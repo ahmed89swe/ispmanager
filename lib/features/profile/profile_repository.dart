@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -15,18 +17,34 @@ class ProfileRepository {
   final FirebaseStorage? _storage;
 
   Future<String> uploadAvatar(AppUser user, XFile file) async {
-    if (_storage == null || _db == null) {
+    if (_db == null) {
       throw StateError('Firebase not configured');
     }
-    final ref = _storage.ref('users/${user.uid}/avatar.jpg');
     final bytes = await file.readAsBytes();
-    await ref.putData(
-      bytes,
-      SettableMetadata(contentType: _imageContentType(file.name)),
-    );
-    final url = await ref.getDownloadURL();
-    await _writePhotoUrl(user, url);
-    return url;
+    String? photoUrl;
+
+    if (_storage != null) {
+      try {
+        final ref = _storage.ref('users/${user.uid}/avatar.jpg');
+        await ref.putData(
+          bytes,
+          SettableMetadata(contentType: _imageContentType(file.name)),
+        );
+        photoUrl = await ref.getDownloadURL();
+      } catch (e) {
+        debugPrint(
+            'Firebase Storage upload failed (falling back to Base64 data URL): $e');
+      }
+    }
+
+    if (photoUrl == null) {
+      final mime = _imageContentType(file.name);
+      final b64 = base64Encode(bytes);
+      photoUrl = 'data:$mime;base64,$b64';
+    }
+
+    await _writePhotoUrl(user, photoUrl);
+    return photoUrl;
   }
 
   String _imageContentType(String path) {
@@ -40,10 +58,11 @@ class ProfileRepository {
   }
 
   Future<void> removeAvatar(AppUser user) async {
-    if (_storage == null) return;
-    try {
-      await _storage.ref('users/${user.uid}/avatar.jpg').delete();
-    } catch (_) {}
+    if (_storage != null) {
+      try {
+        await _storage.ref('users/${user.uid}/avatar.jpg').delete();
+      } catch (_) {}
+    }
     await _writePhotoUrl(user, null);
   }
 
@@ -70,7 +89,11 @@ class ProfileRepository {
             .collection('employees')
             .doc(user.uid);
     await docRef.set({'photoUrl': url}, SetOptions(merge: true));
-    await _auth?.currentUser?.updatePhotoURL(url);
+    try {
+      if (url == null || !url.startsWith('data:')) {
+        await _auth?.currentUser?.updatePhotoURL(url);
+      }
+    } catch (_) {}
   }
 }
 

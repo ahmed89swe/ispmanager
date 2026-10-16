@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../core/constants.dart';
 import '../../core/firebase_service.dart';
@@ -12,10 +16,16 @@ import '../history/history_repository.dart';
 import '../notifications/notifications_repository.dart';
 
 class EmployeesRepository {
-  EmployeesRepository(this._db, this._logger, [this._notificationsRepo]);
+  EmployeesRepository(
+    this._db,
+    this._logger, [
+    this._notificationsRepo,
+    this._storage,
+  ]);
   final FirebaseFirestore? _db;
   final HistoryLogger _logger;
   final NotificationsRepository? _notificationsRepo;
+  final FirebaseStorage? _storage;
 
   CollectionReference<Map<String, dynamic>> _col(String adminUid) =>
       _db!.collection('admins').doc(adminUid).collection('employees');
@@ -221,6 +231,67 @@ class EmployeesRepository {
       before: emp.toMap(),
     );
   }
+
+  Future<String> uploadAvatar(AppUser by, Employee emp, XFile file) async {
+    final bytes = await file.readAsBytes();
+    String? photoUrl;
+
+    if (_storage != null) {
+      try {
+        final ref = _storage!.ref('users/${emp.uid}/avatar.jpg');
+        await ref.putData(
+          bytes,
+          SettableMetadata(contentType: _imageContentType(file.name)),
+        );
+        photoUrl = await ref.getDownloadURL();
+      } catch (e) {
+        debugPrint(
+            'Firebase Storage upload failed for employee (falling back to Base64 data URL): $e');
+      }
+    }
+
+    if (photoUrl == null) {
+      final mime = _imageContentType(file.name);
+      final b64 = base64Encode(bytes);
+      photoUrl = 'data:$mime;base64,$b64';
+    }
+
+    await _col(by.adminUid).doc(emp.id).update({'photoUrl': photoUrl});
+    await _logger.log(
+      actor: by,
+      action: 'employee.update_photo',
+      targetType: 'employee',
+      targetId: emp.id,
+      summary: 'Updated photo for employee ${emp.username}',
+    );
+    return photoUrl;
+  }
+
+  Future<void> removeAvatar(AppUser by, Employee emp) async {
+    if (_storage != null) {
+      try {
+        await _storage!.ref('users/${emp.uid}/avatar.jpg').delete();
+      } catch (_) {}
+    }
+    await _col(by.adminUid).doc(emp.id).update({'photoUrl': null});
+    await _logger.log(
+      actor: by,
+      action: 'employee.remove_photo',
+      targetType: 'employee',
+      targetId: emp.id,
+      summary: 'Removed photo for employee ${emp.username}',
+    );
+  }
+
+  String _imageContentType(String path) {
+    final lowerPath = path.toLowerCase();
+    if (lowerPath.endsWith('.png')) return 'image/png';
+    if (lowerPath.endsWith('.webp')) return 'image/webp';
+    if (lowerPath.endsWith('.gif')) return 'image/gif';
+    if (lowerPath.endsWith('.heic')) return 'image/heic';
+    if (lowerPath.endsWith('.heif')) return 'image/heif';
+    return 'image/jpeg';
+  }
 }
 
 final employeesRepositoryProvider = Provider<EmployeesRepository>(
@@ -228,6 +299,7 @@ final employeesRepositoryProvider = Provider<EmployeesRepository>(
     ref.watch(firestoreProvider),
     ref.watch(historyLoggerProvider),
     ref.watch(notificationsRepositoryProvider),
+    ref.watch(firebaseStorageProvider),
   ),
 );
 

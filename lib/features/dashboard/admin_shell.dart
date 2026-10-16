@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import '../../core/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -814,15 +814,10 @@ class _AvatarMini extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initials = user.displayName.isNotEmpty
-        ? user.displayName.trim().substring(0, 1).toUpperCase()
-        : '?';
-    if (user.photoUrl != null && user.photoUrl!.isNotEmpty) {
-      return CircleAvatar(
-        radius: 16,
-        backgroundImage: CachedNetworkImageProvider(user.photoUrl!),
-      );
-    }
-    return CircleAvatar(radius: 16, child: Text(initials));
+    return AppAvatar(
+      photoUrl: user.photoUrl,
+      name: user.displayName,
+      radius: 16,
+    );
   }
 }

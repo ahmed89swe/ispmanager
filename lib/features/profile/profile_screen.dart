@@ -1,8 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-
+import '../../core/widgets/app_avatar.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_repository.dart';
 import 'profile_repository.dart';
@@ -30,8 +29,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 70,
-      maxWidth: 800,
+      imageQuality: 75,
+      maxWidth: 600,
+      maxHeight: 600,
     );
     if (picked == null) return;
     setState(() => _busy = true);
@@ -39,7 +39,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       await ref
           .read(profileRepositoryProvider)
           .uploadAvatar(user, picked);
-      if (mounted) ref.invalidate(currentAppUserProvider);
+      if (mounted) {
+        ref.invalidate(currentAppUserProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF00A86B),
+            content: Text('تم تحديث الصورة الشخصية بنجاح'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('فشل حفظ الصورة: $e')),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -51,7 +65,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     setState(() => _busy = true);
     try {
       await ref.read(profileRepositoryProvider).removeAvatar(user);
-      if (mounted) ref.invalidate(currentAppUserProvider);
+      if (mounted) {
+        ref.invalidate(currentAppUserProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تمت إزالة الصورة الشخصية')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('فشل إزالة الصورة: $e')),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -92,20 +117,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Center(
                 child: Stack(
                   children: [
-                    CircleAvatar(
+                    AppAvatar(
+                      photoUrl: user.photoUrl,
+                      name: user.displayName,
                       radius: 56,
-                      backgroundImage:
-                          user.photoUrl != null && user.photoUrl!.isNotEmpty
-                              ? CachedNetworkImageProvider(user.photoUrl!)
-                              : null,
-                      child: (user.photoUrl == null || user.photoUrl!.isEmpty)
-                          ? Text(
-                              user.displayName.isNotEmpty
-                                  ? user.displayName[0].toUpperCase()
-                                  : '?',
-                              style: const TextStyle(fontSize: 40),
-                            )
-                          : null,
+                      fontSize: 42,
                     ),
                     Positioned(
                       right: 0,

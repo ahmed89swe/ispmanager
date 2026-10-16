@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../core/constants.dart';
 import '../../core/models/models.dart';
+import '../../core/widgets/app_avatar.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_repository.dart';
 import 'employees_repository.dart';
@@ -64,15 +66,35 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
                         borderRadius: BorderRadius.circular(16)),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    leading: CircleAvatar(
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      foregroundColor: theme.colorScheme.onPrimaryContainer,
-                      child: Text(
-                        e.username.isNotEmpty
-                            ? e.username[0].toUpperCase()
-                            : '?',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                    leading: Stack(
+                      children: [
+                        AppAvatar(
+                          photoUrl: e.photoUrl,
+                          name: e.displayName.isNotEmpty
+                              ? e.displayName
+                              : e.username,
+                          radius: 22,
+                        ),
+                        Positioned(
+                          right: -2,
+                          bottom: -2,
+                          child: InkWell(
+                            onTap: isBusy
+                                ? null
+                                : () => _changeEmployeeAvatar(user, e),
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.camera_alt,
+                                  size: 11, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     title: Text(
                       e.displayName,
@@ -196,6 +218,89 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
       );
     } finally {
       if (mounted) setState(() => _busyEmployeeIds.remove(employee.id));
+    }
+  }
+
+  Future<void> _changeEmployeeAvatar(AppUser user, Employee emp) async {
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('اختيار صورة من المعرض'),
+                onTap: () => Navigator.pop(ctx, 'pick'),
+              ),
+              if (emp.photoUrl != null && emp.photoUrl!.isNotEmpty)
+                ListTile(
+                  leading:
+                      const Icon(Icons.delete_outline, color: Colors.redAccent),
+                  title: const Text('إزالة الصورة',
+                      style: TextStyle(color: Colors.redAccent)),
+                  onTap: () => Navigator.pop(ctx, 'remove'),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (action == null || !mounted) return;
+
+    if (action == 'pick') {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 75,
+        maxWidth: 600,
+        maxHeight: 600,
+      );
+      if (picked == null || !mounted) return;
+      setState(() => _busyEmployeeIds.add(emp.id));
+      try {
+        await ref
+            .read(employeesRepositoryProvider)
+            .uploadAvatar(user, emp, picked);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Color(0xFF00A86B),
+              content: Text('تم تحديث صورة الموظف بنجاح'),
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('فشل حفظ صورة الموظف: $e')),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _busyEmployeeIds.remove(emp.id));
+      }
+    } else if (action == 'remove') {
+      setState(() => _busyEmployeeIds.add(emp.id));
+      try {
+        await ref.read(employeesRepositoryProvider).removeAvatar(user, emp);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('تمت إزالة صورة الموظف')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('فشل إزالة الصورة: $e')),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _busyEmployeeIds.remove(emp.id));
+      }
     }
   }
 }
@@ -363,8 +468,40 @@ class _PermissionsSheetState extends ConsumerState<PermissionsSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${l.permissions} — ${widget.employee.username}',
-                style: Theme.of(context).textTheme.titleLarge),
+            Row(
+              children: [
+                AppAvatar(
+                  photoUrl: widget.employee.photoUrl,
+                  name: widget.employee.displayName.isNotEmpty
+                      ? widget.employee.displayName
+                      : widget.employee.username,
+                  radius: 24,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.employee.displayName.isNotEmpty
+                            ? widget.employee.displayName
+                            : widget.employee.username,
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                      ),
+                      Text(
+                        '${l.permissions} • ${widget.employee.username}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 12),
             for (final p in Permission.values)
               CheckboxListTile(
