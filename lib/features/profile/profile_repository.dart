@@ -21,26 +21,25 @@ class ProfileRepository {
       throw StateError('Firebase not configured');
     }
     final bytes = await file.readAsBytes();
-    String? photoUrl;
+    final mime = _imageContentType(file.name);
+    final b64 = base64Encode(bytes);
+    final base64Url = 'data:$mime;base64,$b64';
+    String photoUrl = base64Url;
 
     if (_storage != null) {
       try {
         final ref = _storage.ref('users/${user.uid}/avatar.jpg');
         await ref.putData(
           bytes,
-          SettableMetadata(contentType: _imageContentType(file.name)),
+          SettableMetadata(contentType: mime),
         );
-        photoUrl = await ref.getDownloadURL();
+        if (!kIsWeb) {
+          photoUrl = await ref.getDownloadURL();
+        }
       } catch (e) {
         debugPrint(
-            'Firebase Storage upload failed (falling back to Base64 data URL): $e');
+            'Firebase Storage upload warning (using Base64 data URL): $e');
       }
-    }
-
-    if (photoUrl == null) {
-      final mime = _imageContentType(file.name);
-      final b64 = base64Encode(bytes);
-      photoUrl = 'data:$mime;base64,$b64';
     }
 
     await _writePhotoUrl(user, photoUrl);

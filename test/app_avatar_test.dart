@@ -40,9 +40,6 @@ void main() {
 
     testWidgets('renders Image.memory when photoUrl is valid base64 data URL',
         (tester) async {
-      // 1x1 transparent PNG in base64
-      const pngBase64 =
-          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAA安置';
       // clean 1x1 png base64
       final validBytes = base64Decode(
           'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAZ');

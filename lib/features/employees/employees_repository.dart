@@ -234,26 +234,25 @@ class EmployeesRepository {
 
   Future<String> uploadAvatar(AppUser by, Employee emp, XFile file) async {
     final bytes = await file.readAsBytes();
-    String? photoUrl;
+    final mime = _imageContentType(file.name);
+    final b64 = base64Encode(bytes);
+    final base64Url = 'data:$mime;base64,$b64';
+    String photoUrl = base64Url;
 
     if (_storage != null) {
       try {
-        final ref = _storage!.ref('users/${emp.uid}/avatar.jpg');
+        final ref = _storage.ref('users/${emp.uid}/avatar.jpg');
         await ref.putData(
           bytes,
-          SettableMetadata(contentType: _imageContentType(file.name)),
+          SettableMetadata(contentType: mime),
         );
-        photoUrl = await ref.getDownloadURL();
+        if (!kIsWeb) {
+          photoUrl = await ref.getDownloadURL();
+        }
       } catch (e) {
         debugPrint(
-            'Firebase Storage upload failed for employee (falling back to Base64 data URL): $e');
+            'Firebase Storage upload warning for employee (using Base64 data URL): $e');
       }
-    }
-
-    if (photoUrl == null) {
-      final mime = _imageContentType(file.name);
-      final b64 = base64Encode(bytes);
-      photoUrl = 'data:$mime;base64,$b64';
     }
 
     await _col(by.adminUid).doc(emp.id).update({'photoUrl': photoUrl});
@@ -270,7 +269,7 @@ class EmployeesRepository {
   Future<void> removeAvatar(AppUser by, Employee emp) async {
     if (_storage != null) {
       try {
-        await _storage!.ref('users/${emp.uid}/avatar.jpg').delete();
+        await _storage.ref('users/${emp.uid}/avatar.jpg').delete();
       } catch (_) {}
     }
     await _col(by.adminUid).doc(emp.id).update({'photoUrl': null});

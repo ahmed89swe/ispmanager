@@ -2528,66 +2528,66 @@
       "source_location": "L25"
     },
     {
-      "id": "lib_features_auth_auth_repository_currentappuserprovider",
-      "label": "currentAppUserProvider",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "currentAppUserProvider",
-      "file_type": "code",
-      "norm_label": "currentappuserprovider",
-      "source_file": "lib/features/auth/auth_repository.dart",
-      "source_location": "L357"
-    },
-    {
-      "id": "lib_features_dashboard_admin_shell_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "currentAppUserProvider",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L131"
-    },
-    {
       "id": "lib_features_dashboard_dashboard_screen_build",
       "label": "build",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L56"
+      "source_location": "L58"
     },
     {
       "id": "lib_features_dashboard_dashboard_screen_dashboardscreen",
       "label": "DashboardScreen",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "dashboardscreen",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L21"
+      "source_location": "L23"
     },
     {
       "id": "lib_features_dashboard_dashboard_screen_dashboardscreenstate",
       "label": "_DashboardScreenState",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "_dashboardscreenstate",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L28"
+      "source_location": "L30"
+    },
+    {
+      "id": "lib_features_employees_employees_repository_employeesstreamprovider",
+      "label": "employeesStreamProvider",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currencyProvider",
+      "file_type": "code",
+      "norm_label": "employeesstreamprovider",
+      "source_file": "lib/features/employees/employees_repository.dart",
+      "source_location": "L305"
+    },
+    {
+      "id": "lib_features_expenses_expenses_repository_expensesrepositoryprovider",
+      "label": "expensesRepositoryProvider",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currencyProvider",
+      "file_type": "code",
+      "norm_label": "expensesrepositoryprovider",
+      "source_file": "lib/features/expenses/expenses_repository.dart",
+      "source_location": "L271"
     },
     {
       "id": "lib_features_expenses_expenses_repository_expensesstreamprovider",
       "label": "expensesStreamProvider",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "expensesstreamprovider",
       "source_file": "lib/features/expenses/expenses_repository.dart",
@@ -2598,106 +2598,139 @@
       "label": "build",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/features/expenses/expenses_screen.dart",
       "source_location": "L34"
     },
     {
-      "id": "lib_features_expenses_expenses_screen_expensesscreen",
-      "label": "ExpensesScreen",
+      "id": "lib_features_expenses_expenses_screen_deleteexpense",
+      "label": "_deleteExpense",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
-      "norm_label": "expensesscreen",
+      "norm_label": "_deleteexpense",
       "source_file": "lib/features/expenses/expenses_screen.dart",
-      "source_location": "L20"
+      "source_location": "L253"
     },
     {
-      "id": "lib_features_expenses_expenses_screen_expensesscreenstate",
-      "label": "_ExpensesScreenState",
+      "id": "lib_features_expenses_expenses_screen_expenseformsheet",
+      "label": "ExpenseFormSheet",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
-      "norm_label": "_expensesscreenstate",
+      "norm_label": "expenseformsheet",
       "source_file": "lib/features/expenses/expenses_screen.dart",
-      "source_location": "L30"
+      "source_location": "L301"
+    },
+    {
+      "id": "lib_features_expenses_expenses_screen_expenseformsheetstate",
+      "label": "_ExpenseFormSheetState",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currencyProvider",
+      "file_type": "code",
+      "norm_label": "_expenseformsheetstate",
+      "source_file": "lib/features/expenses/expenses_screen.dart",
+      "source_location": "L308"
+    },
+    {
+      "id": "lib_features_expenses_expenses_screen_save",
+      "label": "_save",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currencyProvider",
+      "file_type": "code",
+      "norm_label": "_save",
+      "source_file": "lib/features/expenses/expenses_screen.dart",
+      "source_location": "L396"
+    },
+    {
+      "id": "lib_features_finance_cashbox_repository_cashboxledgerstreamprovider",
+      "label": "cashboxLedgerStreamProvider",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currencyProvider",
+      "file_type": "code",
+      "norm_label": "cashboxledgerstreamprovider",
+      "source_file": "lib/features/finance/cashbox_repository.dart",
+      "source_location": "L510"
     },
     {
       "id": "lib_features_finance_cashbox_repository_cashboxstreamprovider",
       "label": "cashboxStreamProvider",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "cashboxstreamprovider",
       "source_file": "lib/features/finance/cashbox_repository.dart",
       "source_location": "L503"
     },
     {
-      "id": "lib_features_inbox_inbox_screen_build",
+      "id": "lib_features_finance_cashbox_screen_build",
       "label": "build",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "build",
-      "source_file": "lib/features/inbox/inbox_screen.dart",
-      "source_location": "L41"
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L32"
     },
     {
-      "id": "lib_features_payments_advance_subscription_sheet_submit",
-      "label": "_submit",
+      "id": "lib_features_finance_cashbox_screen_buildadminstaffdebtstab",
+      "label": "_buildAdminStaffDebtsTab",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
-      "norm_label": "_submit",
-      "source_file": "lib/features/payments/advance_subscription_sheet.dart",
-      "source_location": "L66"
+      "norm_label": "_buildadminstaffdebtstab",
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L241"
+    },
+    {
+      "id": "lib_features_finance_cashbox_screen_cashboxscreen",
+      "label": "CashboxScreen",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currencyProvider",
+      "file_type": "code",
+      "norm_label": "cashboxscreen",
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L15"
+    },
+    {
+      "id": "lib_features_finance_cashbox_screen_cashboxscreenstate",
+      "label": "_CashboxScreenState",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currencyProvider",
+      "file_type": "code",
+      "norm_label": "_cashboxscreenstate",
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L27"
     },
     {
       "id": "lib_features_payments_payments_repository_paymentsrepositoryprovider",
       "label": "paymentsRepositoryProvider",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "paymentsrepositoryprovider",
       "source_file": "lib/features/payments/payments_repository.dart",
       "source_location": "L92"
     },
     {
-      "id": "lib_features_payments_record_payment_sheet_save",
-      "label": "_save",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "currentAppUserProvider",
-      "file_type": "code",
-      "norm_label": "_save",
-      "source_file": "lib/features/payments/record_payment_sheet.dart",
-      "source_location": "L32"
-    },
-    {
-      "id": "lib_features_profile_profile_screen_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "currentAppUserProvider",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "lib/features/profile/profile_screen.dart",
-      "source_location": "L100"
-    },
-    {
       "id": "lib_features_reports_reports_screen_build",
       "label": "build",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/features/reports/reports_screen.dart",
@@ -2708,7 +2741,7 @@
       "label": "ReportsScreen",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "reportsscreen",
       "source_file": "lib/features/reports/reports_screen.dart",
@@ -2719,7 +2752,7 @@
       "label": "_ReportsScreenState",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "_reportsscreenstate",
       "source_file": "lib/features/reports/reports_screen.dart",
@@ -2730,7 +2763,7 @@
       "label": "_supplierNames",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "_suppliernames",
       "source_file": "lib/features/reports/reports_screen.dart",
@@ -2741,7 +2774,7 @@
       "label": "subscribersStreamProvider",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "subscribersstreamprovider",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
@@ -2752,7 +2785,7 @@
       "label": "build",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
@@ -2763,7 +2796,7 @@
       "label": "_exportDebtsReport",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "_exportdebtsreport",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
@@ -2774,7 +2807,7 @@
       "label": "suppliersStreamProvider",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "suppliersstreamprovider",
       "source_file": "lib/features/suppliers/suppliers_repository.dart",
@@ -2785,11 +2818,22 @@
       "label": "build",
       "_origin": "ast",
       "community": 12,
-      "community_name": "currentAppUserProvider",
+      "community_name": "currencyProvider",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/features/suppliers/suppliers_screen.dart",
       "source_location": "L36"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_currencyprovider",
+      "label": "currencyProvider",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currencyProvider",
+      "file_type": "code",
+      "norm_label": "currencyprovider",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L80"
     },
     {
       "id": "bool_get",
@@ -5014,6 +5058,17 @@
       "source_location": null
     },
     {
+      "id": "package_firebase_messaging_firebase_messaging_dart",
+      "label": "package:firebase_messaging/firebase_messaging.dart",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "firebase_service.dart",
+      "file_type": "code",
+      "norm_label": "package:firebase_messaging/firebase_messaging.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "package_firebase_storage_firebase_storage_dart",
       "label": "package:firebase_storage/firebase_storage.dart",
       "_origin": "ast",
@@ -5089,6 +5144,17 @@
       "norm_label": "firebaseavailableprovider",
       "source_file": "lib/core/firebase_service.dart",
       "source_location": "L38"
+    },
+    {
+      "id": "lib_features_auth_auth_repository_authrepositoryprovider",
+      "label": "authRepositoryProvider",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "authrepositoryprovider",
+      "source_file": "lib/features/auth/auth_repository.dart",
+      "source_location": "L344"
     },
     {
       "id": "lib_features_auth_login_screen",
@@ -5168,6 +5234,17 @@
       "source_location": "L27"
     },
     {
+      "id": "lib_features_auth_login_screen_employeesignin",
+      "label": "_employeeSignIn",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "_employeesignin",
+      "source_file": "lib/features/auth/login_screen.dart",
+      "source_location": "L54"
+    },
+    {
       "id": "lib_features_auth_login_screen_employeetab",
       "label": "_employeeTab",
       "_origin": "ast",
@@ -5188,6 +5265,17 @@
       "norm_label": "_error",
       "source_file": "lib/features/auth/login_screen.dart",
       "source_location": "L20"
+    },
+    {
+      "id": "lib_features_auth_login_screen_googlesignin",
+      "label": "_googleSignIn",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "_googlesignin",
+      "source_file": "lib/features/auth/login_screen.dart",
+      "source_location": "L34"
     },
     {
       "id": "lib_features_auth_login_screen_icon",
@@ -5267,6 +5355,94 @@
       "source_location": "L23"
     },
     {
+      "id": "lib_features_dashboard_admin_shell_builddesktopshell",
+      "label": "_buildDesktopShell",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "_builddesktopshell",
+      "source_file": "lib/features/dashboard/admin_shell.dart",
+      "source_location": "L211"
+    },
+    {
+      "id": "lib_features_dashboard_admin_shell_buildmobileshell",
+      "label": "_buildMobileShell",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "_buildmobileshell",
+      "source_file": "lib/features/dashboard/admin_shell.dart",
+      "source_location": "L160"
+    },
+    {
+      "id": "lib_features_dashboard_dashboard_screen_buildheadergreeting",
+      "label": "_buildHeaderGreeting",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "_buildheadergreeting",
+      "source_file": "lib/features/dashboard/dashboard_screen.dart",
+      "source_location": "L267"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_notificationsrepositoryprovider",
+      "label": "notificationsRepositoryProvider",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "notificationsrepositoryprovider",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L111"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_notificationsstreamprovider",
+      "label": "notificationsStreamProvider",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "notificationsstreamprovider",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L115"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_unreadnotificationscountprovider",
+      "label": "unreadNotificationsCountProvider",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "unreadnotificationscountprovider",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L124"
+    },
+    {
+      "id": "lib_features_notifications_notifications_sheet_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "lib/features/notifications/notifications_sheet.dart",
+      "source_location": "L26"
+    },
+    {
+      "id": "lib_features_notifications_notifications_sheet_notificationssheet",
+      "label": "NotificationsSheet",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "code",
+      "norm_label": "notificationssheet",
+      "source_file": "lib/features/notifications/notifications_sheet.dart",
+      "source_location": "L10"
+    },
+    {
       "id": "package_flutter_animate_flutter_animate_dart",
       "label": "package:flutter_animate/flutter_animate.dart",
       "_origin": "ast",
@@ -5274,6 +5450,39 @@
       "community_name": "login_screen.dart",
       "file_type": "code",
       "norm_label": "package:flutter_animate/flutter_animate.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "route_home",
+      "label": "Route /home",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "concept",
+      "norm_label": "route /home",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "route_login",
+      "label": "Route /login",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "concept",
+      "norm_label": "route /login",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "route_profile",
+      "label": "Route /profile",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "login_screen.dart",
+      "file_type": "concept",
+      "norm_label": "route /profile",
       "source_file": null,
       "source_location": null
     },
@@ -5454,13 +5663,13 @@
       "source_location": "L16"
     },
     {
-      "id": "core_utils_formatters_dart",
-      "label": "../../core/utils/formatters.dart",
+      "id": "l10n_app_localizations_dart",
+      "label": "../../l10n/app_localizations.dart",
       "_origin": "ast",
       "community": 19,
       "community_name": "notifications_sheet.dart",
       "file_type": "code",
-      "norm_label": "../../core/utils/formatters.dart",
+      "norm_label": "../../l10n/app_localizations.dart",
       "source_file": null,
       "source_location": null
     },
@@ -5902,7 +6111,7 @@
       "file_type": "code",
       "norm_label": "employeesrepositoryprovider",
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L297"
+      "source_location": "L296"
     },
     {
       "id": "lib_features_employees_employees_screen",
@@ -6574,17 +6783,6 @@
       "norm_label": "watchdeleterequests",
       "source_file": "lib/features/expenses/expenses_repository.dart",
       "source_location": "L138"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_notificationsrepository",
-      "label": "NotificationsRepository",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "expenses_repository.dart",
-      "file_type": "code",
-      "norm_label": "notificationsrepository",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L8"
     },
     {
       "id": "lib_features_payments_payments_repository",
@@ -7320,61 +7518,6 @@
       "norm_label": "watchreimbursementrequests",
       "source_file": "lib/features/finance/cashbox_repository.dart",
       "source_location": "L323"
-    },
-    {
-      "id": "lib_l10n_strings_ar",
-      "label": "strings_ar.dart",
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "cashbox_repository.dart",
-      "file_type": "code",
-      "norm_label": "strings_ar.dart",
-      "source_file": "lib/l10n/strings_ar.dart",
-      "source_location": null
-    },
-    {
-      "id": "lib_l10n_strings_ar_arabicstrings",
-      "label": "arabicStrings",
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "cashbox_repository.dart",
-      "file_type": "code",
-      "norm_label": "arabicstrings",
-      "source_file": "lib/l10n/strings_ar.dart",
-      "source_location": "L1"
-    },
-    {
-      "id": "lib_l10n_strings_en",
-      "label": "strings_en.dart",
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "cashbox_repository.dart",
-      "file_type": "code",
-      "norm_label": "strings_en.dart",
-      "source_file": "lib/l10n/strings_en.dart",
-      "source_location": null
-    },
-    {
-      "id": "lib_l10n_strings_en_englishstrings",
-      "label": "englishStrings",
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "cashbox_repository.dart",
-      "file_type": "code",
-      "norm_label": "englishstrings",
-      "source_file": "lib/l10n/strings_en.dart",
-      "source_location": "L1"
-    },
-    {
-      "id": "map",
-      "label": "Map",
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "cashbox_repository.dart",
-      "file_type": "code",
-      "norm_label": "map",
-      "source_file": null,
-      "source_location": null
     },
     {
       "id": "lib_features_finance_cashbox_repository_cashboxrepositoryprovider",
@@ -8877,40 +9020,106 @@
       "label": "../../core/widgets/app_avatar.dart",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "../../core/widgets/app_avatar.dart",
       "source_file": null,
       "source_location": null
     },
     {
+      "id": "lib_features_auth_auth_repository_currentappuserprovider",
+      "label": "currentAppUserProvider",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "currentappuserprovider",
+      "source_file": "lib/features/auth/auth_repository.dart",
+      "source_location": "L357"
+    },
+    {
+      "id": "lib_features_dashboard_admin_shell_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "lib/features/dashboard/admin_shell.dart",
+      "source_location": "L131"
+    },
+    {
+      "id": "lib_features_inbox_inbox_screen_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "lib/features/inbox/inbox_screen.dart",
+      "source_location": "L41"
+    },
+    {
+      "id": "lib_features_payments_advance_subscription_sheet_submit",
+      "label": "_submit",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "_submit",
+      "source_file": "lib/features/payments/advance_subscription_sheet.dart",
+      "source_location": "L66"
+    },
+    {
+      "id": "lib_features_payments_record_payment_sheet_save",
+      "label": "_save",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "_save",
+      "source_file": "lib/features/payments/record_payment_sheet.dart",
+      "source_location": "L32"
+    },
+    {
       "id": "lib_features_profile_profile_repository_profilerepositoryprovider",
       "label": "profileRepositoryProvider",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "profilerepositoryprovider",
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L100"
+      "source_location": "L99"
     },
     {
       "id": "lib_features_profile_profile_screen",
       "label": "profile_screen.dart",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "profile_screen.dart",
       "source_file": "lib/features/profile/profile_screen.dart",
       "source_location": null
     },
     {
+      "id": "lib_features_profile_profile_screen_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 33,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "lib/features/profile/profile_screen.dart",
+      "source_location": "L100"
+    },
+    {
       "id": "lib_features_profile_profile_screen_busy",
       "label": "_busy",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "_busy",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -8921,7 +9130,7 @@
       "label": "createState",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "createstate",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -8932,7 +9141,7 @@
       "label": "dispose",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "dispose",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -8943,7 +9152,7 @@
       "label": "_initialized",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "_initialized",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -8954,7 +9163,7 @@
       "label": "_name",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "_name",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -8965,7 +9174,7 @@
       "label": "_pickAvatar",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "_pickavatar",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -8976,7 +9185,7 @@
       "label": "ProfileScreen",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "profilescreen",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -8987,7 +9196,7 @@
       "label": "_ProfileScreenState",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "_profilescreenstate",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -8998,7 +9207,7 @@
       "label": "_removeAvatar",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "_removeavatar",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -9009,7 +9218,7 @@
       "label": "_saveName",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "_savename",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -9020,7 +9229,7 @@
       "label": "profile_repository.dart",
       "_origin": "ast",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "profile_repository.dart",
       "source_file": null,
@@ -10758,40 +10967,40 @@
       "label": "advance_subscription_sheet.dart",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "advance_subscription_sheet.dart",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "l10n_app_localizations_dart",
-      "label": "../../l10n/app_localizations.dart",
+      "id": "auth_auth_repository_dart",
+      "label": "../auth/auth_repository.dart",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
-      "norm_label": "../../l10n/app_localizations.dart",
+      "norm_label": "../auth/auth_repository.dart",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "lib_core_constants_moneystorage",
-      "label": "MoneyStorage",
+      "id": "lib_core_models_models_subscriber",
+      "label": "Subscriber",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
-      "norm_label": "moneystorage",
-      "source_file": "lib/core/constants.dart",
-      "source_location": "L43"
+      "norm_label": "subscriber",
+      "source_file": "lib/core/models/models.dart",
+      "source_location": "L48"
     },
     {
       "id": "lib_features_payments_record_payment_sheet",
       "label": "record_payment_sheet.dart",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "record_payment_sheet.dart",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10802,7 +11011,7 @@
       "label": "_amount",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "_amount",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10813,7 +11022,7 @@
       "label": "build",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10824,7 +11033,7 @@
       "label": "_busy",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "_busy",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10835,7 +11044,7 @@
       "label": "createState",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "createstate",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10846,7 +11055,7 @@
       "label": "dispose",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "dispose",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10857,7 +11066,7 @@
       "label": "_note",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "_note",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10868,7 +11077,7 @@
       "label": "_receivedIn",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "_receivedin",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10879,7 +11088,7 @@
       "label": "subscriber",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "subscriber",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -10890,20 +11099,20 @@
       "label": "../subscribers/subscribers_repository.dart",
       "_origin": "ast",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "../subscribers/subscribers_repository.dart",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "auth_auth_repository_dart",
-      "label": "../auth/auth_repository.dart",
+      "id": "core_utils_formatters_dart",
+      "label": "../../core/utils/formatters.dart",
       "_origin": "ast",
       "community": 37,
       "community_name": "history_screen.dart",
       "file_type": "code",
-      "norm_label": "../auth/auth_repository.dart",
+      "norm_label": "../../core/utils/formatters.dart",
       "source_file": null,
       "source_location": null
     },
@@ -12580,6 +12789,28 @@
       "source_location": null
     },
     {
+      "id": "lib_features_dashboard_admin_shell_adminshell",
+      "label": "AdminShell",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "adminshell",
+      "source_file": "lib/features/dashboard/admin_shell.dart",
+      "source_location": "L40"
+    },
+    {
+      "id": "lib_features_dashboard_admin_shell_adminshellstate",
+      "label": "_AdminShellState",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "_adminshellstate",
+      "source_file": "lib/features/dashboard/admin_shell.dart",
+      "source_location": "L47"
+    },
+    {
       "id": "lib_features_employees_employees_screen_permissionssheet",
       "label": "PermissionsSheet",
       "_origin": "ast",
@@ -12600,6 +12831,28 @@
       "norm_label": "_permissionssheetstate",
       "source_file": "lib/features/employees/employees_screen.dart",
       "source_location": "L451"
+    },
+    {
+      "id": "lib_features_expenses_expenses_screen_expensesscreen",
+      "label": "ExpensesScreen",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "expensesscreen",
+      "source_file": "lib/features/expenses/expenses_screen.dart",
+      "source_location": "L20"
+    },
+    {
+      "id": "lib_features_expenses_expenses_screen_expensesscreenstate",
+      "label": "_ExpensesScreenState",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "_expensesscreenstate",
+      "source_file": "lib/features/expenses/expenses_screen.dart",
+      "source_location": "L30"
     },
     {
       "id": "lib_features_payments_advance_subscription_sheet_advancesubscriptionsheet",
@@ -12690,50 +12943,6 @@
       "source_location": "L1062"
     },
     {
-      "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionsheet",
-      "label": "SupplierBalanceTransactionSheet",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "supplierbalancetransactionsheet",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L652"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionsheetstate",
-      "label": "_SupplierBalanceTransactionSheetState",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_supplierbalancetransactionsheetstate",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L669"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_supplierpaymentrequestsheet",
-      "label": "SupplierPaymentRequestSheet",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "supplierpaymentrequestsheet",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L1164"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_supplierpaymentrequestsheetstate",
-      "label": "_SupplierPaymentRequestSheetState",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_supplierpaymentrequestsheetstate",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L1173"
-    },
-    {
       "id": "lib_features_suppliers_suppliers_screen_suppliersscreen",
       "label": "SuppliersScreen",
       "_origin": "ast",
@@ -12756,15 +12965,48 @@
       "source_location": "L25"
     },
     {
-      "id": "lib_shared_providers_preferences_providers_currencyprovider",
-      "label": "currencyProvider",
+      "id": "lib_core_utils_firestore_helpers",
+      "label": "firestore_helpers.dart",
       "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
+      "community": 44,
+      "community_name": "history_repository.dart",
       "file_type": "code",
-      "norm_label": "currencyprovider",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L80"
+      "norm_label": "firestore_helpers.dart",
+      "source_file": "lib/core/utils/firestore_helpers.dart",
+      "source_location": null
+    },
+    {
+      "id": "lib_core_utils_firestore_helpers_now",
+      "label": "now",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "history_repository.dart",
+      "file_type": "code",
+      "norm_label": "now",
+      "source_file": "lib/core/utils/firestore_helpers.dart",
+      "source_location": "L8"
+    },
+    {
+      "id": "lib_core_utils_firestore_helpers_null",
+      "label": "null",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "history_repository.dart",
+      "file_type": "code",
+      "norm_label": "null",
+      "source_file": "lib/core/utils/firestore_helpers.dart",
+      "source_location": "L16"
+    },
+    {
+      "id": "lib_core_utils_firestore_helpers_tstodate",
+      "label": "tsToDate",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "history_repository.dart",
+      "file_type": "code",
+      "norm_label": "tstodate",
+      "source_file": "lib/core/utils/firestore_helpers.dart",
+      "source_location": "L3"
     },
     {
       "id": "lib_features_history_history_repository",
@@ -12954,6 +13196,28 @@
       "source_location": "L72"
     },
     {
+      "id": "package_cloud_firestore_cloud_firestore_dart",
+      "label": "package:cloud_firestore/cloud_firestore.dart",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "history_repository.dart",
+      "file_type": "code",
+      "norm_label": "package:cloud_firestore/cloud_firestore.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "return",
+      "label": "return",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "history_repository.dart",
+      "file_type": "code",
+      "norm_label": "return",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "lib_features_dashboard_dashboard_screen_syncduedebts",
       "label": "_syncDueDebts",
       "_origin": "ast",
@@ -12962,7 +13226,7 @@
       "file_type": "code",
       "norm_label": "_syncduedebts",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L31"
+      "source_location": "L33"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_subscribersrepositoryprovider",
@@ -13105,7 +13369,7 @@
       "file_type": "code",
       "norm_label": "authuser",
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L308"
+      "source_location": "L307"
     },
     {
       "id": "lib_features_employees_employees_repository_col",
@@ -13171,7 +13435,7 @@
       "file_type": "code",
       "norm_label": "_imagecontenttype",
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L286"
+      "source_location": "L285"
     },
     {
       "id": "lib_features_employees_employees_repository_logger",
@@ -13204,7 +13468,7 @@
       "file_type": "code",
       "norm_label": "removeavatar",
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L270"
+      "source_location": "L269"
     },
     {
       "id": "lib_features_employees_employees_repository_setactive",
@@ -13259,7 +13523,7 @@
       "file_type": "code",
       "norm_label": "watch",
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L310"
+      "source_location": "L309"
     },
     {
       "id": "lib_features_employees_employees_repository_watchall",
@@ -13757,81 +14021,59 @@
       "source_location": null
     },
     {
-      "id": "lib_features_dashboard_admin_shell_adminshell",
-      "label": "AdminShell",
+      "id": "lib_l10n_strings_ar",
+      "label": "strings_ar.dart",
       "_origin": "ast",
       "community": 49,
-      "community_name": "_AdminShellState",
+      "community_name": "Map",
       "file_type": "code",
-      "norm_label": "adminshell",
-      "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L40"
+      "norm_label": "strings_ar.dart",
+      "source_file": "lib/l10n/strings_ar.dart",
+      "source_location": null
     },
     {
-      "id": "lib_features_dashboard_admin_shell_adminshellstate",
-      "label": "_AdminShellState",
+      "id": "lib_l10n_strings_ar_arabicstrings",
+      "label": "arabicStrings",
       "_origin": "ast",
       "community": 49,
-      "community_name": "_AdminShellState",
+      "community_name": "Map",
       "file_type": "code",
-      "norm_label": "_adminshellstate",
-      "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L47"
+      "norm_label": "arabicstrings",
+      "source_file": "lib/l10n/strings_ar.dart",
+      "source_location": "L1"
     },
     {
-      "id": "lib_features_notifications_notifications_repository_notificationsrepositoryprovider",
-      "label": "notificationsRepositoryProvider",
+      "id": "lib_l10n_strings_en",
+      "label": "strings_en.dart",
       "_origin": "ast",
       "community": 49,
-      "community_name": "_AdminShellState",
+      "community_name": "Map",
       "file_type": "code",
-      "norm_label": "notificationsrepositoryprovider",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L111"
+      "norm_label": "strings_en.dart",
+      "source_file": "lib/l10n/strings_en.dart",
+      "source_location": null
     },
     {
-      "id": "lib_features_notifications_notifications_repository_notificationsstreamprovider",
-      "label": "notificationsStreamProvider",
+      "id": "lib_l10n_strings_en_englishstrings",
+      "label": "englishStrings",
       "_origin": "ast",
       "community": 49,
-      "community_name": "_AdminShellState",
+      "community_name": "Map",
       "file_type": "code",
-      "norm_label": "notificationsstreamprovider",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L115"
+      "norm_label": "englishstrings",
+      "source_file": "lib/l10n/strings_en.dart",
+      "source_location": "L1"
     },
     {
-      "id": "lib_features_notifications_notifications_repository_unreadnotificationscountprovider",
-      "label": "unreadNotificationsCountProvider",
+      "id": "map",
+      "label": "Map",
       "_origin": "ast",
       "community": 49,
-      "community_name": "_AdminShellState",
+      "community_name": "Map",
       "file_type": "code",
-      "norm_label": "unreadnotificationscountprovider",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L124"
-    },
-    {
-      "id": "lib_features_notifications_notifications_sheet_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "_AdminShellState",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "lib/features/notifications/notifications_sheet.dart",
-      "source_location": "L26"
-    },
-    {
-      "id": "lib_features_notifications_notifications_sheet_notificationssheet",
-      "label": "NotificationsSheet",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "_AdminShellState",
-      "file_type": "code",
-      "norm_label": "notificationssheet",
-      "source_file": "lib/features/notifications/notifications_sheet.dart",
-      "source_location": "L10"
+      "norm_label": "map",
+      "source_file": null,
+      "source_location": null
     },
     {
       "id": "dashboard_screen_dart",
@@ -14274,61 +14516,6 @@
       "source_location": null
     },
     {
-      "id": "lib_features_suppliers_suppliers_repository_suppliersrepositoryprovider",
-      "label": "suppliersRepositoryProvider",
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "suppliersRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "suppliersrepositoryprovider",
-      "source_file": "lib/features/suppliers/suppliers_repository.dart",
-      "source_location": "L373"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_save",
-      "label": "_save",
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "suppliersRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_save",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L356"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionstab",
-      "label": "_SupplierBalanceTransactionsTab",
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "suppliersRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_supplierbalancetransactionstab",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L480"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_supplierformsheet",
-      "label": "SupplierFormSheet",
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "suppliersRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "supplierformsheet",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L329"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_supplierformsheetstate",
-      "label": "_SupplierFormSheetState",
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "suppliersRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_supplierformsheetstate",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L338"
-    },
-    {
       "id": "lib_app_app_splashscreen",
       "label": "_SplashScreen",
       "_origin": "ast",
@@ -14538,50 +14725,6 @@
       "source_location": null
     },
     {
-      "id": "lib_core_utils_firestore_helpers",
-      "label": "firestore_helpers.dart",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "notifications_repository.dart",
-      "file_type": "code",
-      "norm_label": "firestore_helpers.dart",
-      "source_file": "lib/core/utils/firestore_helpers.dart",
-      "source_location": null
-    },
-    {
-      "id": "lib_core_utils_firestore_helpers_now",
-      "label": "now",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "notifications_repository.dart",
-      "file_type": "code",
-      "norm_label": "now",
-      "source_file": "lib/core/utils/firestore_helpers.dart",
-      "source_location": "L8"
-    },
-    {
-      "id": "lib_core_utils_firestore_helpers_null",
-      "label": "null",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "notifications_repository.dart",
-      "file_type": "code",
-      "norm_label": "null",
-      "source_file": "lib/core/utils/firestore_helpers.dart",
-      "source_location": "L16"
-    },
-    {
-      "id": "lib_core_utils_firestore_helpers_tstodate",
-      "label": "tsToDate",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "notifications_repository.dart",
-      "file_type": "code",
-      "norm_label": "tstodate",
-      "source_file": "lib/core/utils/firestore_helpers.dart",
-      "source_location": "L3"
-    },
-    {
       "id": "lib_features_notifications_notifications_repository",
       "label": "notifications_repository.dart",
       "_origin": "ast",
@@ -14648,6 +14791,17 @@
       "source_location": "L79"
     },
     {
+      "id": "lib_features_notifications_notifications_repository_notificationsrepository",
+      "label": "NotificationsRepository",
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "notifications_repository.dart",
+      "file_type": "code",
+      "norm_label": "notificationsrepository",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L8"
+    },
+    {
       "id": "lib_features_notifications_notifications_repository_ref",
       "label": "ref",
       "_origin": "ast",
@@ -14701,28 +14855,6 @@
       "norm_label": "watchunreadcount",
       "source_file": "lib/features/notifications/notifications_repository.dart",
       "source_location": "L42"
-    },
-    {
-      "id": "package_cloud_firestore_cloud_firestore_dart",
-      "label": "package:cloud_firestore/cloud_firestore.dart",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "notifications_repository.dart",
-      "file_type": "code",
-      "norm_label": "package:cloud_firestore/cloud_firestore.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "return",
-      "label": "return",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "notifications_repository.dart",
-      "file_type": "code",
-      "norm_label": "return",
-      "source_file": null,
-      "source_location": null
     },
     {
       "id": "in",
@@ -14901,17 +15033,6 @@
       "source_location": "L12"
     },
     {
-      "id": "package_firebase_messaging_firebase_messaging_dart",
-      "label": "package:firebase_messaging/firebase_messaging.dart",
-      "_origin": "ast",
-      "community": 55,
-      "community_name": "../../core/models/models.dart",
-      "file_type": "code",
-      "norm_label": "package:firebase_messaging/firebase_messaging.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
       "id": "streamsubscription",
       "label": "StreamSubscription",
       "_origin": "ast",
@@ -15009,72 +15130,6 @@
       "norm_label": "win32_window.h",
       "source_file": "windows/runner/win32_window.h",
       "source_location": "L1"
-    },
-    {
-      "id": "lib_features_employees_employees_repository_employeesstreamprovider",
-      "label": "employeesStreamProvider",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "employeesStreamProvider",
-      "file_type": "code",
-      "norm_label": "employeesstreamprovider",
-      "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L306"
-    },
-    {
-      "id": "lib_features_finance_cashbox_repository_cashboxledgerstreamprovider",
-      "label": "cashboxLedgerStreamProvider",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "employeesStreamProvider",
-      "file_type": "code",
-      "norm_label": "cashboxledgerstreamprovider",
-      "source_file": "lib/features/finance/cashbox_repository.dart",
-      "source_location": "L510"
-    },
-    {
-      "id": "lib_features_finance_cashbox_screen_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "employeesStreamProvider",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L32"
-    },
-    {
-      "id": "lib_features_finance_cashbox_screen_buildadminstaffdebtstab",
-      "label": "_buildAdminStaffDebtsTab",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "employeesStreamProvider",
-      "file_type": "code",
-      "norm_label": "_buildadminstaffdebtstab",
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L241"
-    },
-    {
-      "id": "lib_features_finance_cashbox_screen_cashboxscreen",
-      "label": "CashboxScreen",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "employeesStreamProvider",
-      "file_type": "code",
-      "norm_label": "cashboxscreen",
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L15"
-    },
-    {
-      "id": "lib_features_finance_cashbox_screen_cashboxscreenstate",
-      "label": "_CashboxScreenState",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "employeesStreamProvider",
-      "file_type": "code",
-      "norm_label": "_cashboxscreenstate",
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L27"
     },
     {
       "id": "windows_runner_win32_window_cpp_hwnd",
@@ -15833,7 +15888,7 @@
       "file_type": "code",
       "norm_label": "_imagecontenttype",
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L50"
+      "source_location": "L49"
     },
     {
       "id": "lib_features_profile_profile_repository_profilerepository",
@@ -15855,7 +15910,7 @@
       "file_type": "code",
       "norm_label": "removeavatar",
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L60"
+      "source_location": "L59"
     },
     {
       "id": "lib_features_profile_profile_repository_storage",
@@ -15877,7 +15932,7 @@
       "file_type": "code",
       "norm_label": "updatedisplayname",
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L69"
+      "source_location": "L68"
     },
     {
       "id": "lib_features_profile_profile_repository_uploadavatar",
@@ -15899,7 +15954,7 @@
       "file_type": "code",
       "norm_label": "_writephotourl",
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L82"
+      "source_location": "L81"
     },
     {
       "id": "package_image_picker_image_picker_dart",
@@ -15911,61 +15966,6 @@
       "norm_label": "package:image_picker/image_picker.dart",
       "source_file": null,
       "source_location": null
-    },
-    {
-      "id": "lib_features_expenses_expenses_repository_expensesrepositoryprovider",
-      "label": "expensesRepositoryProvider",
-      "_origin": "ast",
-      "community": 63,
-      "community_name": "expensesRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "expensesrepositoryprovider",
-      "source_file": "lib/features/expenses/expenses_repository.dart",
-      "source_location": "L271"
-    },
-    {
-      "id": "lib_features_expenses_expenses_screen_deleteexpense",
-      "label": "_deleteExpense",
-      "_origin": "ast",
-      "community": 63,
-      "community_name": "expensesRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_deleteexpense",
-      "source_file": "lib/features/expenses/expenses_screen.dart",
-      "source_location": "L253"
-    },
-    {
-      "id": "lib_features_expenses_expenses_screen_expenseformsheet",
-      "label": "ExpenseFormSheet",
-      "_origin": "ast",
-      "community": 63,
-      "community_name": "expensesRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "expenseformsheet",
-      "source_file": "lib/features/expenses/expenses_screen.dart",
-      "source_location": "L301"
-    },
-    {
-      "id": "lib_features_expenses_expenses_screen_expenseformsheetstate",
-      "label": "_ExpenseFormSheetState",
-      "_origin": "ast",
-      "community": 63,
-      "community_name": "expensesRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_expenseformsheetstate",
-      "source_file": "lib/features/expenses/expenses_screen.dart",
-      "source_location": "L308"
-    },
-    {
-      "id": "lib_features_expenses_expenses_screen_save",
-      "label": "_save",
-      "_origin": "ast",
-      "community": 63,
-      "community_name": "expensesRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_save",
-      "source_file": "lib/features/expenses/expenses_screen.dart",
-      "source_location": "L396"
     },
     {
       "id": "lib_features_dashboard_admin_shell_adminbottomtabbar",
@@ -16281,17 +16281,6 @@
       "source_location": "L1522"
     },
     {
-      "id": "lib_features_dashboard_dashboard_screen_buildheadergreeting",
-      "label": "_buildHeaderGreeting",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "dashboard_screen.dart",
-      "file_type": "code",
-      "norm_label": "_buildheadergreeting",
-      "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L265"
-    },
-    {
       "id": "lib_features_dashboard_dashboard_screen_buildkpimetricsgrid",
       "label": "_buildKpiMetricsGrid",
       "_origin": "ast",
@@ -16344,7 +16333,7 @@
       "file_type": "code",
       "norm_label": "createstate",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L25"
+      "source_location": "L27"
     },
     {
       "id": "lib_features_dashboard_dashboard_screen_icon",
@@ -16399,7 +16388,7 @@
       "file_type": "code",
       "norm_label": "_syncedsubscribers",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L29"
+      "source_location": "L31"
     },
     {
       "id": "lib_features_dashboard_dashboard_screen_text",
@@ -16464,94 +16453,6 @@
       "community_name": "dashboard_screen.dart",
       "file_type": "code",
       "norm_label": "../suppliers/suppliers_repository.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "lib_features_auth_auth_repository_authrepositoryprovider",
-      "label": "authRepositoryProvider",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "authRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "authrepositoryprovider",
-      "source_file": "lib/features/auth/auth_repository.dart",
-      "source_location": "L344"
-    },
-    {
-      "id": "lib_features_auth_login_screen_employeesignin",
-      "label": "_employeeSignIn",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "authRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_employeesignin",
-      "source_file": "lib/features/auth/login_screen.dart",
-      "source_location": "L54"
-    },
-    {
-      "id": "lib_features_auth_login_screen_googlesignin",
-      "label": "_googleSignIn",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "authRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_googlesignin",
-      "source_file": "lib/features/auth/login_screen.dart",
-      "source_location": "L34"
-    },
-    {
-      "id": "lib_features_dashboard_admin_shell_builddesktopshell",
-      "label": "_buildDesktopShell",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "authRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_builddesktopshell",
-      "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L211"
-    },
-    {
-      "id": "lib_features_dashboard_admin_shell_buildmobileshell",
-      "label": "_buildMobileShell",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "authRepositoryProvider",
-      "file_type": "code",
-      "norm_label": "_buildmobileshell",
-      "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L160"
-    },
-    {
-      "id": "route_home",
-      "label": "Route /home",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "authRepositoryProvider",
-      "file_type": "concept",
-      "norm_label": "route /home",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "route_login",
-      "label": "Route /login",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "authRepositoryProvider",
-      "file_type": "concept",
-      "norm_label": "route /login",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "route_profile",
-      "label": "Route /profile",
-      "_origin": "ast",
-      "community": 70,
-      "community_name": "authRepositoryProvider",
-      "file_type": "concept",
-      "norm_label": "route /profile",
       "source_file": null,
       "source_location": null
     },
@@ -16655,15 +16556,15 @@
       "source_location": null
     },
     {
-      "id": "lib_core_models_models_subscriber",
-      "label": "Subscriber",
+      "id": "lib_core_constants_moneystorage",
+      "label": "MoneyStorage",
       "_origin": "ast",
       "community": 76,
       "community_name": "advance_subscription_sheet.dart",
       "file_type": "code",
-      "norm_label": "subscriber",
-      "source_file": "lib/core/models/models.dart",
-      "source_location": "L48"
+      "norm_label": "moneystorage",
+      "source_file": "lib/core/constants.dart",
+      "source_location": "L43"
     },
     {
       "id": "lib_features_payments_advance_subscription_sheet",
@@ -17007,6 +16908,17 @@
       "source_location": "L319"
     },
     {
+      "id": "lib_features_suppliers_suppliers_repository_suppliersrepositoryprovider",
+      "label": "suppliersRepositoryProvider",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "suppliersrepositoryprovider",
+      "source_file": "lib/features/suppliers/suppliers_repository.dart",
+      "source_location": "L373"
+    },
+    {
       "id": "lib_features_suppliers_suppliers_screen",
       "label": "suppliers_screen.dart",
       "_origin": "ast",
@@ -17227,6 +17139,17 @@
       "source_location": "L676"
     },
     {
+      "id": "lib_features_suppliers_suppliers_screen_save",
+      "label": "_save",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "_save",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L356"
+    },
+    {
       "id": "lib_features_suppliers_suppliers_screen_searchcontroller",
       "label": "_searchController",
       "_origin": "ast",
@@ -17271,6 +17194,61 @@
       "source_location": "L441"
     },
     {
+      "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionsheet",
+      "label": "SupplierBalanceTransactionSheet",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "supplierbalancetransactionsheet",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L652"
+    },
+    {
+      "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionsheetstate",
+      "label": "_SupplierBalanceTransactionSheetState",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "_supplierbalancetransactionsheetstate",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L669"
+    },
+    {
+      "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionstab",
+      "label": "_SupplierBalanceTransactionsTab",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "_supplierbalancetransactionstab",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L480"
+    },
+    {
+      "id": "lib_features_suppliers_suppliers_screen_supplierformsheet",
+      "label": "SupplierFormSheet",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "supplierformsheet",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L329"
+    },
+    {
+      "id": "lib_features_suppliers_suppliers_screen_supplierformsheetstate",
+      "label": "_SupplierFormSheetState",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "_supplierformsheetstate",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L338"
+    },
+    {
       "id": "lib_features_suppliers_suppliers_screen_supplierid",
       "label": "supplierId",
       "_origin": "ast",
@@ -17280,6 +17258,28 @@
       "norm_label": "supplierid",
       "source_file": "lib/features/suppliers/suppliers_screen.dart",
       "source_location": "L1055"
+    },
+    {
+      "id": "lib_features_suppliers_suppliers_screen_supplierpaymentrequestsheet",
+      "label": "SupplierPaymentRequestSheet",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "supplierpaymentrequestsheet",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L1164"
+    },
+    {
+      "id": "lib_features_suppliers_suppliers_screen_supplierpaymentrequestsheetstate",
+      "label": "_SupplierPaymentRequestSheetState",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "suppliers_screen.dart",
+      "file_type": "code",
+      "norm_label": "_supplierpaymentrequestsheetstate",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L1173"
     },
     {
       "id": "lib_features_suppliers_suppliers_screen_type",
@@ -18760,7 +18760,7 @@
       "label": "ListView",
       "_origin": "semantic",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "listview",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -18771,7 +18771,7 @@
       "label": "Scaffold",
       "_origin": "semantic",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "scaffold",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -18782,7 +18782,7 @@
       "label": "SizedBox",
       "_origin": "semantic",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "sizedbox",
       "source_file": "lib/features/profile/profile_screen.dart",
@@ -18793,7 +18793,7 @@
       "label": "dart:io",
       "_origin": "semantic",
       "community": 33,
-      "community_name": "profile_screen.dart",
+      "community_name": "currentAppUserProvider",
       "file_type": "code",
       "norm_label": "dart:io",
       "source_file": "lib/features/suppliers/suppliers_screen.dart",
@@ -18804,7 +18804,7 @@
       "label": "Padding",
       "_origin": "semantic",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "padding",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -18815,7 +18815,7 @@
       "label": "SizedBox",
       "_origin": "semantic",
       "community": 36,
-      "community_name": "record_payment_sheet.dart",
+      "community_name": "../auth/auth_repository.dart",
       "file_type": "code",
       "norm_label": "sizedbox",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
@@ -22626,7 +22626,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L58",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -22638,7 +22638,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L62",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -22650,7 +22650,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L64",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -22662,7 +22662,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -22674,7 +22674,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L66",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -22686,7 +22686,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L68",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -22698,7 +22698,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L70",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -22710,7 +22710,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L48",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -22722,7 +22722,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L58",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -22734,7 +22734,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L62",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -22746,7 +22746,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L64",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -22758,7 +22758,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L65",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -22770,7 +22770,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L66",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -22782,7 +22782,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L68",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -22794,7 +22794,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L70",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -22806,7 +22806,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L48",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -24703,6 +24703,18 @@
       "context": "route_path",
       "source_file": "lib/features/dashboard/admin_shell.dart",
       "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_dashboard_dashboard_screen_buildheadergreeting",
+      "target": "route_profile",
+      "relation": "navigates",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "route_path",
+      "source_file": "lib/features/dashboard/dashboard_screen.dart",
+      "source_location": "L279",
       "weight": 1.0
     },
     {
@@ -32220,18 +32232,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L21",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_dashboard_dashboard_screen",
-      "target": "lib_features_dashboard_dashboard_screen_createstate",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L25",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -32242,7 +32243,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L265",
+      "source_location": "L267",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_dashboard_dashboard_screen",
+      "target": "lib_features_dashboard_dashboard_screen_createstate",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/dashboard/dashboard_screen.dart",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -32253,7 +32265,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L28",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -32264,7 +32276,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L29",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -32275,7 +32287,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -32297,7 +32309,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L56",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -32401,6 +32413,17 @@
     },
     {
       "source": "lib_features_employees_employees_repository",
+      "target": "lib_features_employees_employees_repository_removeavatar",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/employees/employees_repository.dart",
+      "source_location": "L269",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_employees_employees_repository",
       "target": "lib_features_employees_employees_repository_notificationsrepo",
       "relation": "defines",
       "_origin": "ast",
@@ -32408,17 +32431,6 @@
       "confidence_score": 1.0,
       "source_file": "lib/features/employees/employees_repository.dart",
       "source_location": "L27",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_employees_employees_repository",
-      "target": "lib_features_employees_employees_repository_removeavatar",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L270",
       "weight": 1.0
     },
     {
@@ -32440,7 +32452,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L286",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -32451,7 +32463,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L297",
+      "source_location": "L296",
       "weight": 1.0
     },
     {
@@ -32473,7 +32485,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L306",
+      "source_location": "L305",
       "weight": 1.0
     },
     {
@@ -32484,7 +32496,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L308",
+      "source_location": "L307",
       "weight": 1.0
     },
     {
@@ -32495,7 +32507,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/employees/employees_repository.dart",
-      "source_location": "L310",
+      "source_location": "L309",
       "weight": 1.0
     },
     {
@@ -36097,17 +36109,6 @@
     },
     {
       "source": "lib_features_profile_profile_repository",
-      "target": "lib_features_profile_profile_repository_profilerepositoryprovider",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L100",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_profile_profile_repository",
       "target": "lib_features_profile_profile_repository_profilerepository",
       "relation": "defines",
       "_origin": "ast",
@@ -36169,7 +36170,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L50",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -36180,7 +36181,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L60",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
@@ -36191,7 +36192,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L69",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -36202,7 +36203,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/profile/profile_repository.dart",
-      "source_location": "L82",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_profile_profile_repository",
+      "target": "lib_features_profile_profile_repository_profilerepositoryprovider",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/profile/profile_repository.dart",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -41487,7 +41499,7 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "shared_providers_preferences_providers_dart",
+      "target": "core_utils_formatters_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41498,7 +41510,7 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "expenses_expenses_repository_dart",
+      "target": "shared_providers_preferences_providers_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41509,18 +41521,7 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "expenses_expenses_screen_dart",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_dashboard_dashboard_screen",
-      "target": "finance_cashbox_repository_dart",
+      "target": "expenses_expenses_repository_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41531,7 +41532,7 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "finance_cashbox_screen_dart",
+      "target": "expenses_expenses_screen_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41542,7 +41543,7 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "payments_payments_repository_dart",
+      "target": "finance_cashbox_repository_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41553,7 +41554,7 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "subscribers_subscribers_repository_dart",
+      "target": "finance_cashbox_screen_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41564,7 +41565,7 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "subscribers_subscribers_screen_dart",
+      "target": "payments_payments_repository_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41575,7 +41576,7 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "suppliers_suppliers_repository_dart",
+      "target": "subscribers_subscribers_repository_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41593,6 +41594,28 @@
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
       "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_dashboard_dashboard_screen",
+      "target": "subscribers_subscribers_screen_dart",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/dashboard/dashboard_screen.dart",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_dashboard_dashboard_screen",
+      "target": "suppliers_suppliers_repository_dart",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/dashboard/dashboard_screen.dart",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -41619,13 +41642,24 @@
     },
     {
       "source": "lib_features_dashboard_dashboard_screen",
-      "target": "core_utils_formatters_dart",
+      "target": "package_go_router_go_router_dart",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L8",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_dashboard_dashboard_screen",
+      "target": "core_widgets_app_avatar_dart",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/dashboard/dashboard_screen.dart",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -44199,7 +44233,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -44210,7 +44244,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L28",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -45387,7 +45421,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/dashboard_screen.dart",
-      "source_location": "L28",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -48896,5 +48930,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a6a3ccaf0aa8c7516f460b02f7c27c8b60a7cdd1"
+  "built_at_commit": "46d7f3657d7b5784b04dc5bb9229bc7bd33e9f58"
 }

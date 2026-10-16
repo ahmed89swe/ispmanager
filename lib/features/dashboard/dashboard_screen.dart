@@ -2,9 +2,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants.dart';
 import '../../core/models/models.dart';
+import '../../core/widgets/app_avatar.dart';
 import '../../core/utils/formatters.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/providers/preferences_providers.dart';
@@ -273,15 +275,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     return Row(
       children: [
-        CircleAvatar(
-          radius: 22,
-          backgroundColor: theme.colorScheme.primaryContainer,
-          foregroundColor: theme.colorScheme.onPrimaryContainer,
-          child: Text(
-            user.displayName.isNotEmpty
-                ? user.displayName.substring(0, 1).toUpperCase()
-                : 'U',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        InkWell(
+          onTap: () => context.push('/profile'),
+          borderRadius: BorderRadius.circular(22),
+          child: AppAvatar(
+            photoUrl: user.photoUrl,
+            name: user.displayName,
+            radius: 22,
           ),
         ),
         const SizedBox(width: 12),

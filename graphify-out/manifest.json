@@ -216,26 +216,26 @@
     "semantic_hash": ""
   },
   "lib/features/dashboard/admin_shell.dart": {
-    "mtime": 1792184032.3903728,
-    "seen": 1792184362.2672749,
+    "mtime": 1792184401.6057713,
+    "seen": 1792185236.0987313,
     "ast_hash": "bd0cc3894a51fba40dbce89d364a334d",
     "semantic_hash": ""
   },
   "lib/features/dashboard/dashboard_screen.dart": {
-    "mtime": 1792174030.6918032,
-    "seen": 1792174184.7312658,
-    "ast_hash": "84916e2f9751b72fbf016e96e0e8660e",
+    "mtime": 1792185056.6484916,
+    "seen": 1792185236.0987327,
+    "ast_hash": "946a457e04e5f377606d2f5f7242493b",
     "semantic_hash": ""
   },
   "lib/features/employees/employees_repository.dart": {
-    "mtime": 1792184066.13019,
-    "seen": 1792184362.2672784,
-    "ast_hash": "a4f98e7ae2bfd8a56fc15fae1bdbbd3b",
+    "mtime": 1792185083.205348,
+    "seen": 1792185236.0987344,
+    "ast_hash": "e5774146fabe42b765d2468878e07b0f",
     "semantic_hash": ""
   },
   "lib/features/employees/employees_screen.dart": {
-    "mtime": 1792184181.3165822,
-    "seen": 1792184362.2672799,
+    "mtime": 1792184402.7767427,
+    "seen": 1792185236.0987523,
     "ast_hash": "6ca766526419dd937a556cc6603c16bd",
     "semantic_hash": ""
   },
@@ -318,14 +318,14 @@
     "semantic_hash": ""
   },
   "lib/features/profile/profile_repository.dart": {
-    "mtime": 1792183870.6545322,
-    "seen": 1792184362.2673075,
-    "ast_hash": "63bc62bc58a7dbb5e0cf517802d1c894",
+    "mtime": 1792185006.0714695,
+    "seen": 1792185236.098776,
+    "ast_hash": "9a8bf0dfe64c804d92a6137550b538b7",
     "semantic_hash": ""
   },
   "lib/features/profile/profile_screen.dart": {
-    "mtime": 1792183955.4387589,
-    "seen": 1792184362.2673087,
+    "mtime": 1792184403.4732928,
+    "seen": 1792185236.0987775,
     "ast_hash": "5121f6a56f3a863f493e1b04394d3da6",
     "semantic_hash": ""
   },
@@ -846,9 +846,15 @@
     "semantic_hash": ""
   },
   "test/app_avatar_test.dart": {
-    "mtime": 1792184246.1957002,
-    "seen": 1792184362.26735,
-    "ast_hash": "b11546b798dc9de202d8f1906ed8d336",
+    "mtime": 1792185093.5402658,
+    "seen": 1792185236.098816,
+    "ast_hash": "1164537f5f959071a531bb29803d0002",
+    "semantic_hash": ""
+  },
+  "cors.json": {
+    "mtime": 1792185158.5553963,
+    "seen": 1792185236.0986578,
+    "ast_hash": "378c2e9835aa077368005591413caff9",
     "semantic_hash": ""
   }
 }
