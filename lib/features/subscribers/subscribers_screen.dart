@@ -1150,7 +1150,11 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                                       by: by,
                                       debts: unpaidDebts,
                                     ),
-                                    _PaidSubscriptionsTab(debts: paidDebts),
+                                    _PaidSubscriptionsTab(
+                                      subscriber: subscriber,
+                                      by: by,
+                                      debts: paidDebts,
+                                    ),
                                   ],
                                 ),
                         ),
@@ -1254,6 +1258,59 @@ class _SubscriberDebtsTab extends ConsumerWidget {
     }
   }
 
+  static Future<void> _confirmAndDeleteDebt(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l,
+    String loc,
+    AppUser by,
+    Subscriber subscriber,
+    SubscriberDebt debt,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.red),
+            const SizedBox(width: 8),
+            Text(l.t('deleteDebt')),
+          ],
+        ),
+        content: Text(
+          '${l.t('confirmDeleteDebt')}\n\n'
+          '${l.amount}: ${CurrencyFormatter.format(debt.remaining, debt.currency, locale: loc)}\n'
+          '${debt.packageName ?? subscriber.packageName ?? ''}\n\n'
+          '${l.t('confirmDeleteDebtMsg')}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx, false),
+            child: Text(l.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(dialogCtx, true),
+            child: Text(l.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      await ref.read(subscribersRepositoryProvider).deleteDebt(
+            by,
+            subscriber,
+            debt,
+          );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l.t('debtDeletedSuccess'))),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
@@ -1285,13 +1342,67 @@ class _SubscriberDebtsTab extends ConsumerWidget {
                     '${isPartial ? ' • ${l.paid}: ${CurrencyFormatter.format(debt.paidAmount, debt.currency, locale: loc)}' : ''}',
                   ),
                   isThreeLine: true,
-                  trailing: canPay
-                      ? FilledButton(
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (canPay)
+                        FilledButton(
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
+                            visualDensity: VisualDensity.compact,
+                          ),
                           onPressed: () => _confirmAndPayDebt(
                               context, ref, l, loc, by, subscriber, debt),
                           child: Text(l.t('pay')),
-                        )
-                      : null,
+                        ),
+                      if (canAddDebt)
+                        PopupMenuButton<String>(
+                          tooltip: 'خيارات الدين',
+                          icon: const Icon(Icons.more_vert, size: 20),
+                          onSelected: (action) {
+                            if (action == 'edit') {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (_) => AddSubscriberDebtSheet(
+                                  subscriber: subscriber,
+                                  by: by,
+                                  existingDebt: debt,
+                                ),
+                              );
+                            } else if (action == 'delete') {
+                              _confirmAndDeleteDebt(
+                                  context, ref, l, loc, by, subscriber, debt);
+                            }
+                          },
+                          itemBuilder: (ctx) => [
+                            PopupMenuItem(
+                              value: 'edit',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.edit_outlined,
+                                      size: 18, color: Colors.blue),
+                                  const SizedBox(width: 8),
+                                  Text(l.t('editDebt')),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.delete_outline,
+                                      size: 18, color: Colors.red),
+                                  const SizedBox(width: 8),
+                                  Text(l.t('deleteDebt')),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -1313,15 +1424,22 @@ class _SubscriberDebtsTab extends ConsumerWidget {
   }
 }
 
-class _PaidSubscriptionsTab extends StatelessWidget {
-  const _PaidSubscriptionsTab({required this.debts});
+class _PaidSubscriptionsTab extends ConsumerWidget {
+  const _PaidSubscriptionsTab({
+    required this.subscriber,
+    required this.by,
+    required this.debts,
+  });
 
+  final Subscriber subscriber;
+  final AppUser by;
   final List<SubscriberDebt> debts;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
+    final canManage = by.isAdmin || by.can(Permission.editSubscriber);
     if (debts.isEmpty) return Center(child: Text(l.noData));
     return ListView.separated(
       itemCount: debts.length,
@@ -1329,7 +1447,7 @@ class _PaidSubscriptionsTab extends StatelessWidget {
       itemBuilder: (_, i) {
         final debt = debts[i];
         return ListTile(
-          leading: const Icon(Icons.check_circle_outline),
+          leading: const Icon(Icons.check_circle_outline, color: Colors.green),
           title: Text(
             CurrencyFormatter.format(debt.amount, debt.currency, locale: loc),
           ),
@@ -1339,6 +1457,52 @@ class _PaidSubscriptionsTab extends StatelessWidget {
             '${l.paid}: ${debt.paidAt == null ? '-' : DateFormatter.dateTime(debt.paidAt!, locale: loc)}',
           ),
           isThreeLine: true,
+          trailing: canManage
+              ? PopupMenuButton<String>(
+                  tooltip: 'خيارات الاشتراك',
+                  icon: const Icon(Icons.more_vert, size: 20),
+                  onSelected: (action) {
+                    if (action == 'edit') {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (_) => AddSubscriberDebtSheet(
+                          subscriber: subscriber,
+                          by: by,
+                          existingDebt: debt,
+                        ),
+                      );
+                    } else if (action == 'delete') {
+                      _SubscriberDebtsTab._confirmAndDeleteDebt(
+                          context, ref, l, loc, by, subscriber, debt);
+                    }
+                  },
+                  itemBuilder: (ctx) => [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.edit_outlined,
+                              size: 18, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          Text(l.t('editDebt')),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.delete_outline,
+                              size: 18, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(l.t('deleteDebt')),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              : null,
         );
       },
     );
@@ -1350,10 +1514,12 @@ class AddSubscriberDebtSheet extends ConsumerStatefulWidget {
     super.key,
     required this.subscriber,
     required this.by,
+    this.existingDebt,
   });
 
   final Subscriber subscriber;
   final AppUser by;
+  final SubscriberDebt? existingDebt;
 
   @override
   ConsumerState<AddSubscriberDebtSheet> createState() =>
@@ -1362,13 +1528,22 @@ class AddSubscriberDebtSheet extends ConsumerStatefulWidget {
 
 class _AddSubscriberDebtSheetState
     extends ConsumerState<AddSubscriberDebtSheet> {
-  late DateTime _from = DateTime.now();
-  late DateTime _to = DateFormatter.addDays(_from, 30);
-  late final _amount =
-      TextEditingController(text: widget.subscriber.monthlyFee.toString());
+  late DateTime _from =
+      widget.existingDebt?.periodStart ?? DateTime.now();
+  late DateTime _to = widget.existingDebt?.periodEnd ??
+      DateFormatter.addDays(_from, 30);
+  late final _amount = TextEditingController(
+    text: widget.existingDebt != null
+        ? widget.existingDebt!.amount.toString()
+        : widget.subscriber.monthlyFee.toString(),
+  );
   late final _agentCost = TextEditingController(
-      text: widget.subscriber.packageAgentPrice.toString());
-  final _note = TextEditingController();
+    text: widget.existingDebt != null
+        ? widget.existingDebt!.agentCost.toString()
+        : widget.subscriber.packageAgentPrice.toString(),
+  );
+  late final _note =
+      TextEditingController(text: widget.existingDebt?.note ?? '');
   bool _busy = false;
 
   @override
@@ -1383,28 +1558,47 @@ class _AddSubscriberDebtSheetState
     final amount = num.tryParse(_amount.text) ?? 0;
     if (amount <= 0 || !_to.isAfter(_from)) return;
     setState(() => _busy = true);
+    final l = AppLocalizations.of(context);
     try {
+      final repo = ref.read(subscribersRepositoryProvider);
       final debt = SubscriberDebt(
-        id: '',
+        id: widget.existingDebt?.id ?? '',
         subscriberId: widget.subscriber.id,
         supplierId: widget.subscriber.supplierId,
         packageId: widget.subscriber.packageId,
         packageName:
             widget.subscriber.packageName ?? widget.subscriber.planName,
         amount: amount,
+        paidAmount: widget.existingDebt?.paidAmount ?? 0,
         agentCost: num.tryParse(_agentCost.text) ?? 0,
         currency: widget.subscriber.currency,
         periodStart: _from,
         periodEnd: _to,
-        status: SubscriptionDebtStatus.unpaid,
+        status: widget.existingDebt?.status ?? SubscriptionDebtStatus.unpaid,
         note: _note.text.trim().isEmpty ? null : _note.text.trim(),
-        recordedBy: widget.by.uid,
-        createdAt: DateTime.now(),
+        recordedBy: widget.existingDebt?.recordedBy ?? widget.by.uid,
+        createdAt: widget.existingDebt?.createdAt ?? DateTime.now(),
+        paidAt: widget.existingDebt?.paidAt,
+        paidBy: widget.existingDebt?.paidBy,
       );
-      await ref
-          .read(subscribersRepositoryProvider)
-          .addDebt(widget.by, widget.subscriber, debt);
-      if (mounted) Navigator.pop(context);
+      if (widget.existingDebt != null) {
+        await repo.updateDebt(
+            widget.by, widget.subscriber, widget.existingDebt!, debt);
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l.t('debtUpdatedSuccess'))),
+          );
+        }
+      } else {
+        await repo.addDebt(widget.by, widget.subscriber, debt);
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l.saved)),
+          );
+        }
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -1427,7 +1621,10 @@ class _AddSubscriberDebtSheetState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(l.t('addDebt'), style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              widget.existingDebt != null ? l.t('editDebt') : l.t('addDebt'),
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 12),
             Row(
               children: [

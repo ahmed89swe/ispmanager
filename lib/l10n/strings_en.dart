@@ -307,4 +307,10 @@ const Map<String, String> englishStrings = {
   'reimbursementRequests': 'Reimbursement Requests',
   'reimbursementRequest': 'Reimbursement Request',
   'requestReimbursement': 'Request Reimbursement from Cashbox',
+  'editDebt': 'Edit Debt',
+  'deleteDebt': 'Delete Debt',
+  'confirmDeleteDebt': 'Are you sure you want to delete this debt?',
+  'confirmDeleteDebtMsg': 'This debt will be deleted, its amount will be deducted from the subscriber balance, and status updated.',
+  'debtDeletedSuccess': 'Debt deleted successfully and balance updated',
+  'debtUpdatedSuccess': 'Debt updated successfully and balance updated',
 };

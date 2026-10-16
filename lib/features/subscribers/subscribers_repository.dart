@@ -336,6 +336,152 @@ class SubscribersRepository {
     }
   }
 
+  Future<void> updateDebt(
+    AppUser by,
+    Subscriber subscriber,
+    SubscriberDebt oldDebt,
+    SubscriberDebt newDebt,
+  ) async {
+    if (_db == null) return;
+    final subRef = _col(by.adminUid).doc(subscriber.id);
+    final debtRef = _debtCol(by.adminUid, subscriber.id).doc(oldDebt.id);
+
+    final oldUnpaid =
+        (oldDebt.amount - oldDebt.paidAmount).clamp(0, double.infinity);
+    final newUnpaid =
+        (newDebt.amount - newDebt.paidAmount).clamp(0, double.infinity);
+    final diff = newUnpaid - oldUnpaid;
+
+    await _db.runTransaction((tx) async {
+      final snap = await tx.get(subRef);
+      if (!snap.exists) return;
+      final currentBalance = (snap.data()?['balance'] ?? 0) as num;
+      final nextBalance =
+          (currentBalance + diff).clamp(0, double.infinity);
+      final nextStatus = nextBalance > 0
+          ? SubscriberStatus.overdue.name
+          : SubscriberStatus.active.name;
+
+      final currentEnd = snap.data()?['subscriptionEndsAt'];
+      final nextEnd = currentEnd == null
+          ? newDebt.periodEnd
+          : _maxDate(_dateFromFirestore(currentEnd), newDebt.periodEnd);
+
+      tx.update(debtRef, {
+        'amount': newDebt.amount,
+        'agentCost': newDebt.agentCost,
+        'periodStart': Timestamp.fromDate(newDebt.periodStart),
+        'periodEnd': Timestamp.fromDate(newDebt.periodEnd),
+        'note': newDebt.note,
+      });
+
+      tx.update(subRef, {
+        'balance': nextBalance,
+        'subscriptionEndsAt': Timestamp.fromDate(nextEnd),
+        'status': nextStatus,
+      });
+    });
+
+    await _logger.log(
+      actor: by,
+      action: 'subscriber.debt.update',
+      targetType: 'subscriberDebt',
+      targetId: oldDebt.id,
+      summary:
+          'Updated debt from ${oldDebt.amount} to ${newDebt.amount} ${newDebt.currency.code} for ${subscriber.name}',
+      before: oldDebt.toMap(),
+      after: newDebt.toMap(),
+    );
+
+    if (!by.isAdmin && _notificationsRepo != null) {
+      await _notificationsRepo.sendNotification(
+        adminUid: by.adminUid,
+        recipientUid: 'admin',
+        title: 'تعديل دين مشترك',
+        body:
+            'قام الموظف ${by.displayName} بتعديل دين للمشترك: ${subscriber.name}',
+        type: 'subscriber_debt_updated',
+        actor: by,
+        targetId: subscriber.id,
+        targetType: 'subscriber',
+      );
+    }
+  }
+
+  Future<void> deleteDebt(
+    AppUser by,
+    Subscriber subscriber,
+    SubscriberDebt debt,
+  ) async {
+    if (_db == null) return;
+    final subRef = _col(by.adminUid).doc(subscriber.id);
+    final debtRef = _debtCol(by.adminUid, subscriber.id).doc(debt.id);
+
+    final unpaidPortion =
+        (debt.amount - debt.paidAmount).clamp(0, double.infinity);
+
+    // Read remaining debts to properly restore subscriptionEndsAt if this was the latest debt
+    final allDebtsSnap = await _debtCol(by.adminUid, subscriber.id).get();
+    DateTime? maxPeriodEnd;
+    for (final doc in allDebtsSnap.docs) {
+      if (doc.id == debt.id) continue;
+      final d = doc.data();
+      final pEnd = d['periodEnd'];
+      if (pEnd != null) {
+        final dt = _dateFromFirestore(pEnd);
+        if (maxPeriodEnd == null || dt.isAfter(maxPeriodEnd)) {
+          maxPeriodEnd = dt;
+        }
+      }
+    }
+
+    await _db.runTransaction((tx) async {
+      final snap = await tx.get(subRef);
+      if (!snap.exists) return;
+      final currentBalance = (snap.data()?['balance'] ?? 0) as num;
+      final nextBalance =
+          (currentBalance - unpaidPortion).clamp(0, double.infinity);
+      final nextStatus = nextBalance > 0
+          ? SubscriberStatus.overdue.name
+          : SubscriberStatus.active.name;
+
+      final updates = <String, dynamic>{
+        'balance': nextBalance,
+        'status': nextStatus,
+      };
+      if (maxPeriodEnd != null) {
+        updates['subscriptionEndsAt'] = Timestamp.fromDate(maxPeriodEnd);
+      }
+
+      tx.delete(debtRef);
+      tx.update(subRef, updates);
+    });
+
+    await _logger.log(
+      actor: by,
+      action: 'subscriber.debt.delete',
+      targetType: 'subscriberDebt',
+      targetId: debt.id,
+      summary:
+          'Deleted debt ${debt.amount} ${debt.currency.code} for ${subscriber.name}',
+      before: debt.toMap(),
+    );
+
+    if (!by.isAdmin && _notificationsRepo != null) {
+      await _notificationsRepo.sendNotification(
+        adminUid: by.adminUid,
+        recipientUid: 'admin',
+        title: 'حذف دين مشترك',
+        body:
+            'قام الموظف ${by.displayName} بحذف دين بقيمة ${debt.amount} ${debt.currency.code} للمشترك: ${subscriber.name}',
+        type: 'subscriber_debt_deleted',
+        actor: by,
+        targetId: subscriber.id,
+        targetType: 'subscriber',
+      );
+    }
+  }
+
   Future<void> markDebtPaid(
       AppUser by, Subscriber subscriber, SubscriberDebt debt,
       {MoneyStorage receivedIn = MoneyStorage.cashbox}) async {

@@ -305,4 +305,10 @@ const Map<String, String> arabicStrings = {
   'reimbursementRequests': 'طلبات صرف المستحقات',
   'reimbursementRequest': 'طلب صرف مستحقات',
   'requestReimbursement': 'طلب صرف مستحقات من الصندوق',
+  'editDebt': 'تعديل الدين',
+  'deleteDebt': 'حذف الدين',
+  'confirmDeleteDebt': 'هل أنت متأكد من حذف هذا الدين؟',
+  'confirmDeleteDebtMsg': 'سيتم حذف هذا الدين وخصم مبلغه من رصيد ديون المشترك وتحديث حالته.',
+  'debtDeletedSuccess': 'تم حذف الدين بنجاح وتحديث رصيد المشترك',
+  'debtUpdatedSuccess': 'تم تعديل بيانات الدين بنجاح وتحديث رصيد المشترك',
 };
