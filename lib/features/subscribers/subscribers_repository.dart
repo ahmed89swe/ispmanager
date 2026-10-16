@@ -562,6 +562,7 @@ class SubscribersRepository {
     var periodEnd = DateFormatter.addDays(periodStart, 30);
     var added = 0;
     num addedBalance = 0;
+    var remainingPrepaid = subscriber.prepaidCycles;
     final batch = _db.batch();
 
     while (!periodStart.isAfter(now) && added < 36) {
@@ -569,6 +570,7 @@ class SubscribersRepository {
           _debtCol(by.adminUid, subscriber.id).doc(_periodDebtId(periodStart));
       final exists = await debtRef.get();
       if (!exists.exists) {
+        final isPrepaid = remainingPrepaid > 0;
         final debt = SubscriberDebt(
           id: debtRef.id,
           subscriberId: subscriber.id,
@@ -576,16 +578,26 @@ class SubscribersRepository {
           packageId: subscriber.packageId,
           packageName: subscriber.packageName ?? subscriber.planName,
           amount: subscriber.monthlyFee,
+          paidAmount: isPrepaid ? subscriber.monthlyFee : 0,
           agentCost: subscriber.packageAgentPrice,
           currency: subscriber.currency,
           periodStart: periodStart,
           periodEnd: periodEnd,
-          status: SubscriptionDebtStatus.unpaid,
+          status: isPrepaid
+              ? SubscriptionDebtStatus.paid
+              : SubscriptionDebtStatus.unpaid,
+          note: isPrepaid ? 'تجديد تلقائي (مسدد مقدماً)' : null,
           recordedBy: by.uid,
           createdAt: now,
+          paidAt: isPrepaid ? now : null,
+          paidBy: isPrepaid ? by.uid : null,
         );
         batch.set(debtRef, debt.toMap());
-        addedBalance += debt.amount;
+        if (isPrepaid) {
+          remainingPrepaid--;
+        } else {
+          addedBalance += debt.amount;
+        }
       }
       added++;
       periodStart = periodEnd;
@@ -594,6 +606,7 @@ class SubscribersRepository {
 
     final updates = <String, dynamic>{
       'subscriptionEndsAt': Timestamp.fromDate(periodStart),
+      'prepaidCycles': remainingPrepaid,
     };
     if (addedBalance > 0) {
       updates['balance'] = FieldValue.increment(addedBalance);
@@ -634,6 +647,7 @@ class SubscribersRepository {
         .doc(_periodDebtId(activationStart));
     final exists = await debtRef.get();
     if (!exists.exists) {
+      final isPrepaid = subscriber.prepaidCycles > 0;
       final debt = SubscriberDebt(
         id: debtRef.id,
         subscriberId: subscriber.id,
@@ -641,27 +655,141 @@ class SubscribersRepository {
         packageId: subscriber.packageId,
         packageName: subscriber.packageName ?? subscriber.planName,
         amount: subscriber.monthlyFee,
+        paidAmount: isPrepaid ? subscriber.monthlyFee : 0,
         agentCost: subscriber.packageAgentPrice,
         currency: subscriber.currency,
         periodStart: activationStart,
         periodEnd: activationEnd,
-        status: SubscriptionDebtStatus.unpaid,
+        status: isPrepaid
+            ? SubscriptionDebtStatus.paid
+            : SubscriptionDebtStatus.unpaid,
+        note: isPrepaid ? 'تجديد تلقائي (مسدد مقدماً)' : null,
         recordedBy: by.uid,
         createdAt: now,
+        paidAt: isPrepaid ? now : null,
+        paidBy: isPrepaid ? by.uid : null,
       );
       await _db.runTransaction((tx) async {
         final snap = await tx.get(subRef);
         final currentBalance = (snap.data()?['balance'] ?? 0) as num;
+        final currentPrepaid =
+            ((snap.data()?['prepaidCycles'] as num?)?.toInt()) ?? 0;
         tx.set(debtRef, debt.toMap());
-        tx.update(subRef, {
-          'balance': currentBalance + debt.amount,
+        final subUpdates = <String, dynamic>{
           'subscriptionEndsAt': Timestamp.fromDate(activationEnd),
-          'status': SubscriberStatus.overdue.name,
-        });
+        };
+        if (isPrepaid) {
+          subUpdates['prepaidCycles'] = (currentPrepaid - 1).clamp(0, 999);
+        } else {
+          subUpdates['balance'] = currentBalance + debt.amount;
+          subUpdates['status'] = SubscriberStatus.overdue.name;
+        }
+        tx.update(subRef, subUpdates);
       });
     }
     // Continue catching up from there.
     await syncDueDebts(by, subscriber.copyWith(autoRenew: true));
+  }
+
+  /// Records an advance subscription payment for upcoming cycle(s).
+  /// Registers cash in cashbox immediately and increments `prepaidCycles`
+  /// so that upon next auto-renewal, the period debt is automatically marked
+  /// paid without adding debt to subscriber balance.
+  Future<void> recordAdvanceSubscriptionPayment(
+    AppUser by,
+    Subscriber subscriber, {
+    required num amount,
+    required MoneyStorage receivedIn,
+    int cycles = 1,
+    String? note,
+  }) async {
+    if (_db == null) return;
+    final db = _db;
+    final subRef = _col(by.adminUid).doc(subscriber.id);
+    final payRef = subRef.collection('payments').doc();
+    final now = DateTime.now();
+
+    final payment = Payment(
+      id: payRef.id,
+      subscriberId: subscriber.id,
+      amount: amount,
+      currency: subscriber.currency,
+      receivedIn: receivedIn,
+      method: 'advance_subscription',
+      note: note ?? 'تسديد اشتراك قادم مقدماً ($cycles دورة)',
+      recordedBy: by.uid,
+      recordedAt: now,
+    );
+
+    final batch = db.batch();
+    batch.set(payRef, payment.toMap());
+
+    final nextPrepaid = subscriber.prepaidCycles + cycles;
+    batch.update(subRef, {
+      'prepaidCycles': nextPrepaid,
+    });
+
+    CashboxService.registerSubscriptionPayment(
+      batch: batch,
+      db: db,
+      actor: by,
+      adminUid: by.adminUid,
+      payment: payment,
+      paymentId: payRef.id,
+      subscriberId: subscriber.id,
+      subscriberName: subscriber.name,
+    );
+
+    await batch.commit();
+
+    await _logger.log(
+      actor: by,
+      action: 'subscriber.advance_payment',
+      targetType: 'subscriber',
+      targetId: subscriber.id,
+      summary:
+          'تسديد اشتراك قادم مقدماً ($cycles دورة) بقيمة $amount ${subscriber.currency.code} للمشترك ${subscriber.name}',
+      after: {
+        'amount': amount,
+        'cycles': cycles,
+        'prepaidCycles': nextPrepaid,
+      },
+    );
+
+    if (!by.isAdmin && _notificationsRepo != null) {
+      await _notificationsRepo.sendNotification(
+        adminUid: by.adminUid,
+        recipientUid: 'admin',
+        title: 'تسديد اشتراك قادم مقدماً',
+        body:
+            'قام الموظف ${by.displayName} بتسجيل تسديد اشتراك قادم مقدماً للمشترك: ${subscriber.name} بقيمة $amount ${subscriber.currency.code}',
+        type: 'subscriber_advance_payment',
+        actor: by,
+        targetId: subscriber.id,
+        targetType: 'subscriber',
+      );
+    }
+  }
+
+  /// Cancels a prepaid cycle if entered by mistake.
+  Future<void> cancelAdvancePayment(
+    AppUser by,
+    Subscriber subscriber, {
+    int cyclesToCancel = 1,
+  }) async {
+    if (_db == null || subscriber.prepaidCycles <= 0) return;
+    final subRef = _col(by.adminUid).doc(subscriber.id);
+    final newCount = (subscriber.prepaidCycles - cyclesToCancel).clamp(0, 999);
+    await subRef.update({'prepaidCycles': newCount});
+    await _logger.log(
+      actor: by,
+      action: 'subscriber.advance_payment.cancel',
+      targetType: 'subscriber',
+      targetId: subscriber.id,
+      summary: 'إلغاء تسديد مسبق لدورة اشتراك قادمة للمشترك ${subscriber.name}',
+      before: {'prepaidCycles': subscriber.prepaidCycles},
+      after: {'prepaidCycles': newCount},
+    );
   }
 
   /// Record a payment and distribute the amount across unpaid/partial debts

@@ -6,6 +6,7 @@ import '../../core/models/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_repository.dart';
 import '../subscribers/subscribers_repository.dart';
+import 'advance_subscription_sheet.dart';
 
 class RecordPaymentSheet extends ConsumerStatefulWidget {
   const RecordPaymentSheet({super.key, required this.subscriber});
@@ -80,6 +81,41 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
         children: [
           Text('${l.recordPayment} — ${widget.subscriber.name}',
               style: Theme.of(context).textTheme.titleMedium),
+          if (widget.subscriber.balance <= 0)
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1976D2).withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color(0xFF1976D2).withValues(alpha: 0.25),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline,
+                      size: 18, color: Color(0xFF1976D2)),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'المشترك ليس عليه ديون حالية. لتسديد اشتراك قادم مقدماً:',
+                      style: TextStyle(fontSize: 12, color: Color(0xFF0D47A1)),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      AdvanceSubscriptionSheet.show(
+                          context, widget.subscriber);
+                    },
+                    child: const Text('تسديد مقدماً',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            ),
           const SizedBox(height: 12),
           TextField(
               controller: _amount,

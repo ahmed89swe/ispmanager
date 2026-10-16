@@ -9,6 +9,7 @@ import '../../core/services/pdf_report_service.dart';
 import '../../core/utils/formatters.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_repository.dart';
+import '../payments/advance_subscription_sheet.dart';
 import '../payments/record_payment_sheet.dart';
 import '../suppliers/suppliers_repository.dart';
 import 'subscribers_repository.dart';
@@ -317,6 +318,9 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                                             subscriber: subscriber),
                                       );
                                     },
+                                    onPayAdvance: () =>
+                                        AdvanceSubscriptionSheet.show(
+                                            context, subscriber),
                                     onToggleAutoRenew: () async {
                                       await ref
                                           .read(subscribersRepositoryProvider)
@@ -529,6 +533,7 @@ class _ModernSubscriberCard extends StatelessWidget {
     required this.onTap,
     required this.onExportPdf,
     required this.onPay,
+    required this.onPayAdvance,
     required this.onToggleAutoRenew,
     required this.onEdit,
     required this.onDelete,
@@ -539,6 +544,7 @@ class _ModernSubscriberCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onExportPdf;
   final VoidCallback onPay;
+  final VoidCallback onPayAdvance;
   final VoidCallback onToggleAutoRenew;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -743,13 +749,14 @@ class _ModernSubscriberCard extends StatelessWidget {
                     PopupMenuButton<String>(
                       onSelected: (val) {
                         if (val == 'pay') onPay();
+                        if (val == 'payAdvance') onPayAdvance();
                         if (val == 'pdf') onExportPdf();
                         if (val == 'toggleAutoRenew') onToggleAutoRenew();
                         if (val == 'edit') onEdit();
                         if (val == 'delete') onDelete();
                       },
                       itemBuilder: (_) => [
-                        if (user.can(Permission.recordSubscriberPayment))
+                        if (user.can(Permission.recordSubscriberPayment)) ...[
                           PopupMenuItem(
                             value: 'pay',
                             child: Row(
@@ -761,6 +768,18 @@ class _ModernSubscriberCard extends StatelessWidget {
                               ],
                             ),
                           ),
+                          PopupMenuItem(
+                            value: 'payAdvance',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.event_repeat_rounded,
+                                    size: 18, color: Color(0xFF1976D2)),
+                                const SizedBox(width: 8),
+                                Text(l.t('payAdvanceSubscription')),
+                              ],
+                            ),
+                          ),
+                        ],
                         const PopupMenuItem(
                           value: 'pdf',
                           child: Row(
@@ -890,6 +909,44 @@ class _ModernSubscriberCard extends StatelessWidget {
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w600,
                                 color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    if (subscriber.prepaidCycles > 0) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 7, vertical: 3),
+                        decoration: BoxDecoration(
+                          color:
+                              const Color(0xFF1976D2).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color:
+                                const Color(0xFF1976D2).withValues(alpha: 0.25),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.verified_outlined,
+                              size: 13,
+                              color: Color(0xFF1976D2),
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              subscriber.prepaidCycles == 1
+                                  ? l.t('prepaidNextBadge')
+                                  : l.t('prepaidCyclesBadge').replaceAll(
+                                      '@count', '${subscriber.prepaidCycles}'),
+                              style: const TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF1976D2),
                               ),
                             ),
                           ],
@@ -1094,6 +1151,14 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                           ),
                         ],
                       ),
+                    if (by.can(Permission.recordSubscriberPayment))
+                      IconButton(
+                        tooltip: l.t('payAdvanceSubscription'),
+                        icon: const Icon(Icons.event_repeat_rounded,
+                            color: Color(0xFF1976D2)),
+                        onPressed: () =>
+                            AdvanceSubscriptionSheet.show(context, subscriber),
+                      ),
                     IconButton(
                       tooltip: 'تصدير كشف حساب المشترك (PDF)',
                       icon: const Icon(Icons.picture_as_pdf_rounded,
@@ -1107,6 +1172,76 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                   ],
                 ),
               ),
+              if (subscriber.prepaidCycles > 0)
+                Container(
+                  margin: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1976D2).withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFF1976D2).withValues(alpha: 0.25),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.verified_rounded,
+                          color: Color(0xFF1976D2), size: 22),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          subscriber.prepaidCycles == 1
+                              ? 'الاشتراك القادم مسدد مقدماً. عند حلول موعد التجديد التلقائي القادم سيُسجل كمسدد تلقائياً بدون إضافة دين.'
+                              : 'المشترك لديه (${subscriber.prepaidCycles}) دورات مسددة مقدماً. سيتم تسجيل التجديدات القادمة كمسددة تلقائياً.',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF0D47A1),
+                          ),
+                        ),
+                      ),
+                      if (by.can(Permission.recordSubscriberPayment))
+                        TextButton(
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: Text(l.t('cancelAdvancePayment')),
+                                content: Text(
+                                    l.t('confirmCancelAdvancePayment')),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(ctx, false),
+                                    child: Text(l.no),
+                                  ),
+                                  FilledButton(
+                                    onPressed: () =>
+                                        Navigator.pop(ctx, true),
+                                    child: Text(l.yes),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
+                              await ref
+                                  .read(subscribersRepositoryProvider)
+                                  .cancelAdvancePayment(by, subscriber);
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            }
+                          },
+                          child: Text(
+                            l.t('cancelAdvancePayment'),
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 11),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               Expanded(
                 child: StreamBuilder<List<SubscriberDebt>>(
                   stream: ref
@@ -1811,6 +1946,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
         joinedAt: widget.existing?.joinedAt ?? DateTime.now(),
         subscriptionEndsAt: _subscriptionEndsAt,
         autoRenew: _autoRenew,
+        prepaidCycles: widget.existing?.prepaidCycles ?? 0,
       );
       if (widget.existing == null) {
         if (_initialPaymentMode == 'paid') {

@@ -62,6 +62,7 @@ class Subscriber {
   final DateTime joinedAt;
   final DateTime subscriptionEndsAt;
   final bool autoRenew;
+  final int prepaidCycles;
 
   Subscriber({
     required this.id,
@@ -80,6 +81,7 @@ class Subscriber {
     required this.joinedAt,
     DateTime? subscriptionEndsAt,
     this.autoRenew = true,
+    this.prepaidCycles = 0,
   }) : subscriptionEndsAt =
             subscriptionEndsAt ?? DateFormatter.addDays(joinedAt, 30);
 
@@ -106,6 +108,7 @@ class Subscriber {
           ? DateFormatter.addDays(tsToDate(d['joinedAt']), 30)
           : tsToDate(d['subscriptionEndsAt']),
       autoRenew: (d['autoRenew'] ?? true) as bool,
+      prepaidCycles: ((d['prepaidCycles'] as num?)?.toInt()) ?? 0,
     );
   }
 
@@ -125,6 +128,7 @@ class Subscriber {
         'joinedAt': Timestamp.fromDate(joinedAt),
         'subscriptionEndsAt': Timestamp.fromDate(subscriptionEndsAt),
         'autoRenew': autoRenew,
+        'prepaidCycles': prepaidCycles,
       };
 
   Subscriber copyWith({
@@ -144,6 +148,7 @@ class Subscriber {
     DateTime? joinedAt,
     DateTime? subscriptionEndsAt,
     bool? autoRenew,
+    int? prepaidCycles,
   }) =>
       Subscriber(
         id: id ?? this.id,
@@ -162,6 +167,7 @@ class Subscriber {
         joinedAt: joinedAt ?? this.joinedAt,
         subscriptionEndsAt: subscriptionEndsAt ?? this.subscriptionEndsAt,
         autoRenew: autoRenew ?? this.autoRenew,
+        prepaidCycles: prepaidCycles ?? this.prepaidCycles,
       );
 }
 
