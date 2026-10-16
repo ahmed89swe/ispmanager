@@ -1549,7 +1549,8 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
   late DateTime _subscriptionEndsAt = widget.existing?.subscriptionEndsAt ??
       DateFormatter.addDays(DateTime.now(), 30);
   late bool _autoRenew = widget.existing?.autoRenew ?? true;
-  bool _initialPaid = true;
+  // 'paid' = مدفوع نقداً, 'debt' = دين على المشترك, 'none' = بدون أثر مالي (إضافة فقط)
+  String _initialPaymentMode = 'none';
   MoneyStorage _initialReceivedIn = MoneyStorage.cashbox;
   bool _busy = false;
 
@@ -1589,6 +1590,10 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
     setState(() => _busy = true);
     try {
       final repo = ref.read(subscribersRepositoryProvider);
+      final isInitialDebt = _initialPaymentMode == 'debt';
+      final isInitialPaid = _initialPaymentMode == 'paid';
+      final isNoFinancialEffect = _initialPaymentMode == 'none';
+
       final subscriber = Subscriber(
         id: widget.existing?.id ?? '',
         name: _name.text.trim(),
@@ -1601,20 +1606,27 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
         monthlyFee: _subscriberPrice,
         packageAgentPrice: _agentPrice,
         currency: _currency,
-        balance: widget.existing?.balance ?? (_initialPaid ? 0 : _subscriberPrice),
+        balance: widget.existing?.balance ??
+            (isInitialDebt ? _subscriberPrice : 0),
         status: widget.existing?.status ??
-            (_initialPaid ? SubscriberStatus.active : SubscriberStatus.overdue),
+            (isInitialDebt
+                ? SubscriberStatus.overdue
+                : SubscriberStatus.active),
         joinedAt: widget.existing?.joinedAt ?? DateTime.now(),
         subscriptionEndsAt: _subscriptionEndsAt,
         autoRenew: _autoRenew,
       );
       if (widget.existing == null) {
-        await repo.addWithInitialSubscription(
-          widget.by,
-          subscriber,
-          isPaid: _initialPaid,
-          receivedIn: _initialReceivedIn,
-        );
+        if (isNoFinancialEffect) {
+          await repo.add(widget.by, subscriber);
+        } else {
+          await repo.addWithInitialSubscription(
+            widget.by,
+            subscriber,
+            isPaid: isInitialPaid,
+            receivedIn: _initialReceivedIn,
+          );
+        }
       } else {
         await repo.update(widget.by, subscriber);
       }
@@ -1808,28 +1820,70 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                       ],
                     ),
                     const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ChoiceChip(
+                        avatar: const Icon(Icons.person_add_alt_1_outlined,
+                            size: 18),
+                        label: Center(
+                          child: Text(
+                            l.t('noInitialFinancialEffect'),
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        selected: _initialPaymentMode == 'none',
+                        onSelected: (_) =>
+                            setState(() => _initialPaymentMode = 'none'),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         Expanded(
                           child: ChoiceChip(
                             label: Center(child: Text(l.t('firstMonthPaid'))),
-                            selected: _initialPaid,
-                            onSelected: (v) =>
-                                setState(() => _initialPaid = true),
+                            selected: _initialPaymentMode == 'paid',
+                            onSelected: (_) =>
+                                setState(() => _initialPaymentMode = 'paid'),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: ChoiceChip(
                             label: Center(child: Text(l.t('firstMonthDebt'))),
-                            selected: !_initialPaid,
-                            onSelected: (v) =>
-                                setState(() => _initialPaid = false),
+                            selected: _initialPaymentMode == 'debt',
+                            onSelected: (_) =>
+                                setState(() => _initialPaymentMode = 'debt'),
                           ),
                         ),
                       ],
                     ),
-                    if (_initialPaid) ...[
+                    if (_initialPaymentMode == 'none') ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            size: 15,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              l.t('noInitialFinancialEffectHint'),
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                    if (_initialPaymentMode == 'paid') ...[
                       const SizedBox(height: 10),
                       DropdownButtonFormField<MoneyStorage>(
                         value: _initialReceivedIn,

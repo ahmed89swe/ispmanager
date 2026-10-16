@@ -288,6 +288,9 @@ const Map<String, String> englishStrings = {
   'initialPaymentOption': 'First month payment status',
   'firstMonthPaid': 'Paid Now',
   'firstMonthDebt': 'On Credit (Debt)',
+  'noInitialFinancialEffect': 'No financial effect (Add only)',
+  'noInitialFinancialEffectHint':
+      'Adds the subscriber as active with 0 balance and no payment or debt records in cashbox (ideal for initial setup).',
   'iqdDebts': 'IQD Debts',
   'usdDebts': 'USD Debts',
   'selectedCurrency': 'Selected Currency',

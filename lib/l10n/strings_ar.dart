@@ -286,6 +286,9 @@ const Map<String, String> arabicStrings = {
   'initialPaymentOption': 'حالة دفع الاشتراك الأول',
   'firstMonthPaid': 'مدفوع نقداً',
   'firstMonthDebt': 'دين على المشترك',
+  'noInitialFinancialEffect': 'بدون أثر مالي (إضافة فقط)',
+  'noInitialFinancialEffectHint':
+      'سيتم إضافة المشترك كـ (نشط) برصيد 0 وبدون تسجيل أي دفعة أو دين في الصندوق (مثالي لتجهيز النظام لأول مرة).',
   'iqdDebts': 'ديون الدينار (IQD)',
   'usdDebts': 'ديون الدولار (USD)',
   'selectedCurrency': 'العملة المحددة',
