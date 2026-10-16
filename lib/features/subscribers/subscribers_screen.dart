@@ -276,7 +276,7 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                     ),
                     const SizedBox(height: 4),
 
-                    // Subscribers List
+                    // Subscribers List / Grid
                     Expanded(
                       child: filtered.isEmpty
                           ? Center(
@@ -292,60 +292,99 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                                 ],
                               ),
                             )
-                          : ListView.builder(
-                              padding:
-                                  const EdgeInsets.only(top: 4, bottom: 100),
-                              itemCount: filtered.length,
-                              itemBuilder: (_, i) {
-                                final subscriber = filtered[i];
-                                return _ModernSubscriberCard(
-                                  subscriber: subscriber,
-                                  user: user,
-                                  onTap: () => showDialog(
-                                    context: context,
-                                    builder: (_) => SubscriberDetailsDialog(
-                                      subscriber: subscriber,
-                                      by: user,
-                                    ),
-                                  ),
-                                  onExportPdf: () => _exportSubscriberStatement(
-                                      context, user, subscriber),
-                                  onPay: () async {
-                                    await showModalBottomSheet(
+                          : LayoutBuilder(
+                              builder: (context, constraints) {
+                                final isWide = constraints.maxWidth >= 840;
+                                Widget buildSubscriberItem(Subscriber subscriber) {
+                                  return _ModernSubscriberCard(
+                                    subscriber: subscriber,
+                                    user: user,
+                                    onTap: () => showDialog(
                                       context: context,
-                                      isScrollControlled: true,
-                                      builder: (_) => RecordPaymentSheet(
-                                          subscriber: subscriber),
-                                    );
-                                  },
-                                  onToggleAutoRenew: () async {
-                                    await ref
-                                        .read(subscribersRepositoryProvider)
-                                        .setAutoRenew(user, subscriber,
-                                            !subscriber.autoRenew);
-                                    if (!context.mounted) return;
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(subscriber.autoRenew
-                                            ? l.t('autoRenewDisabled')
-                                            : l.t('autoRenewEnabled')),
+                                      builder: (_) => SubscriberDetailsDialog(
+                                        subscriber: subscriber,
+                                        by: user,
                                       ),
-                                    );
-                                  },
-                                  onEdit: () => _showForm(context, ref, user,
-                                      existing: subscriber),
-                                  onDelete: () async {
-                                    final ok = await _confirm(context, l);
-                                    if (ok == true) {
+                                    ),
+                                    onExportPdf: () =>
+                                        _exportSubscriberStatement(
+                                            context, user, subscriber),
+                                    onPay: () async {
+                                      await showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (_) => RecordPaymentSheet(
+                                            subscriber: subscriber),
+                                      );
+                                    },
+                                    onToggleAutoRenew: () async {
                                       await ref
                                           .read(subscribersRepositoryProvider)
-                                          .delete(user, subscriber);
-                                    }
-                                  },
-                                )
-                                    .animate()
-                                    .fadeIn(duration: 200.ms)
-                                    .slideY(begin: 0.04, end: 0);
+                                          .setAutoRenew(user, subscriber,
+                                              !subscriber.autoRenew);
+                                      if (!context.mounted) return;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(subscriber.autoRenew
+                                              ? l.t('autoRenewDisabled')
+                                              : l.t('autoRenewEnabled')),
+                                        ),
+                                      );
+                                    },
+                                    onEdit: () => _showForm(context, ref, user,
+                                        existing: subscriber),
+                                    onDelete: () async {
+                                      final ok = await _confirm(context, l);
+                                      if (ok == true) {
+                                        await ref
+                                            .read(subscribersRepositoryProvider)
+                                            .delete(user, subscriber);
+                                      }
+                                    },
+                                  )
+                                      .animate()
+                                      .fadeIn(duration: 200.ms)
+                                      .slideY(begin: 0.04, end: 0);
+                                }
+
+                                if (isWide) {
+                                  final rows = (filtered.length + 1) ~/ 2;
+                                  return ListView.builder(
+                                    padding: const EdgeInsets.only(
+                                        top: 4, bottom: 100),
+                                    itemCount: rows,
+                                    itemBuilder: (_, rowIdx) {
+                                      final first = filtered[rowIdx * 2];
+                                      final secondIdx = rowIdx * 2 + 1;
+                                      final second = secondIdx < filtered.length
+                                          ? filtered[secondIdx]
+                                          : null;
+                                      return Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                              child:
+                                                  buildSubscriberItem(first)),
+                                          Expanded(
+                                            child: second != null
+                                                ? buildSubscriberItem(second)
+                                                : const SizedBox.shrink(),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+
+                                return ListView.builder(
+                                  padding: const EdgeInsets.only(
+                                      top: 4, bottom: 100),
+                                  itemCount: filtered.length,
+                                  itemBuilder: (_, i) =>
+                                      buildSubscriberItem(filtered[i]),
+                                );
                               },
                             ),
                     ),

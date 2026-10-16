@@ -109,145 +109,145 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                     ),
                   );
                 }
-                return ListView.builder(
-                  padding: const EdgeInsets.only(top: 4, bottom: 84),
-                  itemCount: filtered.length,
-                  itemBuilder: (_, i) {
-                    final supplier = filtered[i];
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 5),
-                      decoration: BoxDecoration(
-                        color:
-                            isDark ? theme.colorScheme.surface : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: theme.colorScheme.outlineVariant
-                              .withValues(alpha: 0.4),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black
-                                .withValues(alpha: isDark ? 0.2 : 0.04),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(16),
-                        child: InkWell(
+                return LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 840;
+                    Widget buildSupplierCard(Supplier supplier) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 5),
+                        decoration: BoxDecoration(
+                          color:
+                              isDark ? theme.colorScheme.surface : Colors.white,
                           borderRadius: BorderRadius.circular(16),
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  SupplierDetailsScreen(supplier: supplier),
-                            ),
+                          border: Border.all(
+                            color: theme.colorScheme.outlineVariant
+                                .withValues(alpha: 0.4),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(14),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 22,
-                                  backgroundColor: theme.colorScheme.primary
-                                      .withValues(alpha: 0.1),
-                                  child: Icon(
-                                    Icons.hub_outlined,
-                                    color: theme.colorScheme.primary,
-                                    size: 24,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black
+                                  .withValues(alpha: isDark ? 0.2 : 0.04),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    SupplierDetailsScreen(supplier: supplier),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(14),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 22,
+                                    backgroundColor: theme.colorScheme.primary
+                                        .withValues(alpha: 0.1),
+                                    child: Icon(
+                                      Icons.hub_outlined,
+                                      color: theme.colorScheme.primary,
+                                      size: 24,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 14),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        supplier.name,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          supplier.name,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      if (supplier.contactPhone != null &&
-                                          supplier.contactPhone!.isNotEmpty)
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.phone_outlined,
-                                              size: 13,
-                                              color: theme
-                                                  .colorScheme.onSurfaceVariant,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              supplier.contactPhone!,
-                                              style: TextStyle(
-                                                fontSize: 12.5,
+                                        const SizedBox(height: 4),
+                                        if (supplier.contactPhone != null &&
+                                            supplier.contactPhone!.isNotEmpty)
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.phone_outlined,
+                                                size: 13,
                                                 color: theme.colorScheme
                                                     .onSurfaceVariant,
                                               ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                supplier.contactPhone!,
+                                                style: TextStyle(
+                                                  fontSize: 12.5,
+                                                  color: theme.colorScheme
+                                                      .onSurfaceVariant,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        else
+                                          Text(
+                                            l.suppliers,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: theme
+                                                  .colorScheme.onSurfaceVariant,
                                             ),
-                                          ],
-                                        )
-                                      else
-                                        Text(
-                                          l.suppliers,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: theme
-                                                .colorScheme.onSurfaceVariant,
                                           ),
-                                        ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                if (supplier.contactPhone != null &&
-                                    supplier.contactPhone!.trim().isNotEmpty)
-                                  IconButton(
-                                    icon: const Icon(Icons.phone_outlined,
-                                        color: Color(0xFF00A86B), size: 20),
-                                    tooltip: supplier.contactPhone,
-                                    onPressed: () async {
-                                      final uri = Uri.parse(
-                                          'tel:${supplier.contactPhone!.trim()}');
-                                      if (await canLaunchUrl(uri)) {
-                                        await launchUrl(uri);
+                                  if (supplier.contactPhone != null &&
+                                      supplier.contactPhone!.trim().isNotEmpty)
+                                    IconButton(
+                                      icon: const Icon(Icons.phone_outlined,
+                                          color: Color(0xFF00A86B), size: 20),
+                                      tooltip: supplier.contactPhone,
+                                      onPressed: () async {
+                                        final uri = Uri.parse(
+                                            'tel:${supplier.contactPhone!.trim()}');
+                                        if (await canLaunchUrl(uri)) {
+                                          await launchUrl(uri);
+                                        }
+                                      },
+                                    ),
+                                  PopupMenuButton<String>(
+                                    onSelected: (value) async {
+                                      if (value == 'request' && canRequest) {
+                                        await showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (_) =>
+                                              SupplierPaymentRequestSheet(
+                                                  supplier: supplier),
+                                        );
+                                      } else if (value == 'edit' && canManage) {
+                                        await showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (_) => SupplierFormSheet(
+                                              by: user, existing: supplier),
+                                        );
+                                      } else if (value == 'delete' &&
+                                          canManage) {
+                                        await ref
+                                            .read(suppliersRepositoryProvider)
+                                            .delete(user, supplier);
                                       }
                                     },
-                                  ),
-                                PopupMenuButton<String>(
-                                  onSelected: (value) async {
-                                    if (value == 'request' && canRequest) {
-                                      await showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        builder: (_) =>
-                                            SupplierPaymentRequestSheet(
-                                                supplier: supplier),
-                                      );
-                                    } else if (value == 'edit' && canManage) {
-                                      await showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        builder: (_) => SupplierFormSheet(
-                                            by: user, existing: supplier),
-                                      );
-                                    } else if (value == 'delete' && canManage) {
-                                      await ref
-                                          .read(suppliersRepositoryProvider)
-                                          .delete(user, supplier);
-                                    }
-                                  },
-                                  itemBuilder: (_) => [
-                                    if (canRequest)
-                                      PopupMenuItem(
-                                        value: 'request',
+                                    itemBuilder: (_) => [
+                                      if (canRequest)
+                                        PopupMenuItem(
+                                          value: 'request',
                                         child: Text(l.requestSupplierPayment),
                                       ),
                                     if (canManage)
@@ -267,10 +267,43 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                           ),
                         ),
                       ),
-                    )
-                        .animate()
-                        .fadeIn(duration: 200.ms)
-                        .slideY(begin: 0.04, end: 0);
+                      )
+                          .animate()
+                          .fadeIn(duration: 200.ms)
+                          .slideY(begin: 0.04, end: 0);
+                    }
+
+                    if (isWide) {
+                      final rows = (filtered.length + 1) ~/ 2;
+                      return ListView.builder(
+                        padding: const EdgeInsets.only(top: 4, bottom: 84),
+                        itemCount: rows,
+                        itemBuilder: (_, rowIdx) {
+                          final first = filtered[rowIdx * 2];
+                          final secondIdx = rowIdx * 2 + 1;
+                          final second = secondIdx < filtered.length
+                              ? filtered[secondIdx]
+                              : null;
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: buildSupplierCard(first)),
+                              Expanded(
+                                child: second != null
+                                    ? buildSupplierCard(second)
+                                    : const SizedBox.shrink(),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(top: 4, bottom: 84),
+                      itemCount: filtered.length,
+                      itemBuilder: (_, i) => buildSupplierCard(filtered[i]),
+                    );
                   },
                 );
               },

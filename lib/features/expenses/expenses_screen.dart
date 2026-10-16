@@ -62,24 +62,55 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
             children: [
               _buildSummaryBanner(context, list, l, loc),
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(top: 4, bottom: 84),
-                  itemCount: list.length,
-                  itemBuilder: (_, i) {
-                    final e = list[i];
-                    final actorLabel = _actorLabel(l, user, e);
-                    final isBusy = _busyExpenseIds.contains(e.id);
-                    return _ModernExpenseCard(
-                      expense: e,
-                      actorLabel: actorLabel,
-                      isBusy: isBusy,
-                      isAdmin: user.isAdmin,
-                      locale: loc,
-                      onDelete: () => _deleteExpense(context, l, user, e),
-                    )
-                        .animate()
-                        .fadeIn(duration: 200.ms)
-                        .slideY(begin: 0.04, end: 0);
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 840;
+                    Widget buildExpenseItem(Expense e) {
+                      final actorLabel = _actorLabel(l, user, e);
+                      final isBusy = _busyExpenseIds.contains(e.id);
+                      return _ModernExpenseCard(
+                        expense: e,
+                        actorLabel: actorLabel,
+                        isBusy: isBusy,
+                        isAdmin: user.isAdmin,
+                        locale: loc,
+                        onDelete: () => _deleteExpense(context, l, user, e),
+                      )
+                          .animate()
+                          .fadeIn(duration: 200.ms)
+                          .slideY(begin: 0.04, end: 0);
+                    }
+
+                    if (isWide) {
+                      final rows = (list.length + 1) ~/ 2;
+                      return ListView.builder(
+                        padding: const EdgeInsets.only(top: 4, bottom: 84),
+                        itemCount: rows,
+                        itemBuilder: (_, rowIdx) {
+                          final first = list[rowIdx * 2];
+                          final secondIdx = rowIdx * 2 + 1;
+                          final second =
+                              secondIdx < list.length ? list[secondIdx] : null;
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: buildExpenseItem(first)),
+                              Expanded(
+                                child: second != null
+                                    ? buildExpenseItem(second)
+                                    : const SizedBox.shrink(),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(top: 4, bottom: 84),
+                      itemCount: list.length,
+                      itemBuilder: (_, i) => buildExpenseItem(list[i]),
+                    );
                   },
                 ),
               ),

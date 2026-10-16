@@ -26,55 +26,126 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
     }
     final stream = ref.watch(employeesStreamProvider(user.adminUid));
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body: stream.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('$e')),
         data: (list) {
           if (list.isEmpty) return Center(child: Text(l.noData));
-          return ListView.separated(
-            itemCount: list.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (_, i) {
-              final e = list[i];
-              final isBusy = _busyEmployeeIds.contains(e.id);
-              return ListTile(
-                leading: CircleAvatar(
-                    child: Text(e.username.isNotEmpty
-                        ? e.username[0].toUpperCase()
-                        : '?')),
-                title: Text(e.displayName),
-                subtitle: Text(
-                    '${e.username} • ${e.permissions.length} ${l.permissions}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Switch(
-                      value: e.active,
-                      onChanged: isBusy
-                          ? null
-                          : (v) => ref
-                              .read(employeesRepositoryProvider)
-                              .setActive(user, e, v),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth >= 840;
+              Widget buildEmployeeCard(Employee e) {
+                final isBusy = _busyEmployeeIds.contains(e.id);
+                return Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isDark ? theme.colorScheme.surface : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: theme.colorScheme.outlineVariant
+                          .withValues(alpha: 0.4),
                     ),
-                    isBusy
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : IconButton(
-                            tooltip: l.delete,
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () => _deleteEmployee(context, user, e),
-                          ),
-                  ],
-                ),
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (_) => PermissionsSheet(by: user, employee: e),
-                ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black
+                            .withValues(alpha: isDark ? 0.2 : 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    leading: CircleAvatar(
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      foregroundColor: theme.colorScheme.onPrimaryContainer,
+                      child: Text(
+                        e.username.isNotEmpty
+                            ? e.username[0].toUpperCase()
+                            : '?',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    title: Text(
+                      e.displayName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      '${e.username} • ${e.permissions.length} ${l.permissions}',
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Switch(
+                          value: e.active,
+                          onChanged: isBusy
+                              ? null
+                              : (v) => ref
+                                  .read(employeesRepositoryProvider)
+                                  .setActive(user, e, v),
+                        ),
+                        isBusy
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : IconButton(
+                                tooltip: l.delete,
+                                icon: const Icon(Icons.delete_outline,
+                                    color: Colors.redAccent),
+                                onPressed: () =>
+                                    _deleteEmployee(context, user, e),
+                              ),
+                      ],
+                    ),
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (_) => PermissionsSheet(by: user, employee: e),
+                    ),
+                  ),
+                );
+              }
+
+              if (isWide) {
+                final rows = (list.length + 1) ~/ 2;
+                return ListView.builder(
+                  padding: const EdgeInsets.only(top: 8, bottom: 84),
+                  itemCount: rows,
+                  itemBuilder: (_, rowIdx) {
+                    final first = list[rowIdx * 2];
+                    final secondIdx = rowIdx * 2 + 1;
+                    final second =
+                        secondIdx < list.length ? list[secondIdx] : null;
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: buildEmployeeCard(first)),
+                        Expanded(
+                          child: second != null
+                              ? buildEmployeeCard(second)
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.only(top: 8, bottom: 84),
+                itemCount: list.length,
+                itemBuilder: (_, i) => buildEmployeeCard(list[i]),
               );
             },
           );

@@ -53,6 +53,9 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 1,
       ),
+      bottomSheetTheme: base.bottomSheetTheme.copyWith(
+        constraints: const BoxConstraints(maxWidth: 640),
+      ),
     );
   }
 
@@ -82,6 +85,9 @@ class AppTheme {
         centerTitle: false,
         elevation: 0,
         scrolledUnderElevation: 1,
+      ),
+      bottomSheetTheme: base.bottomSheetTheme.copyWith(
+        constraints: const BoxConstraints(maxWidth: 640),
       ),
     );
   }

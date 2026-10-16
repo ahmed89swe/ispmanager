@@ -75,83 +75,161 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       builder: (context, snapshot) {
         final payments = snapshot.data ?? [];
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(cashboxStreamProvider(user.adminUid));
-            ref.invalidate(subscribersStreamProvider(user.adminUid));
-            ref.invalidate(expensesStreamProvider(user.adminUid));
-            ref.invalidate(suppliersStreamProvider(user.adminUid));
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 760;
+            final hasRecent = payments.isNotEmpty;
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(cashboxStreamProvider(user.adminUid));
+                ref.invalidate(subscribersStreamProvider(user.adminUid));
+                ref.invalidate(expensesStreamProvider(user.adminUid));
+                ref.invalidate(suppliersStreamProvider(user.adminUid));
+              },
+              child: ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWide ? 24 : 16,
+                  vertical: isWide ? 20 : 12,
+                ),
+                children: [
+                  _buildHeaderGreeting(context, l, user)
+                      .animate()
+                      .fadeIn(duration: 300.ms),
+                  const SizedBox(height: 14),
+                  if (user.isAdmin)
+                    _buildHeroLiquidityCard(
+                      context,
+                      l,
+                      loc,
+                      iqdBalance,
+                      usdBalance,
+                      totalDebtsIqd,
+                      totalDebtsUsd,
+                      totalStaffDebt,
+                      currency,
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.05, end: 0)
+                  else if (isWide)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildGeneralCashboxSummaryCard(
+                            context,
+                            l,
+                            loc,
+                            iqdBalance,
+                            usdBalance,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildEmployeeDashboardCard(
+                            context,
+                            l,
+                            loc,
+                            user,
+                            cashbox,
+                            currency,
+                          ),
+                        ),
+                      ],
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.05, end: 0)
+                  else ...[
+                    _buildGeneralCashboxSummaryCard(
+                      context,
+                      l,
+                      loc,
+                      iqdBalance,
+                      usdBalance,
+                    )
+                        .animate()
+                        .fadeIn(duration: 350.ms)
+                        .slideY(begin: 0.05, end: 0),
+                    const SizedBox(height: 12),
+                    _buildEmployeeDashboardCard(
+                      context,
+                      l,
+                      loc,
+                      user,
+                      cashbox,
+                      currency,
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms)
+                        .slideY(begin: 0.05, end: 0),
+                  ],
+                  const SizedBox(height: 16),
+                  _buildQuickActions(context, l, user)
+                      .animate()
+                      .fadeIn(duration: 450.ms, delay: 100.ms),
+                  const SizedBox(height: 20),
+                  _buildKpiMetricsGrid(
+                    context,
+                    l,
+                    loc,
+                    currency,
+                    subsCount,
+                    activeSubsCount,
+                    totalDebts,
+                    totalExpenses,
+                    suppliersCount,
+                  ).animate().fadeIn(duration: 500.ms, delay: 150.ms),
+                  const SizedBox(height: 24),
+                  if (isWide && hasRecent)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: _buildMonthlyChart(
+                            context,
+                            payments,
+                            expenses,
+                            currency,
+                            loc,
+                            l,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          flex: 5,
+                          child: _buildRecentActivity(
+                            context,
+                            l,
+                            payments,
+                            loc,
+                          ),
+                        ),
+                      ],
+                    )
+                        .animate()
+                        .fadeIn(duration: 550.ms, delay: 200.ms)
+                  else ...[
+                    _buildMonthlyChart(
+                      context,
+                      payments,
+                      expenses,
+                      currency,
+                      loc,
+                      l,
+                    ).animate().fadeIn(duration: 550.ms, delay: 200.ms),
+                    const SizedBox(height: 24),
+                    _buildRecentActivity(context, l, payments, loc)
+                        .animate()
+                        .fadeIn(duration: 600.ms, delay: 250.ms),
+                  ],
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
           },
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            children: [
-              _buildHeaderGreeting(context, l, user)
-                  .animate()
-                  .fadeIn(duration: 300.ms),
-              const SizedBox(height: 14),
-              if (user.isAdmin)
-                _buildHeroLiquidityCard(
-                  context,
-                  l,
-                  loc,
-                  iqdBalance,
-                  usdBalance,
-                  totalDebtsIqd,
-                  totalDebtsUsd,
-                  totalStaffDebt,
-                  currency,
-                ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0)
-              else ...[
-                _buildGeneralCashboxSummaryCard(
-                  context,
-                  l,
-                  loc,
-                  iqdBalance,
-                  usdBalance,
-                )
-                    .animate()
-                    .fadeIn(duration: 350.ms)
-                    .slideY(begin: 0.05, end: 0),
-                const SizedBox(height: 12),
-                _buildEmployeeDashboardCard(
-                  context,
-                  l,
-                  loc,
-                  user,
-                  cashbox,
-                  currency,
-                )
-                    .animate()
-                    .fadeIn(duration: 400.ms)
-                    .slideY(begin: 0.05, end: 0),
-              ],
-              const SizedBox(height: 16),
-              _buildQuickActions(context, l, user)
-                  .animate()
-                  .fadeIn(duration: 450.ms, delay: 100.ms),
-              const SizedBox(height: 20),
-              _buildKpiMetricsGrid(
-                context,
-                l,
-                loc,
-                currency,
-                subsCount,
-                activeSubsCount,
-                totalDebts,
-                totalExpenses,
-                suppliersCount,
-              ).animate().fadeIn(duration: 500.ms, delay: 150.ms),
-              const SizedBox(height: 24),
-              _buildMonthlyChart(context, payments, expenses, currency, loc, l)
-                  .animate()
-                  .fadeIn(duration: 550.ms, delay: 200.ms),
-              const SizedBox(height: 24),
-              _buildRecentActivity(context, l, payments, loc)
-                  .animate()
-                  .fadeIn(duration: 600.ms, delay: 250.ms),
-              const SizedBox(height: 24),
-            ],
-          ),
         );
       },
     );
@@ -1069,51 +1147,61 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     num totalExpenses,
     int suppliersCount,
   ) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.35,
-      children: [
-        _ModernKpiCard(
-          icon: Icons.people_alt_rounded,
-          iconColor: Colors.blue.shade700,
-          backgroundColor: Colors.blue.shade50.withValues(alpha: 0.6),
-          label: l.subscribersCount,
-          value: '$subsCount',
-          badgeText: '$activeSubsCount ${l.t('active')}',
-          badgeColor: Colors.green,
-        ),
-        _ModernKpiCard(
-          icon: Icons.account_balance_wallet_rounded,
-          iconColor: Colors.amber.shade800,
-          backgroundColor: Colors.amber.shade50.withValues(alpha: 0.6),
-          label: l.totalDebts,
-          value: CurrencyFormatter.format(totalDebts, currency, locale: loc),
-          badgeText: l.t('unpaid'),
-          badgeColor: Colors.orange,
-        ),
-        _ModernKpiCard(
-          icon: Icons.receipt_long_rounded,
-          iconColor: Colors.red.shade700,
-          backgroundColor: Colors.red.shade50.withValues(alpha: 0.6),
-          label: l.totalExpenses,
-          value: CurrencyFormatter.format(totalExpenses, currency, locale: loc),
-          badgeText: l.expenses,
-          badgeColor: Colors.red,
-        ),
-        _ModernKpiCard(
-          icon: Icons.local_shipping_rounded,
-          iconColor: Colors.indigo.shade700,
-          backgroundColor: Colors.indigo.shade50.withValues(alpha: 0.6),
-          label: l.suppliers,
-          value: '$suppliersCount',
-          badgeText: l.t('package'),
-          badgeColor: Colors.indigo,
-        ),
-      ],
+    final cards = [
+      _ModernKpiCard(
+        icon: Icons.people_alt_rounded,
+        iconColor: Colors.blue.shade700,
+        backgroundColor: Colors.blue.shade50.withValues(alpha: 0.6),
+        label: l.subscribersCount,
+        value: '$subsCount',
+        badgeText: '$activeSubsCount ${l.t('active')}',
+        badgeColor: Colors.green,
+      ),
+      _ModernKpiCard(
+        icon: Icons.account_balance_wallet_rounded,
+        iconColor: Colors.amber.shade800,
+        backgroundColor: Colors.amber.shade50.withValues(alpha: 0.6),
+        label: l.totalDebts,
+        value: CurrencyFormatter.format(totalDebts, currency, locale: loc),
+        badgeText: l.t('unpaid'),
+        badgeColor: Colors.orange,
+      ),
+      _ModernKpiCard(
+        icon: Icons.receipt_long_rounded,
+        iconColor: Colors.red.shade700,
+        backgroundColor: Colors.red.shade50.withValues(alpha: 0.6),
+        label: l.totalExpenses,
+        value: CurrencyFormatter.format(totalExpenses, currency, locale: loc),
+        badgeText: l.expenses,
+        badgeColor: Colors.red,
+      ),
+      _ModernKpiCard(
+        icon: Icons.local_shipping_rounded,
+        iconColor: Colors.indigo.shade700,
+        backgroundColor: Colors.indigo.shade50.withValues(alpha: 0.6),
+        label: l.suppliers,
+        value: '$suppliersCount',
+        badgeText: l.t('package'),
+        badgeColor: Colors.indigo,
+      ),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = constraints.maxWidth >= 700 ? 4 : 2;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: cards.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            mainAxisExtent: 126,
+          ),
+          itemBuilder: (_, index) => cards[index],
+        );
+      },
     );
   }
 

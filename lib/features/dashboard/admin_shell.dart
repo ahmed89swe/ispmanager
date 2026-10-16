@@ -141,71 +141,440 @@ class _AdminShellState extends ConsumerState<AdminShell> {
         }
         final tabs = _visibleTabs(user);
         final idx = _index.clamp(0, tabs.length - 1);
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(tabs[idx].label(l)),
-            actions: [
-              Consumer(
-                builder: (context, ref, _) {
-                  final unread =
-                      ref.watch(unreadNotificationsCountProvider).valueOrNull ??
-                          0;
-                  return IconButton(
-                    onPressed: () => NotificationsSheet.show(context),
-                    icon: Badge(
-                      isLabelVisible: unread > 0,
-                      label: Text('$unread'),
-                      child: const Icon(Icons.notifications_outlined),
-                    ),
-                    tooltip: l.t('notifications'),
-                  );
-                },
-              ),
-              IconButton(
-                onPressed: () => context.push('/profile'),
-                icon: _AvatarMini(user: user),
-                tooltip: l.profile,
-              ),
-              IconButton(
-                onPressed: () async {
-                  await ref.read(authRepositoryProvider).signOut();
-                  if (context.mounted) context.go('/login');
-                },
-                icon: const Icon(Icons.logout),
-                tooltip: l.logout,
-              ),
-            ],
-          ),
-          body: AnimatedSwitcher(
-            duration: _pageSwitchDuration,
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            transitionBuilder: (child, animation) {
-              final offsetAnimation = Tween<Offset>(
-                begin: const Offset(0.04, 0),
-                end: Offset.zero,
-              ).animate(animation);
-              return FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
-                  position: offsetAnimation,
-                  child: child,
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isDesktop = constraints.maxWidth >= 900;
+            if (isDesktop) {
+              return _buildDesktopShell(context, l, user, tabs, idx);
+            }
+            return _buildMobileShell(context, l, user, tabs, idx);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMobileShell(
+    BuildContext context,
+    AppLocalizations l,
+    AppUser user,
+    List<_Tab> tabs,
+    int idx,
+  ) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(tabs[idx].label(l)),
+        actions: [
+          Consumer(
+            builder: (context, ref, _) {
+              final unread =
+                  ref.watch(unreadNotificationsCountProvider).valueOrNull ?? 0;
+              return IconButton(
+                onPressed: () => NotificationsSheet.show(context),
+                icon: Badge(
+                  isLabelVisible: unread > 0,
+                  label: Text('$unread'),
+                  child: const Icon(Icons.notifications_outlined),
                 ),
+                tooltip: l.t('notifications'),
               );
             },
-            child: KeyedSubtree(
-              key: ValueKey<_Tab>(tabs[idx]),
-              child: tabs[idx].builder(context),
+          ),
+          IconButton(
+            onPressed: () => context.push('/profile'),
+            icon: _AvatarMini(user: user),
+            tooltip: l.profile,
+          ),
+          IconButton(
+            onPressed: () async {
+              await ref.read(authRepositoryProvider).signOut();
+              if (context.mounted) context.go('/login');
+            },
+            icon: const Icon(Icons.logout),
+            tooltip: l.logout,
+          ),
+        ],
+      ),
+      body: _buildAnimatedTabBody(tabs, idx),
+      bottomNavigationBar: _AdminBottomTabBar(
+        tabs: tabs,
+        selectedIndex: idx,
+        localizations: l,
+        onSelected: _selectTab,
+      ),
+    );
+  }
+
+  Widget _buildDesktopShell(
+    BuildContext context,
+    AppLocalizations l,
+    AppUser user,
+    List<_Tab> tabs,
+    int idx,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark
+          ? const Color(0xFF0B1120)
+          : const Color(0xFFF1F5F9),
+      body: Row(
+        children: [
+          // Side Navigation Drawer (RTL-aware: placed on right in Arabic, left in English)
+          Container(
+            width: 268,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0F172A) : Colors.white,
+              border: BorderDirectional(
+                end: BorderSide(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.45),
+                ),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Brand Header
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              colorScheme.primary,
+                              colorScheme.tertiary,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorScheme.primary.withValues(alpha: 0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.router_rounded,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l.appTitle,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                height: 1.2,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'ISP Management Web',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: colorScheme.outline,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  height: 1,
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+                ),
+                const SizedBox(height: 12),
+                // Navigation Links
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 4,
+                    ),
+                    itemCount: tabs.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 4),
+                    itemBuilder: (context, i) {
+                      final tab = tabs[i];
+                      final selected = i == idx;
+                      final label = tab.label(l);
+                      return Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => _selectTab(i),
+                          borderRadius: BorderRadius.circular(14),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 13,
+                            ),
+                            decoration: BoxDecoration(
+                              color: selected
+                                  ? colorScheme.primaryContainer
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(14),
+                              border: selected
+                                  ? Border.all(
+                                      color: colorScheme.primary
+                                          .withValues(alpha: 0.25),
+                                    )
+                                  : null,
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  tab.icon,
+                                  size: 22,
+                                  color: selected
+                                      ? colorScheme.primary
+                                      : colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Text(
+                                    label,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      fontWeight: selected
+                                          ? FontWeight.w800
+                                          : FontWeight.w600,
+                                      color: selected
+                                          ? colorScheme.onPrimaryContainer
+                                          : colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                                if (selected)
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Divider(
+                  height: 1,
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+                ),
+                // User Profile & Logout Footer in Sidebar
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: () => context.push('/profile'),
+                          borderRadius: BorderRadius.circular(20),
+                          child: _AvatarMini(user: user),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => context.push('/profile'),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.displayName.isEmpty
+                                      ? l.employee
+                                      : user.displayName,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  user.isAdmin ? l.admin : l.employee,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: colorScheme.outline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            await ref.read(authRepositoryProvider).signOut();
+                            if (context.mounted) context.go('/login');
+                          },
+                          icon: const Icon(Icons.logout_rounded, size: 20),
+                          tooltip: l.logout,
+                          color: colorScheme.error,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          bottomNavigationBar: _AdminBottomTabBar(
-            tabs: tabs,
-            selectedIndex: idx,
-            localizations: l,
-            onSelected: _selectTab,
+
+          // Main Web Content Area
+          Expanded(
+            child: Column(
+              children: [
+                // Top Web Navbar
+                Container(
+                  height: 68,
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                    border: Border(
+                      bottom: BorderSide(
+                        color:
+                            colorScheme.outlineVariant.withValues(alpha: 0.45),
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        tabs[idx].icon,
+                        color: colorScheme.primary,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        tabs[idx].label(l),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const Spacer(),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final unread = ref
+                                  .watch(unreadNotificationsCountProvider)
+                                  .valueOrNull ??
+                              0;
+                          return FilledButton.tonalIcon(
+                            onPressed: () => NotificationsSheet.show(context),
+                            icon: Badge(
+                              isLabelVisible: unread > 0,
+                              label: Text('$unread'),
+                              child: const Icon(
+                                Icons.notifications_outlined,
+                                size: 20,
+                              ),
+                            ),
+                            label: Text(l.t('notifications')),
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      OutlinedButton.icon(
+                        onPressed: () => context.push('/profile'),
+                        icon: _AvatarMini(user: user),
+                        label: Text(
+                          user.displayName.isEmpty
+                              ? l.profile
+                              : user.displayName,
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Centered Content Body with MaxWidth
+                Expanded(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1320),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: _buildAnimatedTabBody(tabs, idx),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnimatedTabBody(List<_Tab> tabs, int idx) {
+    return AnimatedSwitcher(
+      duration: _pageSwitchDuration,
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) {
+        final offsetAnimation = Tween<Offset>(
+          begin: const Offset(0.02, 0),
+          end: Offset.zero,
+        ).animate(animation);
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: offsetAnimation,
+            child: child,
           ),
         );
       },
+      child: KeyedSubtree(
+        key: ValueKey<_Tab>(tabs[idx]),
+        child: tabs[idx].builder(context),
+      ),
     );
   }
 }
