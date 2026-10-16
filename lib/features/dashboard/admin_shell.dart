@@ -134,10 +134,12 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     return userAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text('$e'))),
+      error: (e, _) =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       data: (user) {
         if (user == null) {
-          return Scaffold(body: Center(child: Text(l.pleaseSignIn)));
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
         }
         final tabs = _visibleTabs(user);
         final idx = _index.clamp(0, tabs.length - 1);
@@ -188,8 +190,8 @@ class _AdminShellState extends ConsumerState<AdminShell> {
           ),
           IconButton(
             onPressed: () async {
-              await ref.read(authRepositoryProvider).signOut();
               if (context.mounted) context.go('/login');
+              await ref.read(authRepositoryProvider).signOut();
             },
             icon: const Icon(Icons.logout),
             tooltip: l.logout,
@@ -435,8 +437,8 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            await ref.read(authRepositoryProvider).signOut();
                             if (context.mounted) context.go('/login');
+                            await ref.read(authRepositoryProvider).signOut();
                           },
                           icon: const Icon(Icons.logout_rounded, size: 20),
                           tooltip: l.logout,

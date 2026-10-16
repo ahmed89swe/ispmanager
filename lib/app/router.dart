@@ -13,8 +13,18 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: _RefreshOnChange(ref),
     redirect: (context, state) {
       final auth = ref.read(currentAppUserProvider);
+      final authState = ref.read(authStateProvider);
       final atLoading = state.matchedLocation == '/loading';
       final atLogin = state.matchedLocation == '/login';
+
+      final firebaseUser = authState.valueOrNull;
+      if (firebaseUser == null && !authState.isLoading) {
+        return atLogin ? null : '/login';
+      }
+
+      if (auth.hasError) {
+        return atLogin ? null : '/login';
+      }
 
       if (auth.isLoading) return atLogin ? '/loading' : null;
 
@@ -34,7 +44,12 @@ final routerProvider = Provider<GoRouter>((ref) {
 
 class _RefreshOnChange extends ChangeNotifier {
   _RefreshOnChange(Ref ref) {
-    ref.listen(currentAppUserProvider, (_, __) => notifyListeners());
+    ref.listen(authStateProvider, (_, __) => notifyListeners());
+    ref.listen(
+      currentAppUserProvider,
+      (_, __) => notifyListeners(),
+      onError: (_, __) => notifyListeners(),
+    );
   }
 }
 

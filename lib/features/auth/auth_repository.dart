@@ -279,43 +279,63 @@ class AuthRepository {
       }
 
       if (initialUser.isAdmin) {
-        yield* db.collection('admins').doc(user.uid).snapshots().map((snap) {
-          if (!snap.exists) return null;
-          final d = snap.data() ?? {};
-          return AppUser(
-            uid: user.uid,
-            email: user.email,
-            displayName: (d['displayName'] ?? user.displayName ?? '') as String,
-            role: UserRole.admin,
-            adminUid: user.uid,
-            permissions: Permission.all,
-            photoUrl: (d['photoUrl'] ?? user.photoURL) as String?,
-            fcmTokens: List<String>.from(d['fcmTokens'] ?? []),
-          );
-        });
+        try {
+          await for (final snap
+              in db.collection('admins').doc(user.uid).snapshots()) {
+            if (!snap.exists) {
+              yield null;
+              continue;
+            }
+            final d = snap.data() ?? {};
+            yield AppUser(
+              uid: user.uid,
+              email: user.email,
+              displayName:
+                  (d['displayName'] ?? user.displayName ?? '') as String,
+              role: UserRole.admin,
+              adminUid: user.uid,
+              permissions: Permission.all,
+              photoUrl: (d['photoUrl'] ?? user.photoURL) as String?,
+              fcmTokens: List<String>.from(d['fcmTokens'] ?? []),
+            );
+          }
+        } catch (e) {
+          debugPrint('Admin snapshots stream ended (signOut or error): $e');
+          yield null;
+        }
       } else {
         final adminUid = initialUser.adminUid;
-        yield* db
-            .collection('admins')
-            .doc(adminUid)
-            .collection('employees')
-            .doc(user.uid)
-            .snapshots()
-            .map((snap) {
-          if (!snap.exists) return null;
-          final emp = Employee.fromDoc(snap);
-          if (!emp.active) return null;
-          return AppUser(
-            uid: user.uid,
-            email: user.email,
-            displayName: emp.displayName,
-            role: UserRole.employee,
-            adminUid: adminUid,
-            permissions: emp.permissions,
-            photoUrl: emp.photoUrl,
-            fcmTokens: List<String>.from(snap.data()?['fcmTokens'] ?? []),
-          );
-        });
+        try {
+          await for (final snap in db
+              .collection('admins')
+              .doc(adminUid)
+              .collection('employees')
+              .doc(user.uid)
+              .snapshots()) {
+            if (!snap.exists) {
+              yield null;
+              continue;
+            }
+            final emp = Employee.fromDoc(snap);
+            if (!emp.active) {
+              yield null;
+              continue;
+            }
+            yield AppUser(
+              uid: user.uid,
+              email: user.email,
+              displayName: emp.displayName,
+              role: UserRole.employee,
+              adminUid: adminUid,
+              permissions: emp.permissions,
+              photoUrl: emp.photoUrl,
+              fcmTokens: List<String>.from(snap.data()?['fcmTokens'] ?? []),
+            );
+          }
+        } catch (e) {
+          debugPrint('Employee snapshots stream ended (signOut or error): $e');
+          yield null;
+        }
       }
     });
   }
