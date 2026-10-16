@@ -1,0 +1,224 @@
+rules_version = '2';
+
+// v2 — Multi-tenant model:
+//   /admins/{adminUid}                — admin profile (owned by adminUid)
+//     /employees/{empUid}             — employee profile (admin RW; employee R own doc)
+//     /subscribers/{subId}            — subscribers (admin RW; employees R; W gated by perms)
+//       /payments/{payId}             — subscriber payments (admin RW; employees R; create gated)
+//       /debts/{debtId}               — subscriber subscription debts (member R; create/update gated)
+//     /suppliers/{supId}              — suppliers (admin RW; employees R)
+//       /packages/{pkgId}             — package templates (admin RW; employees R)
+//     /supplierPurchases/{purId}      — legacy supplier purchases (admin RW; employees R; create gated)
+//     /supplierBalanceTransactions/{tId} — supplier recharges/payments
+//     /supplierPaymentRequests/{rId}  — payment requests (employees create; admin decides)
+//     /expenses/{expId}               — expenses (admin RW; employees create gated)
+//     /finance/cashbox                — unified cashbox summary (member R; writes by financial ops)
+//       /ledger/{entryId}             — cashbox ledger entries
+//     /history/{evId}                 — audit log (admin R; clients append-only)
+//     /notifications/{nId}            — admin inbox
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function uid() {
+      return request.auth.uid;
+    }
+
+    function isAdmin(adminUid) {
+      return isSignedIn() && uid() == adminUid;
+    }
+
+    function employeeDoc(adminUid) {
+      return get(/databases/$(database)/documents/admins/$(adminUid)/employees/$(uid()));
+    }
+
+    function isEmployeeOf(adminUid) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(adminUid)/employees/$(uid()))
+        && employeeDoc(adminUid).data.active == true;
+    }
+
+    function isMember(adminUid) {
+      return isAdmin(adminUid) || isEmployeeOf(adminUid);
+    }
+
+    function hasPerm(adminUid, p) {
+      return isAdmin(adminUid)
+        || (isEmployeeOf(adminUid) && p in employeeDoc(adminUid).data.permissions);
+    }
+
+    // Admin root document
+    match /admins/{adminUid} {
+      allow read: if isMember(adminUid);
+      allow create: if isAdmin(adminUid);
+      allow update: if isAdmin(adminUid);
+      allow delete: if false;
+
+      // Employees
+      match /employees/{empUid} {
+        allow read: if isAdmin(adminUid) || (isSignedIn() && uid() == empUid);
+        // Auth user creation is done by Cloud Function; doc itself written by function (admin SDK bypasses rules).
+        allow create, delete: if isAdmin(adminUid);
+        allow update: if isAdmin(adminUid)
+                      || (isSignedIn()
+                          && uid() == empUid
+                          && request.resource.data.diff(resource.data).affectedKeys()
+                            .hasOnly(['displayName', 'photoUrl']));
+      }
+
+      // Subscribers
+      match /subscribers/{subId} {
+        allow read: if isMember(adminUid);
+        allow create: if hasPerm(adminUid, 'addSubscriber');
+        allow update: if hasPerm(adminUid, 'editSubscriber')
+                       || hasPerm(adminUid, 'recordSubscriberPayment'); // balance updates via payment tx
+        allow delete: if hasPerm(adminUid, 'deleteSubscriber');
+
+        // Payments under a subscriber
+        match /payments/{payId} {
+          allow read: if isMember(adminUid);
+          allow create: if hasPerm(adminUid, 'recordSubscriberPayment')
+                         && request.resource.data.recordedBy == uid();
+          allow update, delete: if isAdmin(adminUid);
+        }
+
+        match /debts/{debtId} {
+          allow read: if isMember(adminUid);
+          allow create: if hasPerm(adminUid, 'editSubscriber')
+                         || hasPerm(adminUid, 'recordSubscriberPayment');
+          allow update: if hasPerm(adminUid, 'editSubscriber')
+                         || hasPerm(adminUid, 'recordSubscriberPayment');
+          allow delete: if isAdmin(adminUid);
+        }
+      }
+
+      // Suppliers
+      match /suppliers/{supId} {
+        allow read: if isMember(adminUid);
+        allow create, update, delete: if hasPerm(adminUid, 'manageSuppliers');
+
+        match /packages/{pkgId} {
+          allow read: if isMember(adminUid);
+          allow create, update, delete: if hasPerm(adminUid, 'manageSuppliers');
+        }
+      }
+
+      // Supplier purchases
+      match /supplierPurchases/{purId} {
+        allow read: if isMember(adminUid);
+        allow create: if hasPerm(adminUid, 'manageSupplierPurchases');
+        allow update: if hasPerm(adminUid, 'manageSupplierPurchases');
+        allow delete: if isAdmin(adminUid);
+      }
+
+      match /supplierBalanceTransactions/{tId} {
+        allow read: if isMember(adminUid);
+        allow create: if hasPerm(adminUid, 'manageSupplierPurchases')
+                      && request.resource.data.recordedBy == uid();
+        allow update, delete: if isAdmin(adminUid);
+      }
+
+      // Supplier payment requests (employee → admin)
+      match /supplierPaymentRequests/{rId} {
+        allow read: if isMember(adminUid);
+        allow create: if isMember(adminUid)
+                       && request.resource.data.byEmployeeUid == uid()
+                       && request.resource.data.status == 'pending';
+        // Only admin can decide.
+        allow update: if isAdmin(adminUid);
+        allow delete: if isAdmin(adminUid);
+      }
+
+      // Staff reimbursement requests (employee → admin)
+      match /staffReimbursementRequests/{rId} {
+        allow read: if isMember(adminUid);
+        allow create: if isMember(adminUid)
+                       && request.resource.data.byEmployeeUid == uid()
+                       && request.resource.data.status == 'pending';
+        allow update, delete: if isAdmin(adminUid);
+      }
+
+      // Chat between admin and employee
+      match /chats/{employeeUid} {
+        allow read: if isAdmin(adminUid) || (isSignedIn() && uid() == employeeUid);
+        allow create, update: if isAdmin(adminUid) || (isSignedIn() && uid() == employeeUid);
+        allow delete: if isAdmin(adminUid);
+
+        match /messages/{msgId} {
+          allow read: if isAdmin(adminUid) || (isSignedIn() && uid() == employeeUid);
+          allow create, update: if isAdmin(adminUid) || (isSignedIn() && uid() == employeeUid);
+          allow delete: if isAdmin(adminUid);
+        }
+      }
+
+      // Expenses
+      match /expenses/{expId} {
+        allow read: if isMember(adminUid);
+        allow create: if isAdmin(adminUid)
+                       || (hasPerm(adminUid, 'addExpense')
+                           && request.resource.data.recordedBy == uid());
+        allow update, delete: if isAdmin(adminUid);
+      }
+
+      match /finance/{financeId} {
+        allow read: if isMember(adminUid);
+        allow create, update: if isMember(adminUid);
+        allow delete: if isAdmin(adminUid);
+
+        match /ledger/{entryId} {
+          allow read: if isMember(adminUid);
+          allow create: if isMember(adminUid);
+          allow update, delete: if isAdmin(adminUid);
+        }
+      }
+
+      match /expenseDeleteRequests/{rId} {
+        allow read: if isMember(adminUid);
+        allow create: if isMember(adminUid)
+                       && request.resource.data.byEmployeeUid == uid()
+                       && request.resource.data.status == 'pending';
+        allow update, delete: if isAdmin(adminUid);
+      }
+
+      // History (append-only audit log)
+      match /history/{evId} {
+        allow read: if hasPerm(adminUid, 'viewHistory') || isAdmin(adminUid);
+        allow create: if isMember(adminUid)
+                       && request.resource.data.actor.uid == uid();
+        allow update, delete: if false;
+      }
+
+      // Notifications (admin and employee inboxes)
+      match /notifications/{nId} {
+        allow read: if isMember(adminUid);
+        allow create: if isMember(adminUid);
+        allow update, delete: if isMember(adminUid);
+      }
+    }
+
+    // collectionGroup queries
+    match /{path=**}/employees/{empUid} {
+      // Allow employee to find their own membership doc by uid (for resolving adminUid at sign-in)
+      allow read: if isSignedIn() && (uid() == empUid || resource.data.uid == uid());
+    }
+
+    match /{path=**}/payments/{payId} {
+      allow read: if isSignedIn();
+    }
+
+    match /{path=**}/debts/{debtId} {
+      allow read: if isSignedIn();
+    }
+
+    // Public app version metadata (read by app on startup, before auth).
+    // Write only via Firebase console / admin SDK.
+    match /app_config/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

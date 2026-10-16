@@ -1,0 +1,359 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/constants.dart';
+import '../../core/models/models.dart';
+import '../../l10n/app_localizations.dart';
+import '../auth/auth_repository.dart';
+import 'employees_repository.dart';
+
+class EmployeesScreen extends ConsumerStatefulWidget {
+  const EmployeesScreen({super.key});
+
+  @override
+  ConsumerState<EmployeesScreen> createState() => _EmployeesScreenState();
+}
+
+class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
+  final Set<String> _busyEmployeeIds = {};
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final user = ref.watch(currentAppUserProvider).valueOrNull;
+    if (user == null || !user.isAdmin) {
+      return Center(child: Text(l.pleaseSignIn));
+    }
+    final stream = ref.watch(employeesStreamProvider(user.adminUid));
+
+    return Scaffold(
+      body: stream.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('$e')),
+        data: (list) {
+          if (list.isEmpty) return Center(child: Text(l.noData));
+          return ListView.separated(
+            itemCount: list.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (_, i) {
+              final e = list[i];
+              final isBusy = _busyEmployeeIds.contains(e.id);
+              return ListTile(
+                leading: CircleAvatar(
+                    child: Text(e.username.isNotEmpty
+                        ? e.username[0].toUpperCase()
+                        : '?')),
+                title: Text(e.displayName),
+                subtitle: Text(
+                    '${e.username} • ${e.permissions.length} ${l.permissions}'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Switch(
+                      value: e.active,
+                      onChanged: isBusy
+                          ? null
+                          : (v) => ref
+                              .read(employeesRepositoryProvider)
+                              .setActive(user, e, v),
+                    ),
+                    isBusy
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : IconButton(
+                            tooltip: l.delete,
+                            icon: const Icon(Icons.delete_outline),
+                            onPressed: () => _deleteEmployee(context, user, e),
+                          ),
+                  ],
+                ),
+                onTap: () => showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => PermissionsSheet(by: user, employee: e),
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (_) => EmployeeFormSheet(by: user)),
+        icon: const Icon(Icons.person_add_alt),
+        label: Text(l.newEmployee),
+      ),
+    );
+  }
+
+  Future<void> _deleteEmployee(
+      BuildContext context, AppUser user, Employee employee) async {
+    final l = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        content: Text(l.confirmDelete),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l.no),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l.yes),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    setState(() => _busyEmployeeIds.add(employee.id));
+    try {
+      await ref.read(employeesRepositoryProvider).delete(user, employee);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l.deleted)),
+      );
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    } finally {
+      if (mounted) setState(() => _busyEmployeeIds.remove(employee.id));
+    }
+  }
+}
+
+class EmployeeFormSheet extends ConsumerStatefulWidget {
+  const EmployeeFormSheet({super.key, required this.by});
+  final AppUser by;
+  @override
+  ConsumerState<EmployeeFormSheet> createState() => _EmployeeFormSheetState();
+}
+
+class _EmployeeFormSheetState extends ConsumerState<EmployeeFormSheet> {
+  final _username = TextEditingController();
+  final _displayName = TextEditingController();
+  final _password = TextEditingController();
+  final _perms = <Permission>{
+    Permission.viewSubscribers,
+    Permission.viewSuppliers,
+    Permission.recordSubscriberPayment,
+  };
+  bool _busy = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom +
+            MediaQuery.of(context).padding.bottom +
+            16,
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l.newEmployee, style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 12),
+            TextField(
+                controller: _username,
+                decoration: InputDecoration(labelText: l.username)),
+            const SizedBox(height: 8),
+            TextField(
+                controller: _displayName,
+                decoration: InputDecoration(labelText: l.displayName)),
+            const SizedBox(height: 8),
+            TextField(
+                controller: _password,
+                obscureText: true,
+                decoration: InputDecoration(labelText: l.password)),
+            const SizedBox(height: 16),
+            Text(l.permissions, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            for (final p in Permission.values)
+              CheckboxListTile(
+                dense: true,
+                value: _perms.contains(p),
+                title: Text(l.t(_permKey(p))),
+                onChanged: (v) => setState(() {
+                  if (v == true) {
+                    _perms.add(p);
+                  } else {
+                    _perms.remove(p);
+                  }
+                }),
+              ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: _busy
+                  ? null
+                  : () async {
+                      final u = _username.text.trim();
+                      final p = _password.text;
+                      if (u.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('يرجى كتابة اسم المستخدم')),
+                        );
+                        return;
+                      }
+                      if (p.length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('كلمة المرور يجب أن لا تقل عن 6 أحرف')),
+                        );
+                        return;
+                      }
+                      setState(() => _busy = true);
+                      try {
+                        await ref.read(employeesRepositoryProvider).create(
+                              widget.by,
+                              username: u,
+                              displayName: _displayName.text.trim().isEmpty
+                                  ? u
+                                  : _displayName.text.trim(),
+                              password: p,
+                              permissions: _perms,
+                            );
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('تم إضافة الموظف ($u) بنجاح'),
+                            backgroundColor: Colors.green.shade700,
+                          ),
+                        );
+                        Navigator.pop(context);
+                      } catch (e) {
+                        if (!context.mounted) return;
+                        final msg = e
+                            .toString()
+                            .replaceFirst(RegExp(r'^Exception:\s*|^Error:\s*|\[.*?\]\s*'), '');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(msg),
+                            backgroundColor: Colors.red.shade700,
+                          ),
+                        );
+                      } finally {
+                        if (mounted) setState(() => _busy = false);
+                      }
+                    },
+              style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48)),
+              child: _busy
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : Text(l.save),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PermissionsSheet extends ConsumerStatefulWidget {
+  const PermissionsSheet({super.key, required this.by, required this.employee});
+  final AppUser by;
+  final Employee employee;
+  @override
+  ConsumerState<PermissionsSheet> createState() => _PermissionsSheetState();
+}
+
+class _PermissionsSheetState extends ConsumerState<PermissionsSheet> {
+  late final Set<Permission> _perms = {...widget.employee.permissions};
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom +
+            MediaQuery.of(context).padding.bottom +
+            16,
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${l.permissions} — ${widget.employee.username}',
+                style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 12),
+            for (final p in Permission.values)
+              CheckboxListTile(
+                dense: true,
+                value: _perms.contains(p),
+                title: Text(l.t(_permKey(p))),
+                onChanged: (v) => setState(() {
+                  if (v == true) {
+                    _perms.add(p);
+                  } else {
+                    _perms.remove(p);
+                  }
+                }),
+              ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () async {
+                await ref
+                    .read(employeesRepositoryProvider)
+                    .updatePermissions(widget.by, widget.employee, _perms);
+                if (!context.mounted) return;
+                Navigator.pop(context);
+              },
+              style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48)),
+              child: Text(l.save),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+String _permKey(Permission p) {
+  switch (p) {
+    case Permission.recordSubscriberPayment:
+      return 'permissionRecordPayment';
+    case Permission.addSubscriber:
+      return 'permissionAddSubscriber';
+    case Permission.editSubscriber:
+      return 'permissionEditSubscriber';
+    case Permission.deleteSubscriber:
+      return 'permissionDeleteSubscriber';
+    case Permission.notifySupplierPayment:
+      return 'permissionNotifySupplierPayment';
+    case Permission.addExpense:
+      return 'permissionAddExpense';
+    case Permission.viewSubscribers:
+      return 'permissionViewSubscribers';
+    case Permission.viewSuppliers:
+      return 'permissionViewSuppliers';
+    case Permission.viewReports:
+      return 'permissionViewReports';
+    case Permission.viewHistory:
+      return 'permissionViewHistory';
+    case Permission.manageSuppliers:
+      return 'permissionManageSuppliers';
+    case Permission.manageSupplierPurchases:
+      return 'permissionManageSupplierPurchases';
+  }
+}
