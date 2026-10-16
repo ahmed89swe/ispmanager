@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../utils/firestore_helpers.dart';
+import '../utils/formatters.dart';
 import '../constants.dart';
 
 class AppUser {
@@ -80,7 +81,7 @@ class Subscriber {
     DateTime? subscriptionEndsAt,
     this.autoRenew = true,
   }) : subscriptionEndsAt =
-            subscriptionEndsAt ?? joinedAt.add(const Duration(days: 30));
+            subscriptionEndsAt ?? DateFormatter.addDays(joinedAt, 30);
 
   factory Subscriber.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final d = doc.data() ?? {};
@@ -102,7 +103,7 @@ class Subscriber {
           SubscriberStatus.active,
       joinedAt: tsToDate(d['joinedAt']),
       subscriptionEndsAt: d['subscriptionEndsAt'] == null
-          ? tsToDate(d['joinedAt']).add(const Duration(days: 30))
+          ? DateFormatter.addDays(tsToDate(d['joinedAt']), 30)
           : tsToDate(d['subscriptionEndsAt']),
       autoRenew: (d['autoRenew'] ?? true) as bool,
     );

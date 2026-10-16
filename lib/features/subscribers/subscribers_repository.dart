@@ -6,6 +6,7 @@ import '../../core/constants.dart';
 import '../../core/firebase_service.dart';
 import '../../core/models/models.dart';
 import '../../core/services/cashbox_service.dart';
+import '../../core/utils/formatters.dart';
 import '../auth/auth_repository.dart';
 import '../history/history_repository.dart';
 import '../notifications/notifications_repository.dart';
@@ -412,7 +413,7 @@ class SubscribersRepository {
     if (subscriber.subscriptionEndsAt.isAfter(now)) return;
 
     var periodStart = subscriber.subscriptionEndsAt;
-    var periodEnd = periodStart.add(const Duration(days: 30));
+    var periodEnd = DateFormatter.addDays(periodStart, 30);
     var added = 0;
     num addedBalance = 0;
     final batch = _db.batch();
@@ -442,7 +443,7 @@ class SubscribersRepository {
       }
       added++;
       periodStart = periodEnd;
-      periodEnd = periodStart.add(const Duration(days: 30));
+      periodEnd = DateFormatter.addDays(periodStart, 30);
     }
 
     final updates = <String, dynamic>{
@@ -482,7 +483,7 @@ class SubscribersRepository {
     final activationStart = subscriber.subscriptionEndsAt.isAfter(now)
         ? subscriber.subscriptionEndsAt
         : now;
-    final activationEnd = activationStart.add(const Duration(days: 30));
+    final activationEnd = DateFormatter.addDays(activationStart, 30);
     final debtRef = _debtCol(by.adminUid, subscriber.id)
         .doc(_periodDebtId(activationStart));
     final exists = await debtRef.get();

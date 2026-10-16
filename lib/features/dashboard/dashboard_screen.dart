@@ -26,6 +26,32 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  final _syncedSubscribers = <String>{};
+
+  void _syncDueDebts(AppUser user, List<Subscriber> subscribers) {
+    if (!user.can(Permission.recordSubscriberPayment) &&
+        !user.can(Permission.editSubscriber)) {
+      return;
+    }
+    final now = DateTime.now();
+    final due = subscribers.where((subscriber) {
+      return subscriber.autoRenew &&
+          !_syncedSubscribers.contains(subscriber.id) &&
+          !subscriber.subscriptionEndsAt.isAfter(now);
+    }).toList();
+    if (due.isEmpty) return;
+    for (final subscriber in due) {
+      _syncedSubscribers.add(subscriber.id);
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final repo = ref.read(subscribersRepositoryProvider);
+      for (final subscriber in due) {
+        repo.syncDueDebts(user, subscriber).catchError((_) {});
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -45,6 +71,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             CashboxSnapshot.empty();
 
     final subs = subsAsync.valueOrNull ?? [];
+    _syncDueDebts(user, subs);
     final expenses = expensesAsync.valueOrNull ?? [];
     final suppliers = suppliersAsync.valueOrNull ?? [];
 

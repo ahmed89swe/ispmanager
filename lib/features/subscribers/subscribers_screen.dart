@@ -576,8 +576,10 @@ class _ModernSubscriberCard extends StatelessWidget {
     }
 
     final hasDebt = subscriber.balance > 0;
-    final daysRemaining =
-        subscriber.subscriptionEndsAt.difference(DateTime.now()).inDays;
+    final daysRemaining = DateFormatter.calendarDaysBetween(
+      DateTime.now(),
+      subscriber.subscriptionEndsAt,
+    );
     final daysText = daysRemaining < 0
         ? l.t('overdue')
         : '$daysRemaining ${daysRemaining == 1 ? (loc == 'ar' ? 'يوم' : 'day') : (loc == 'ar' ? 'أيام' : 'days')}';
@@ -1368,7 +1370,7 @@ class AddSubscriberDebtSheet extends ConsumerStatefulWidget {
 class _AddSubscriberDebtSheetState
     extends ConsumerState<AddSubscriberDebtSheet> {
   late DateTime _from = DateTime.now();
-  late DateTime _to = _from.add(const Duration(days: 30));
+  late DateTime _to = DateFormatter.addDays(_from, 30);
   late final _amount =
       TextEditingController(text: widget.subscriber.monthlyFee.toString());
   late final _agentCost = TextEditingController(
@@ -1499,7 +1501,7 @@ class _AddSubscriberDebtSheetState
       setState(() {
         _from = date;
         if (!_to.isAfter(_from)) {
-          _to = _from.add(const Duration(days: 30));
+          _to = DateFormatter.addDays(_from, 30);
         }
       });
     }
@@ -1509,7 +1511,7 @@ class _AddSubscriberDebtSheetState
     final date = await showDatePicker(
       context: context,
       initialDate: _to,
-      firstDate: _from.add(const Duration(days: 1)),
+      firstDate: DateFormatter.addDays(_from, 1),
       lastDate: DateTime(2100),
     );
     if (date != null) setState(() => _to = date);
@@ -1545,7 +1547,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
   late num _agentPrice = widget.existing?.packageAgentPrice ?? 0;
   late AppCurrency _currency = widget.existing?.currency ?? AppCurrency.iqd;
   late DateTime _subscriptionEndsAt = widget.existing?.subscriptionEndsAt ??
-      DateTime.now().add(const Duration(days: 30));
+      DateFormatter.addDays(DateTime.now(), 30);
   late bool _autoRenew = widget.existing?.autoRenew ?? true;
   bool _initialPaid = true;
   MoneyStorage _initialReceivedIn = MoneyStorage.cashbox;
