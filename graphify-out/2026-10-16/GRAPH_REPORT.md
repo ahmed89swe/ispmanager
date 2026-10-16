@@ -1,7 +1,7 @@
 # Graph Report - isp_user_manager  (2026-10-16)
 
 ## Corpus Check
-- 94 files · ~72,209 words
+- 94 files · ~72,393 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 58 file(s) not represented in the graph (top: (none) 9, .xcconfig 8, .xml 7)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2957946a`
+- Built from commit: `9232ff9b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
