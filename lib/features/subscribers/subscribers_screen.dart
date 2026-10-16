@@ -395,13 +395,6 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
           ),
         ],
       ),
-      floatingActionButton: canAdd
-          ? FloatingActionButton.extended(
-              onPressed: () => _showForm(context, ref, user),
-              icon: const Icon(Icons.person_add_alt),
-              label: Text(l.addSubscriber),
-            )
-          : null,
     );
   }
 
@@ -1590,9 +1583,19 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
     setState(() => _busy = true);
     try {
       final repo = ref.read(subscribersRepositoryProvider);
-      final isInitialDebt = _initialPaymentMode == 'debt';
-      final isInitialPaid = _initialPaymentMode == 'paid';
-      final isNoFinancialEffect = _initialPaymentMode == 'none';
+      final num initialBalance;
+      final SubscriberStatus initialStatus;
+      if (widget.existing != null) {
+        initialBalance = widget.existing!.balance;
+        initialStatus = widget.existing!.status;
+      } else if (_initialPaymentMode == 'debt') {
+        initialBalance = _subscriberPrice;
+        initialStatus = SubscriberStatus.overdue;
+      } else {
+        // 'none' or 'paid': initial balance is 0, status is active
+        initialBalance = 0;
+        initialStatus = SubscriberStatus.active;
+      }
 
       final subscriber = Subscriber(
         id: widget.existing?.id ?? '',
@@ -1606,26 +1609,30 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
         monthlyFee: _subscriberPrice,
         packageAgentPrice: _agentPrice,
         currency: _currency,
-        balance: widget.existing?.balance ??
-            (isInitialDebt ? _subscriberPrice : 0),
-        status: widget.existing?.status ??
-            (isInitialDebt
-                ? SubscriberStatus.overdue
-                : SubscriberStatus.active),
+        balance: initialBalance,
+        status: initialStatus,
         joinedAt: widget.existing?.joinedAt ?? DateTime.now(),
         subscriptionEndsAt: _subscriptionEndsAt,
         autoRenew: _autoRenew,
       );
       if (widget.existing == null) {
-        if (isNoFinancialEffect) {
-          await repo.add(widget.by, subscriber);
-        } else {
+        if (_initialPaymentMode == 'paid') {
           await repo.addWithInitialSubscription(
             widget.by,
             subscriber,
-            isPaid: isInitialPaid,
+            isPaid: true,
             receivedIn: _initialReceivedIn,
           );
+        } else if (_initialPaymentMode == 'debt') {
+          await repo.addWithInitialSubscription(
+            widget.by,
+            subscriber,
+            isPaid: false,
+            receivedIn: _initialReceivedIn,
+          );
+        } else {
+          // 'none' (بدون أثر مالي): إضافة المشترك فقط بدون أي حركة في الصندوق وبدون أي دين
+          await repo.add(widget.by, subscriber);
         }
       } else {
         await repo.update(widget.by, subscriber);
@@ -1820,69 +1827,29 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ChoiceChip(
-                        avatar: const Icon(Icons.person_add_alt_1_outlined,
-                            size: 18),
-                        label: Center(
-                          child: Text(
-                            l.t('noInitialFinancialEffect'),
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                        selected: _initialPaymentMode == 'none',
-                        onSelected: (_) =>
-                            setState(() => _initialPaymentMode = 'none'),
-                      ),
+                    _buildPaymentModeTile(
+                      mode: 'none',
+                      title: l.t('noInitialFinancialEffect'),
+                      subtitle: l.t('noInitialFinancialEffectHint'),
+                      icon: Icons.person_add_alt_1_outlined,
+                      activeColor: Colors.teal,
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ChoiceChip(
-                            label: Center(child: Text(l.t('firstMonthPaid'))),
-                            selected: _initialPaymentMode == 'paid',
-                            onSelected: (_) =>
-                                setState(() => _initialPaymentMode = 'paid'),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: ChoiceChip(
-                            label: Center(child: Text(l.t('firstMonthDebt'))),
-                            selected: _initialPaymentMode == 'debt',
-                            onSelected: (_) =>
-                                setState(() => _initialPaymentMode = 'debt'),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 6),
+                    _buildPaymentModeTile(
+                      mode: 'paid',
+                      title: l.t('firstMonthPaid'),
+                      subtitle: 'تحصيل المبلغ وإيداعه في الصندوق فوراً',
+                      icon: Icons.payments_outlined,
+                      activeColor: Colors.green,
                     ),
-                    if (_initialPaymentMode == 'none') ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.info_outline_rounded,
-                            size: 15,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              l.t('noInitialFinancialEffectHint'),
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    const SizedBox(height: 6),
+                    _buildPaymentModeTile(
+                      mode: 'debt',
+                      title: l.t('firstMonthDebt'),
+                      subtitle: 'تسجيل المبلغ كـ دَين على المشترك دون التأثير على الصندوق',
+                      icon: Icons.receipt_outlined,
+                      activeColor: Colors.orange,
+                    ),
                     if (_initialPaymentMode == 'paid') ...[
                       const SizedBox(height: 10),
                       DropdownButtonFormField<MoneyStorage>(
@@ -1928,6 +1895,76 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
               ),
             ]),
             const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentModeTile({
+    required String mode,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color activeColor,
+  }) {
+    final isSelected = _initialPaymentMode == mode;
+    return InkWell(
+      onTap: () => setState(() => _initialPaymentMode = mode),
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? activeColor.withValues(alpha: 0.1)
+              : Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected
+                ? activeColor
+                : Theme.of(context).dividerColor.withValues(alpha: 0.5),
+            width: isSelected ? 1.8 : 1,
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Icon(
+                isSelected ? Icons.check_circle_rounded : icon,
+                size: 20,
+                color: isSelected
+                    ? activeColor
+                    : Theme.of(context).colorScheme.outline,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.w600,
+                      fontSize: 13,
+                      color: isSelected ? activeColor : null,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
