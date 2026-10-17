@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../app/theme/app_theme.dart';
 import '../../core/constants.dart';
 
 class AppPreferences {
@@ -9,6 +10,7 @@ class AppPreferences {
   final SharedPreferences _prefs;
 
   static const _kThemeMode = 'themeMode';
+  static const _kWebColorTheme = 'webColorTheme';
   static const _kLocale = 'locale';
   static const _kCurrency = 'currency';
 
@@ -20,6 +22,15 @@ class AppPreferences {
 
   Future<void> setThemeMode(ThemeMode mode) =>
       _prefs.setString(_kThemeMode, mode.name);
+
+  AppColorTheme get webColorTheme {
+    final v = _prefs.getString(_kWebColorTheme);
+    return AppColorTheme.values
+        .firstWhere((t) => t.name == v, orElse: () => AppColorTheme.deepBlue);
+  }
+
+  Future<void> setWebColorTheme(AppColorTheme theme) =>
+      _prefs.setString(_kWebColorTheme, theme.name);
 
   Locale get locale {
     final v = _prefs.getString(_kLocale) ?? 'ar';
@@ -55,6 +66,15 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
   }
 }
 
+class WebColorThemeNotifier extends StateNotifier<AppColorTheme> {
+  WebColorThemeNotifier(this._prefs) : super(_prefs.webColorTheme);
+  final AppPreferences _prefs;
+  Future<void> set(AppColorTheme theme) async {
+    state = theme;
+    await _prefs.setWebColorTheme(theme);
+  }
+}
+
 class LocaleNotifier extends StateNotifier<Locale> {
   LocaleNotifier(this._prefs) : super(_prefs.locale);
   final AppPreferences _prefs;
@@ -75,6 +95,9 @@ class CurrencyNotifier extends StateNotifier<AppCurrency> {
 
 final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>(
     (ref) => ThemeModeNotifier(ref.watch(appPreferencesProvider)));
+final webColorThemeProvider =
+    StateNotifierProvider<WebColorThemeNotifier, AppColorTheme>(
+        (ref) => WebColorThemeNotifier(ref.watch(appPreferencesProvider)));
 final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>(
     (ref) => LocaleNotifier(ref.watch(appPreferencesProvider)));
 final currencyProvider = StateNotifierProvider<CurrencyNotifier, AppCurrency>(

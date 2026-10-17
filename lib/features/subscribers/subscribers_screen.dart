@@ -64,8 +64,15 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
     }
     final loc = Localizations.localeOf(context).languageCode;
     try {
+      final repo = ref.read(subscribersRepositoryProvider);
+      final indebted = subs.where((s) => s.balance > 0).toList();
+      final debtLists = await Future.wait(
+        indebted.map((s) => repo.getDebts(user.adminUid, s.id)),
+      );
+      final allDebts = debtLists.expand((d) => d).toList();
       await PdfReportService().previewSubscribersDebtReport(
         subscribers: subs,
+        allDebts: allDebts,
         generatedBy: user.displayName.isNotEmpty
             ? user.displayName
             : (user.email ?? 'ISP Manager'),
@@ -202,7 +209,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 2, 14, 4),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                 decoration: BoxDecoration(
                   color: AppTheme.cardColor(context),
                   borderRadius: BorderRadius.circular(14),
@@ -414,7 +422,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                           : LayoutBuilder(
                               builder: (context, constraints) {
                                 final isWide = constraints.maxWidth >= 840;
-                                Widget buildSubscriberItem(Subscriber subscriber) {
+                                Widget buildSubscriberItem(
+                                    Subscriber subscriber) {
                                   return _ModernSubscriberCard(
                                     subscriber: subscriber,
                                     user: user,
@@ -670,6 +679,7 @@ class _ModernSubscriberCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
 
@@ -704,9 +714,8 @@ class _ModernSubscriberCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
       decoration: AppTheme.cardDecoration(
         context,
-        borderColor: hasDebt
-            ? const Color(0xFFE53935).withValues(alpha: 0.45)
-            : null,
+        borderColor:
+            hasDebt ? const Color(0xFFE53935).withValues(alpha: 0.45) : null,
       ),
       child: Material(
         color: Colors.transparent,
@@ -1193,8 +1202,9 @@ class SubscriberDetailsDialog extends ConsumerWidget {
         subscriber: subscriber,
         debts: debts,
         payments: payments,
-        generatedBy:
-            by.displayName.isNotEmpty ? by.displayName : (by.email ?? 'ISP Manager'),
+        generatedBy: by.displayName.isNotEmpty
+            ? by.displayName
+            : (by.email ?? 'ISP Manager'),
         locale: loc,
       );
     } catch (e) {
@@ -1317,8 +1327,8 @@ class SubscriberDetailsDialog extends ConsumerWidget {
               if (subscriber.prepaidCycles > 0)
                 Container(
                   margin: const EdgeInsets.fromLTRB(16, 10, 16, 4),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
                     color: const Color(0xFF1976D2).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
@@ -1350,17 +1360,15 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                               context: context,
                               builder: (ctx) => AlertDialog(
                                 title: Text(l.t('cancelAdvancePayment')),
-                                content: Text(
-                                    l.t('confirmCancelAdvancePayment')),
+                                content:
+                                    Text(l.t('confirmCancelAdvancePayment')),
                                 actions: [
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(ctx, false),
+                                    onPressed: () => Navigator.pop(ctx, false),
                                     child: Text(l.no),
                                   ),
                                   FilledButton(
-                                    onPressed: () =>
-                                        Navigator.pop(ctx, true),
+                                    onPressed: () => Navigator.pop(ctx, true),
                                     child: Text(l.yes),
                                   ),
                                 ],
@@ -1807,10 +1815,9 @@ class AddSubscriberDebtSheet extends ConsumerStatefulWidget {
 
 class _AddSubscriberDebtSheetState
     extends ConsumerState<AddSubscriberDebtSheet> {
-  late DateTime _from =
-      widget.existingDebt?.periodStart ?? DateTime.now();
-  late DateTime _to = widget.existingDebt?.periodEnd ??
-      DateFormatter.addDays(_from, 30);
+  late DateTime _from = widget.existingDebt?.periodStart ?? DateTime.now();
+  late DateTime _to =
+      widget.existingDebt?.periodEnd ?? DateFormatter.addDays(_from, 30);
   late final _amount = TextEditingController(
     text: widget.existingDebt != null
         ? widget.existingDebt!.amount.toString()
@@ -2323,7 +2330,8 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                     _buildPaymentModeTile(
                       mode: 'debt',
                       title: l.t('firstMonthDebt'),
-                      subtitle: 'تسجيل المبلغ كـ دَين على المشترك دون التأثير على الصندوق',
+                      subtitle:
+                          'تسجيل المبلغ كـ دَين على المشترك دون التأثير على الصندوق',
                       icon: Icons.receipt_outlined,
                       activeColor: Colors.orange,
                     ),

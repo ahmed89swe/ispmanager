@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +18,9 @@ class IspUserManagerApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final palette = kIsWeb
+        ? ref.watch(webColorThemeProvider)
+        : AppColorTheme.deepBlue;
     final locale = ref.watch(localeProvider);
     final updateAsync = ref.watch(appUpdateProvider);
 
@@ -24,8 +28,8 @@ class IspUserManagerApp extends ConsumerWidget {
       onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
+      theme: AppTheme.light(palette),
+      darkTheme: AppTheme.dark(palette),
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -104,13 +108,16 @@ class _MainAppRouter extends ConsumerWidget {
 
     final router = ref.watch(routerProvider);
     final themeMode = ref.watch(themeModeProvider);
+    final palette = kIsWeb
+        ? ref.watch(webColorThemeProvider)
+        : AppColorTheme.deepBlue;
     final locale = ref.watch(localeProvider);
     return MaterialApp.router(
       onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
+      theme: AppTheme.light(palette),
+      darkTheme: AppTheme.dark(palette),
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

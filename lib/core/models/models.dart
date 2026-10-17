@@ -621,6 +621,9 @@ class Expense {
   final String? recordedByName;
   final UserRole? recordedByRole;
   final String? attachmentUrl;
+  final String? recurringId;
+  final int? billingYear;
+  final int? billingMonth;
 
   Expense({
     required this.id,
@@ -635,6 +638,9 @@ class Expense {
     this.recordedByName,
     this.recordedByRole,
     this.attachmentUrl,
+    this.recurringId,
+    this.billingYear,
+    this.billingMonth,
   });
 
   factory Expense.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -657,6 +663,9 @@ class Expense {
       recordedByRole:
           enumFromName(UserRole.values, d['recordedByRole'] as String?),
       attachmentUrl: d['attachmentUrl'] as String?,
+      recurringId: d['recurringId'] as String?,
+      billingYear: (d['billingYear'] as num?)?.toInt(),
+      billingMonth: (d['billingMonth'] as num?)?.toInt(),
     );
   }
 
@@ -672,6 +681,137 @@ class Expense {
         'recordedByName': recordedByName,
         'recordedByRole': recordedByRole?.name,
         'attachmentUrl': attachmentUrl,
+        if (recurringId != null) 'recurringId': recurringId,
+        if (billingYear != null) 'billingYear': billingYear,
+        if (billingMonth != null) 'billingMonth': billingMonth,
+      };
+}
+
+class RecurringExpenseMonthPayment {
+  final int year;
+  final int month;
+  final num amount;
+  final AppCurrency currency;
+  final MoneyStorage paidFrom;
+  final DateTime paidAt;
+  final String paidBy;
+  final String? paidByName;
+  final String? expenseId;
+
+  RecurringExpenseMonthPayment({
+    required this.year,
+    required this.month,
+    required this.amount,
+    required this.currency,
+    this.paidFrom = MoneyStorage.cashbox,
+    required this.paidAt,
+    required this.paidBy,
+    this.paidByName,
+    this.expenseId,
+  });
+
+  factory RecurringExpenseMonthPayment.fromMap(Map<String, dynamic> m) {
+    return RecurringExpenseMonthPayment(
+      year: ((m['year'] ?? DateTime.now().year) as num).toInt(),
+      month: ((m['month'] ?? DateTime.now().month) as num).toInt(),
+      amount: (m['amount'] ?? 0) as num,
+      currency: AppCurrency.fromCode((m['currency'] ?? 'IQD') as String),
+      paidFrom: enumFromName(MoneyStorage.values, m['paidFrom'] as String?) ??
+          MoneyStorage.cashbox,
+      paidAt: tsToDate(m['paidAt']),
+      paidBy: (m['paidBy'] ?? '') as String,
+      paidByName: m['paidByName'] as String?,
+      expenseId: m['expenseId'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+        'year': year,
+        'month': month,
+        'amount': amount,
+        'currency': currency.code,
+        'paidFrom': paidFrom.name,
+        'paidAt': Timestamp.fromDate(paidAt),
+        'paidBy': paidBy,
+        if (paidByName != null) 'paidByName': paidByName,
+        if (expenseId != null) 'expenseId': expenseId,
+      };
+}
+
+class RecurringExpense {
+  final String id;
+  final String title;
+  final ExpenseCategory category;
+  final bool isFixedAmount;
+  final num defaultAmount;
+  final AppCurrency currency;
+  final String? note;
+  final DateTime createdAt;
+  final Map<String, RecurringExpenseMonthPayment> paidMonths;
+
+  RecurringExpense({
+    required this.id,
+    required this.title,
+    required this.category,
+    required this.isFixedAmount,
+    required this.defaultAmount,
+    required this.currency,
+    this.note,
+    required this.createdAt,
+    this.paidMonths = const {},
+  });
+
+  static String monthKey(int year, int month) =>
+      '$year-${month.toString().padLeft(2, '0')}';
+
+  bool isPaidFor(int year, int month) =>
+      paidMonths.containsKey(monthKey(year, month));
+
+  RecurringExpenseMonthPayment? paymentFor(int year, int month) =>
+      paidMonths[monthKey(year, month)];
+
+  factory RecurringExpense.fromMap(String id, Map<String, dynamic> d) {
+    final rawPaid = d['paidMonths'];
+    final parsedPaid = <String, RecurringExpenseMonthPayment>{};
+    if (rawPaid is Map) {
+      for (final entry in rawPaid.entries) {
+        final k = entry.key.toString();
+        final v = entry.value;
+        if (v is Map) {
+          parsedPaid[k] = RecurringExpenseMonthPayment.fromMap(
+            Map<String, dynamic>.from(v),
+          );
+        }
+      }
+    }
+    return RecurringExpense(
+      id: id,
+      title: (d['title'] ?? '') as String,
+      category:
+          enumFromName(ExpenseCategory.values, d['category'] as String?) ??
+              ExpenseCategory.other,
+      isFixedAmount: (d['isFixedAmount'] ?? true) as bool,
+      defaultAmount: (d['defaultAmount'] ?? 0) as num,
+      currency: AppCurrency.fromCode((d['currency'] ?? 'IQD') as String),
+      note: d['note'] as String?,
+      createdAt: tsToDate(d['createdAt']),
+      paidMonths: parsedPaid,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'title': title,
+        'category': category.name,
+        'isFixedAmount': isFixedAmount,
+        'defaultAmount': defaultAmount,
+        'currency': currency.code,
+        if (note != null) 'note': note,
+        'createdAt': Timestamp.fromDate(createdAt),
+        'paidMonths': {
+          for (final entry in paidMonths.entries)
+            entry.key: entry.value.toMap(),
+        },
       };
 }
 

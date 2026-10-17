@@ -375,14 +375,24 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               icon: Icons.money_off_rounded,
               color: Colors.redAccent,
             ),
-            actionsRow(() => PdfReportService().previewSubscribersDebtReport(
-                  subscribers: subscribers,
-                  allDebts: debts,
-                  generatedBy: user.displayName.isNotEmpty
-                      ? user.displayName
-                      : (user.email ?? 'ISP Manager'),
-                  locale: loc,
-                )),
+            actionsRow(() async {
+              var resolvedDebts = debts;
+              if (resolvedDebts.isEmpty && indebted.isNotEmpty) {
+                final repo = ref.read(subscribersRepositoryProvider);
+                final lists = await Future.wait(
+                  indebted.map((s) => repo.getDebts(user.adminUid, s.id)),
+                );
+                resolvedDebts = lists.expand((d) => d).toList();
+              }
+              await PdfReportService().previewSubscribersDebtReport(
+                subscribers: subscribers,
+                allDebts: resolvedDebts,
+                generatedBy: user.displayName.isNotEmpty
+                    ? user.displayName
+                    : (user.email ?? 'ISP Manager'),
+                locale: loc,
+              );
+            }),
           ],
         );
       case ReportType.subscriber:

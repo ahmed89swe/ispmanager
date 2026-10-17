@@ -110,8 +110,7 @@ class PdfReportService {
         theme: theme,
         margin: const pw.EdgeInsets.fromLTRB(28, 32, 28, 32),
         textDirection: textDirection,
-        crossAxisAlignment:
-            isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         header: (ctx) => _buildHeader(data, isArabic),
         footer: (ctx) => _buildFooter(ctx, isArabic),
         build: (ctx) => [
@@ -177,13 +176,9 @@ class PdfReportService {
     return doc.save();
   }
 
-  List<pw.Widget> _dirChildren(List<pw.Widget> children, bool isArabic) =>
-      isArabic ? children.reversed.toList() : children;
-
   pw.Widget _buildHeader(PdfReportData data, bool isArabic) {
     final titleColumn = pw.Column(
-      crossAxisAlignment:
-          isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
           isArabic ? 'تقرير' : 'Report',
@@ -233,7 +228,7 @@ class PdfReportService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         crossAxisAlignment: pw.CrossAxisAlignment.center,
-        children: _dirChildren([titleColumn, badge], isArabic),
+        children: [titleColumn, badge],
       ),
     );
   }
@@ -258,7 +253,7 @@ class PdfReportService {
       ),
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-        children: _dirChildren([dateWidget, pageWidget], isArabic),
+        children: [dateWidget, pageWidget],
       ),
     );
   }
@@ -314,8 +309,8 @@ class PdfReportService {
       child: pw.Wrap(
         spacing: 24,
         runSpacing: 6,
-        alignment: isArabic ? pw.WrapAlignment.end : pw.WrapAlignment.start,
-        children: isArabic ? items.reversed.toList() : items,
+        alignment: pw.WrapAlignment.start,
+        children: items,
       ),
     );
   }
@@ -335,7 +330,7 @@ class PdfReportService {
         }
       }
       rows.add(pw.Row(
-        children: _dirChildren(rowChildren, isArabic),
+        children: rowChildren,
       ));
       rows.add(pw.SizedBox(height: 6));
     }
@@ -354,8 +349,7 @@ class PdfReportService {
         borderRadius: pw.BorderRadius.circular(6),
       ),
       child: pw.Column(
-        crossAxisAlignment:
-            isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Text(
             k.label,
@@ -386,10 +380,13 @@ class PdfReportService {
         : data.tableRows;
     final align =
         isArabic ? pw.Alignment.centerRight : pw.Alignment.centerLeft;
+    final dir = isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr;
 
     return pw.TableHelper.fromTextArray(
       headers: headers,
       data: rows,
+      headerDirection: dir,
+      tableDirection: dir,
       headerStyle: pw.TextStyle(
         fontSize: 10,
         fontWeight: pw.FontWeight.bold,
@@ -546,8 +543,7 @@ class PdfReportService {
         theme: theme,
         margin: const pw.EdgeInsets.fromLTRB(28, 28, 28, 28),
         textDirection: textDirection,
-        crossAxisAlignment:
-            isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         header: (ctx) => _buildCustomHeader(
           title: isArabic
               ? 'كشف حساب مشترك - سجل التفعيلات والتسديدات'
@@ -555,7 +551,6 @@ class PdfReportService {
           subtitle: isArabic
               ? 'ISP Manager - نظام إدارة شبكات الإنترنت'
               : 'ISP Manager - Internet Network Management',
-          isArabic: isArabic,
         ),
         footer: (ctx) => _buildCustomFooter(ctx, isArabic, generatedBy),
         build: (ctx) => [
@@ -563,7 +558,7 @@ class PdfReportService {
           _buildSubscriberInfoCard(subscriber, locale, isArabic),
           pw.SizedBox(height: 14),
           pw.Row(
-            children: _dirChildren(kpiCards, isArabic),
+            children: kpiCards,
           ),
           pw.SizedBox(height: 16),
           pw.Container(
@@ -590,6 +585,8 @@ class PdfReportService {
               headers:
                   isArabic ? debtHeadersRaw.reversed.toList() : debtHeadersRaw,
               data: debtRowsRaw,
+              headerDirection: textDirection,
+              tableDirection: textDirection,
               headerStyle: pw.TextStyle(
                   fontSize: 8.5,
                   fontWeight: pw.FontWeight.bold,
@@ -631,6 +628,8 @@ class PdfReportService {
                   ? paymentHeadersRaw.reversed.toList()
                   : paymentHeadersRaw,
               data: paymentRowsRaw,
+              headerDirection: textDirection,
+              tableDirection: textDirection,
               headerStyle: pw.TextStyle(
                   fontSize: 8.5,
                   fontWeight: pw.FontWeight.bold,
@@ -717,10 +716,9 @@ class PdfReportService {
             'رقم الهاتف',
             'المجهز',
             'الباقة',
+            'الأشهر المطلوبة',
             'مبلغ الدين',
-            'العملة',
             'تاريخ الانتهاء',
-            'الحالة'
           ]
         : [
             '#',
@@ -728,10 +726,9 @@ class PdfReportService {
             'Phone',
             'Supplier',
             'Package',
+            'Due Months',
             'Debt Amount',
-            'Currency',
             'Expiry Date',
-            'Status'
           ];
 
     final rowsRaw = indebtedSubs.asMap().entries.map((entry) {
@@ -748,19 +745,30 @@ class PdfReportService {
       final packageStr = (s.packageName != null && s.packageName!.isNotEmpty)
           ? s.packageName!
           : (s.planName != null && s.planName!.isNotEmpty ? s.planName! : '-');
-      final statusStr = s.status == SubscriberStatus.active
-          ? (isArabic ? 'نشط' : 'Active')
-          : (isArabic ? 'منتهي / معلق' : 'Expired / Inactive');
+
+      final subUnpaidDebts = (allDebts ?? const <SubscriberDebt>[])
+          .where((d) => d.subscriberId == s.id && !d.isPaid && d.remaining > 0)
+          .toList()
+        ..sort((a, b) => a.periodStart.compareTo(b.periodStart));
+      final months = <int>[];
+      for (final d in subUnpaidDebts) {
+        if (!months.contains(d.periodStart.month)) {
+          months.add(d.periodStart.month);
+        }
+      }
+      final dueMonthsStr = months.isNotEmpty
+          ? months.join(',')
+          : '${s.subscriptionEndsAt.month}';
+
       final row = [
         '$idx',
         s.name,
         phoneStr,
         supplierStr,
         packageStr,
+        dueMonthsStr,
         CurrencyFormatter.format(s.balance, s.currency, locale: locale),
-        s.currency.code,
         expiryStr,
-        statusStr,
       ];
       return isArabic ? row.reversed.toList() : row;
     }).toList();
@@ -805,8 +813,7 @@ class PdfReportService {
         theme: theme,
         margin: const pw.EdgeInsets.fromLTRB(28, 28, 28, 28),
         textDirection: textDirection,
-        crossAxisAlignment:
-            isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         header: (ctx) => _buildCustomHeader(
           title: isArabic
               ? 'تقرير ديون المشتركين الشامل'
@@ -814,13 +821,12 @@ class PdfReportService {
           subtitle: isArabic
               ? 'ISP Manager - كشف بالذمم المالية ومستحقات المشتركين'
               : 'ISP Manager - Financial Receivables & Subscriber Debts',
-          isArabic: isArabic,
         ),
         footer: (ctx) => _buildCustomFooter(ctx, isArabic, generatedBy),
         build: (ctx) => [
           pw.SizedBox(height: 10),
           pw.Row(
-            children: _dirChildren(kpiCards, isArabic),
+            children: kpiCards,
           ),
           pw.SizedBox(height: 16),
           pw.Container(
@@ -846,14 +852,16 @@ class PdfReportService {
             pw.TableHelper.fromTextArray(
               headers: isArabic ? headersRaw.reversed.toList() : headersRaw,
               data: rowsRaw,
+              headerDirection: textDirection,
+              tableDirection: textDirection,
               headerStyle: pw.TextStyle(
-                  fontSize: 8,
+                  fontSize: 8.5,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.white),
               headerDecoration:
                   const pw.BoxDecoration(color: PdfColors.red700),
               headerAlignment: cellAlign,
-              cellStyle: const pw.TextStyle(fontSize: 7.5),
+              cellStyle: const pw.TextStyle(fontSize: 8),
               cellHeight: 20,
               cellAlignment: cellAlign,
               oddRowDecoration:
@@ -888,11 +896,9 @@ class PdfReportService {
   pw.Widget _buildCustomHeader({
     required String title,
     required String subtitle,
-    required bool isArabic,
   }) {
     final titleColumn = pw.Column(
-      crossAxisAlignment:
-          isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
           title,
@@ -936,7 +942,7 @@ class PdfReportService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         crossAxisAlignment: pw.CrossAxisAlignment.center,
-        children: _dirChildren([titleColumn, badge], isArabic),
+        children: [titleColumn, badge],
       ),
     );
   }
@@ -964,7 +970,7 @@ class PdfReportService {
       ),
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-        children: _dirChildren([generatedText, pageText], isArabic),
+        children: [generatedText, pageText],
       ),
     );
   }
@@ -1039,9 +1045,9 @@ class PdfReportService {
       ),
       child: pw.Column(
         children: [
-          pw.Row(children: _dirChildren(row1, isArabic)),
+          pw.Row(children: row1),
           pw.SizedBox(height: 6),
-          pw.Row(children: _dirChildren(row2, isArabic)),
+          pw.Row(children: row2),
         ],
       ),
     );
@@ -1071,12 +1077,8 @@ class PdfReportService {
       ),
     );
     return pw.Row(
-      mainAxisAlignment:
-          isArabic ? pw.MainAxisAlignment.end : pw.MainAxisAlignment.start,
-      children: _dirChildren(
-        [labelW, pw.SizedBox(width: 4), valueW],
-        isArabic,
-      ),
+      mainAxisAlignment: pw.MainAxisAlignment.start,
+      children: [labelW, pw.SizedBox(width: 4), valueW],
     );
   }
 
