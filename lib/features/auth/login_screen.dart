@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/firebase_service.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/providers/preferences_providers.dart';
 import 'auth_repository.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -17,11 +18,33 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _busy = false;
   bool _obscurePassword = true;
+  bool _rememberMe = true;
   String? _error;
 
   final _adminEmail = TextEditingController();
   final _username = TextEditingController();
   final _password = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  void _loadSavedCredentials() {
+    try {
+      final prefs = ref.read(sharedPreferencesProvider);
+      final remember = prefs.getBool('saved_emp_remember_me') ?? false;
+      if (remember) {
+        _adminEmail.text = prefs.getString('saved_emp_admin_email') ?? '';
+        _username.text = prefs.getString('saved_emp_username') ?? '';
+        _password.text = prefs.getString('saved_emp_password') ?? '';
+        setState(() {
+          _rememberMe = true;
+        });
+      }
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
@@ -62,6 +85,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             username: _username.text,
             password: _password.text,
           );
+      try {
+        final prefs = ref.read(sharedPreferencesProvider);
+        if (_rememberMe) {
+          await prefs.setBool('saved_emp_remember_me', true);
+          await prefs.setString(
+              'saved_emp_admin_email', _adminEmail.text.trim());
+          await prefs.setString('saved_emp_username', _username.text.trim());
+          await prefs.setString('saved_emp_password', _password.text);
+        } else {
+          await prefs.remove('saved_emp_remember_me');
+          await prefs.remove('saved_emp_admin_email');
+          await prefs.remove('saved_emp_username');
+          await prefs.remove('saved_emp_password');
+        }
+      } catch (_) {}
       if (mounted) context.go('/home');
     } catch (e) {
       if (mounted) {
@@ -238,7 +276,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 16),
 
               SizedBox(
-                height: 280,
+                height: 345,
                 child: TabBarView(
                   children: [
                     _adminTab(l, theme),
@@ -437,14 +475,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ],
       );
 
-  Widget _employeeTab(AppLocalizations l, ThemeData theme) =>
-      SingleChildScrollView(
+  Widget _employeeTab(AppLocalizations l, ThemeData theme) {
+    final isArabic = l.locale.languageCode == 'ar';
+    return AutofillGroup(
+      child: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 8),
             TextField(
               controller: _adminEmail,
               keyboardType: TextInputType.emailAddress,
+              autofillHints: const [AutofillHints.email],
               decoration: InputDecoration(
                 labelText: l.adminEmail,
                 prefixIcon: const Icon(Icons.alternate_email, size: 20),
@@ -454,6 +495,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: 12),
             TextField(
               controller: _username,
+              autofillHints: const [AutofillHints.username],
               decoration: InputDecoration(
                 labelText: l.username,
                 prefixIcon: const Icon(Icons.person_outline, size: 20),
@@ -464,6 +506,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             TextField(
               controller: _password,
               obscureText: _obscurePassword,
+              autofillHints: const [AutofillHints.password],
+              onSubmitted: (_) => _busy ? null : _employeeSignIn(),
               decoration: InputDecoration(
                 labelText: l.password,
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
@@ -480,7 +524,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 isDense: true,
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 8),
+            InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () => setState(() => _rememberMe = !_rememberMe),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Checkbox(
+                        value: _rememberMe,
+                        onChanged: (v) =>
+                            setState(() => _rememberMe = v ?? false),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        isArabic
+                            ? 'تذكرني / حفظ بيانات الدخول'
+                            : 'Remember login details',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
             FilledButton(
               onPressed: _busy ? null : _employeeSignIn,
               style: FilledButton.styleFrom(
@@ -499,7 +580,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ],
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _FeatureChip extends StatelessWidget {

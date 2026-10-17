@@ -67,7 +67,7 @@ service cloud.firestore {
                       || (isSignedIn()
                           && uid() == empUid
                           && request.resource.data.diff(resource.data).affectedKeys()
-                            .hasOnly(['displayName', 'photoUrl']));
+                            .hasOnly(['displayName', 'photoUrl', 'themeMode', 'webColorTheme']));
       }
 
       // Subscribers

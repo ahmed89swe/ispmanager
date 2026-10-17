@@ -10,6 +10,7 @@ import '../../core/constants.dart';
 import '../../core/models/models.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/image_preview_dialog.dart';
+import '../../core/widgets/receipt_editor_dialog.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/providers/preferences_providers.dart';
 import '../auth/auth_repository.dart';
@@ -675,11 +676,23 @@ class _SupplierBalanceTransactionSheetState
         imageQuality: 85,
       );
       if (picked != null) {
-        final bytes = await picked.readAsBytes();
-        setState(() {
-          _receiptImage = picked;
-          _receiptImageBytes = bytes;
-        });
+        final rawBytes = await picked.readAsBytes();
+        if (!mounted) return;
+        final processed = await ReceiptEditorDialog.show(
+          context,
+          imageBytes: rawBytes,
+          title: 'تعديل وقص وصل التعبئة',
+        );
+        if (processed != null) {
+          setState(() {
+            _receiptImage = XFile.fromData(
+              processed,
+              name: 'supplier_receipt_${DateTime.now().millisecondsSinceEpoch}.jpg',
+              mimeType: 'image/jpeg',
+            );
+            _receiptImageBytes = processed;
+          });
+        }
       }
     } catch (e) {
       if (mounted) {

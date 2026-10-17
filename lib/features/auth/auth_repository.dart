@@ -89,6 +89,8 @@ class AuthRepository {
       permissions: Permission.all,
       photoUrl: (d['photoUrl'] ?? user.photoURL) as String?,
       fcmTokens: List<String>.from(d['fcmTokens'] ?? []),
+      themeMode: d['themeMode'] as String?,
+      webColorTheme: d['webColorTheme'] as String?,
     );
   }
 
@@ -105,6 +107,7 @@ class AuthRepository {
     if (!emp.active) {
       throw StateError('تم إيقاف حساب هذا الموظف من قبل الإدارة.');
     }
+    final empData = empSnap.data() ?? {};
     return AppUser(
       uid: user.uid,
       email: user.email,
@@ -113,7 +116,9 @@ class AuthRepository {
       adminUid: adminUid,
       permissions: emp.permissions,
       photoUrl: emp.photoUrl,
-      fcmTokens: List<String>.from(empSnap.data()?['fcmTokens'] ?? []),
+      fcmTokens: List<String>.from(empData['fcmTokens'] ?? []),
+      themeMode: empData['themeMode'] as String?,
+      webColorTheme: empData['webColorTheme'] as String?,
     );
   }
 
@@ -297,6 +302,8 @@ class AuthRepository {
               permissions: Permission.all,
               photoUrl: (d['photoUrl'] ?? user.photoURL) as String?,
               fcmTokens: List<String>.from(d['fcmTokens'] ?? []),
+              themeMode: d['themeMode'] as String?,
+              webColorTheme: d['webColorTheme'] as String?,
             );
           }
         } catch (e) {
@@ -321,6 +328,7 @@ class AuthRepository {
               yield null;
               continue;
             }
+            final empData = snap.data() ?? {};
             yield AppUser(
               uid: user.uid,
               email: user.email,
@@ -329,7 +337,9 @@ class AuthRepository {
               adminUid: adminUid,
               permissions: emp.permissions,
               photoUrl: emp.photoUrl,
-              fcmTokens: List<String>.from(snap.data()?['fcmTokens'] ?? []),
+              fcmTokens: List<String>.from(empData['fcmTokens'] ?? []),
+              themeMode: empData['themeMode'] as String?,
+              webColorTheme: empData['webColorTheme'] as String?,
             );
           }
         } catch (e) {
@@ -338,6 +348,35 @@ class AuthRepository {
         }
       }
     });
+  }
+
+  /// Persists the selected theme preference (mode and/or color palette)
+  /// into the user's Firestore profile so it is loaded whenever they log in.
+  Future<void> saveUserThemePreference({
+    required AppUser user,
+    String? themeMode,
+    String? webColorTheme,
+  }) async {
+    if (_db == null) return;
+    final updates = <String, dynamic>{
+      if (themeMode != null) 'themeMode': themeMode,
+      if (webColorTheme != null) 'webColorTheme': webColorTheme,
+    };
+    if (updates.isEmpty) return;
+    try {
+      if (user.isAdmin) {
+        await _db.collection('admins').doc(user.uid).update(updates);
+      } else {
+        await _db
+            .collection('admins')
+            .doc(user.adminUid)
+            .collection('employees')
+            .doc(user.uid)
+            .update(updates);
+      }
+    } catch (e) {
+      debugPrint('Failed to save user theme preference to account: $e');
+    }
   }
 }
 

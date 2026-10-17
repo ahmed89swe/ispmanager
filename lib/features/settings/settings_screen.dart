@@ -7,6 +7,7 @@ import '../../core/constants.dart';
 import '../../core/services/web_notification_helper.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/providers/preferences_providers.dart';
+import '../auth/auth_repository.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -35,9 +36,19 @@ class SettingsScreen extends ConsumerWidget {
                 title: Text(l.theme),
                 trailing: DropdownButton<ThemeMode>(
                   value: themeMode,
-                  underline: const SizedBox.shrink(),
                   onChanged: (v) {
-                    if (v != null) ref.read(themeModeProvider.notifier).set(v);
+                    if (v != null) {
+                      ref.read(themeModeProvider.notifier).set(v);
+                      final user = ref.read(currentAppUserProvider).valueOrNull;
+                      if (user != null) {
+                        ref
+                            .read(authRepositoryProvider)
+                            .saveUserThemePreference(
+                              user: user,
+                              themeMode: v.name,
+                            );
+                      }
+                    }
                   },
                   items: [
                     DropdownMenuItem(
@@ -243,8 +254,19 @@ class SettingsScreen extends ConsumerWidget {
                     final selected = palette == webColorTheme;
                     return InkWell(
                       borderRadius: BorderRadius.circular(14),
-                      onTap: () =>
-                          ref.read(webColorThemeProvider.notifier).set(palette),
+                      onTap: () {
+                        ref.read(webColorThemeProvider.notifier).set(palette);
+                        final user =
+                            ref.read(currentAppUserProvider).valueOrNull;
+                        if (user != null) {
+                          ref
+                              .read(authRepositoryProvider)
+                              .saveUserThemePreference(
+                                user: user,
+                                webColorTheme: palette.name,
+                              );
+                        }
+                      },
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         padding: const EdgeInsets.symmetric(

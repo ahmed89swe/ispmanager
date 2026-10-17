@@ -14,6 +14,8 @@ class AppUser {
   final Set<Permission> permissions;
   final String? photoUrl;
   final List<String> fcmTokens;
+  final String? themeMode;
+  final String? webColorTheme;
 
   AppUser({
     required this.uid,
@@ -24,6 +26,8 @@ class AppUser {
     required this.permissions,
     this.photoUrl,
     this.fcmTokens = const [],
+    this.themeMode,
+    this.webColorTheme,
   });
 
   bool get isAdmin => role == UserRole.admin;
@@ -31,6 +35,8 @@ class AppUser {
 
   AppUser copyWith({
     List<String>? fcmTokens,
+    String? themeMode,
+    String? webColorTheme,
   }) {
     return AppUser(
       uid: uid,
@@ -41,6 +47,8 @@ class AppUser {
       permissions: permissions,
       photoUrl: photoUrl,
       fcmTokens: fcmTokens ?? this.fcmTokens,
+      themeMode: themeMode ?? this.themeMode,
+      webColorTheme: webColorTheme ?? this.webColorTheme,
     );
   }
 }

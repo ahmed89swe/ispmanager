@@ -92,10 +92,32 @@ class _MainAppRouter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void applyUserTheme(AppUser user) {
+      if (user.themeMode != null) {
+        final mode = ThemeMode.values.firstWhere(
+          (m) => m.name == user.themeMode,
+          orElse: () => ThemeMode.system,
+        );
+        if (ref.read(themeModeProvider) != mode) {
+          ref.read(themeModeProvider.notifier).set(mode);
+        }
+      }
+      if (user.webColorTheme != null) {
+        final theme = AppColorTheme.values.firstWhere(
+          (t) => t.name == user.webColorTheme,
+          orElse: () => AppColorTheme.deepBlue,
+        );
+        if (ref.read(webColorThemeProvider) != theme) {
+          ref.read(webColorThemeProvider.notifier).set(theme);
+        }
+      }
+    }
+
     ref.listen<AsyncValue<AppUser?>>(currentAppUserProvider, (prev, next) {
       final user = next.valueOrNull;
       if (user != null) {
         ref.read(notificationServiceProvider).syncUserToken(user);
+        applyUserTheme(user);
       }
     });
 
@@ -103,6 +125,7 @@ class _MainAppRouter extends ConsumerWidget {
     if (currentUser != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(notificationServiceProvider).syncUserToken(currentUser);
+        applyUserTheme(currentUser);
       });
     }
 
