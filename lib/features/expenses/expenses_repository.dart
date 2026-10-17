@@ -157,15 +157,13 @@ class ExpensesRepository {
   Future<void> deleteRecurringExpense(AppUser by, String recurringId) async {
     final db = _db;
     if (db == null) return;
-    await _recurringDoc(by.adminUid).set(
-      {
-        'items': {
-          recurringId: FieldValue.delete(),
-        },
-        'updatedAt': FieldValue.serverTimestamp(),
-      },
-      SetOptions(merge: true),
-    ).timeout(HistoryLogger.operationTimeout);
+    final docRef = _recurringDoc(by.adminUid);
+    final snap = await docRef.get().timeout(HistoryLogger.operationTimeout);
+    if (!snap.exists) return;
+    await docRef.update({
+      FieldPath(['items', recurringId]): FieldValue.delete(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    }).timeout(HistoryLogger.operationTimeout);
   }
 
   Future<void> payRecurringExpenseMonth({
@@ -183,6 +181,51 @@ class ExpensesRepository {
     final monthKey = RecurringExpense.monthKey(year, month);
     final actorName =
         by.displayName.trim().isEmpty ? by.role.name : by.displayName.trim();
+
+    final existingPayment = item.paymentFor(year, month);
+    final batch = db.batch();
+
+    // If this month was already paid (editing/correcting an existing payment),
+    // reverse the previous expense and cashbox entry first.
+    if (existingPayment != null) {
+      Expense? oldExpense;
+      if (existingPayment.expenseId != null &&
+          existingPayment.expenseId!.isNotEmpty) {
+        final oldRef = _col(by.adminUid).doc(existingPayment.expenseId);
+        final oldSnap =
+            await oldRef.get().timeout(HistoryLogger.operationTimeout);
+        if (oldSnap.exists) {
+          oldExpense = Expense.fromDoc(oldSnap);
+          if (by.isAdmin) {
+            batch.delete(oldRef);
+          }
+        }
+      }
+      oldExpense ??= Expense(
+        id: existingPayment.expenseId ?? '',
+        type: ExpenseEntryType.expense,
+        amount: existingPayment.amount,
+        currency: existingPayment.currency,
+        paidFrom: existingPayment.paidFrom,
+        category: item.category,
+        reason: '${item.title} - شهر $month/$year',
+        date: existingPayment.paidAt,
+        recordedBy: existingPayment.paidBy,
+        recordedByName: existingPayment.paidByName,
+        recurringId: item.id,
+        billingYear: year,
+        billingMonth: month,
+      );
+      CashboxService.registerExpense(
+        batch: batch,
+        db: db,
+        actor: by,
+        adminUid: by.adminUid,
+        expense: oldExpense,
+        expenseId: oldExpense.id,
+        reverse: true,
+      );
+    }
 
     final expense = Expense(
       id: expRef.id,
@@ -213,7 +256,21 @@ class ExpensesRepository {
       expenseId: expRef.id,
     );
 
-    final batch = db.batch();
+    final updatedPaidMonths =
+        Map<String, RecurringExpenseMonthPayment>.from(item.paidMonths)
+          ..[monthKey] = paymentRecord;
+    final updatedItem = RecurringExpense(
+      id: item.id,
+      title: item.title,
+      category: item.category,
+      isFixedAmount: item.isFixedAmount,
+      defaultAmount: item.defaultAmount,
+      currency: item.currency,
+      note: item.note,
+      createdAt: item.createdAt,
+      paidMonths: updatedPaidMonths,
+    );
+
     batch.set(expRef, expense.toMap());
     CashboxService.registerExpense(
       batch: batch,
@@ -227,11 +284,7 @@ class ExpensesRepository {
       _recurringDoc(by.adminUid),
       {
         'items': {
-          item.id: {
-            'paidMonths': {
-              monthKey: paymentRecord.toMap(),
-            },
-          },
+          item.id: updatedItem.toMap(),
         },
         'updatedAt': FieldValue.serverTimestamp(),
       },
@@ -241,11 +294,14 @@ class ExpensesRepository {
       _logger.newEventRef(by),
       _logger.eventData(
         actor: by,
-        action: 'expense.recurring.pay',
+        action: existingPayment != null
+            ? 'expense.recurring.edit'
+            : 'expense.recurring.pay',
         targetType: 'expense',
         targetId: expRef.id,
-        summary:
-            'Paid recurring expense ${item.title} ($month/$year): $amount ${item.currency.code}',
+        summary: existingPayment != null
+            ? 'Edited recurring expense ${item.title} ($month/$year): $amount ${item.currency.code}'
+            : 'Paid recurring expense ${item.title} ($month/$year): $amount ${item.currency.code}',
         after: expense.toMap(),
       ),
     );
@@ -255,7 +311,9 @@ class ExpensesRepository {
       await _notificationsRepo.sendNotification(
         adminUid: by.adminUid,
         recipientUid: 'admin',
-        title: 'تسديد مصروف شهري ثابت',
+        title: existingPayment != null
+            ? 'تعديل تسديد مصروف شهري ثابت'
+            : 'تسديد مصروف شهري ثابت',
         body:
             'قام الموظف ${by.displayName} بتسديد المصروف الشهري (${item.title} - شهر $month/$year) بقيمة $amount ${item.currency.code}',
         type: 'expense_added',
@@ -278,38 +336,81 @@ class ExpensesRepository {
     final payment = item.paymentFor(year, month);
     final batch = db.batch();
 
+    Expense? reversedExpense;
     if (payment?.expenseId != null && payment!.expenseId!.isNotEmpty) {
       final expRef = _col(by.adminUid).doc(payment.expenseId);
       final expSnap =
           await expRef.get().timeout(HistoryLogger.operationTimeout);
       if (expSnap.exists) {
-        final exp = Expense.fromDoc(expSnap);
-        batch.delete(expRef);
-        CashboxService.registerExpense(
-          batch: batch,
-          db: db,
-          actor: by,
-          adminUid: by.adminUid,
-          expense: exp,
-          expenseId: exp.id,
-          reverse: true,
-        );
+        reversedExpense = Expense.fromDoc(expSnap);
+        if (by.isAdmin) {
+          batch.delete(expRef);
+        }
       }
     }
 
+    if (reversedExpense == null && payment != null) {
+      reversedExpense = Expense(
+        id: payment.expenseId ?? '',
+        type: ExpenseEntryType.expense,
+        amount: payment.amount,
+        currency: payment.currency,
+        paidFrom: payment.paidFrom,
+        category: item.category,
+        reason: '${item.title} - شهر $month/$year',
+        date: payment.paidAt,
+        recordedBy: payment.paidBy,
+        recordedByName: payment.paidByName,
+        recurringId: item.id,
+        billingYear: year,
+        billingMonth: month,
+      );
+    }
+
+    if (reversedExpense != null) {
+      CashboxService.registerExpense(
+        batch: batch,
+        db: db,
+        actor: by,
+        adminUid: by.adminUid,
+        expense: reversedExpense,
+        expenseId: reversedExpense.id,
+        reverse: true,
+      );
+    }
+
+    final updatedPaidMonths =
+        Map<String, RecurringExpenseMonthPayment>.from(item.paidMonths)
+          ..remove(monthKey);
+    final updatedItem = RecurringExpense(
+      id: item.id,
+      title: item.title,
+      category: item.category,
+      isFixedAmount: item.isFixedAmount,
+      defaultAmount: item.defaultAmount,
+      currency: item.currency,
+      note: item.note,
+      createdAt: item.createdAt,
+      paidMonths: updatedPaidMonths,
+    );
+
+    final recDocRef = _recurringDoc(by.adminUid);
+    batch.update(recDocRef, {
+      'items.${item.id}': updatedItem.toMap(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+
     batch.set(
-      _recurringDoc(by.adminUid),
-      {
-        'items': {
-          item.id: {
-            'paidMonths': {
-              monthKey: FieldValue.delete(),
-            },
-          },
-        },
-        'updatedAt': FieldValue.serverTimestamp(),
-      },
-      SetOptions(merge: true),
+      _logger.newEventRef(by),
+      _logger.eventData(
+        actor: by,
+        action: 'expense.recurring.unpay',
+        targetType: 'expense',
+        targetId: reversedExpense?.id ?? item.id,
+        summary:
+            'Unpaid recurring expense ${item.title} ($month/$year)',
+        before: reversedExpense?.toMap(),
+      ),
     );
 
     await batch.commit().timeout(HistoryLogger.operationTimeout);
@@ -328,19 +429,10 @@ class ExpensesRepository {
         e.billingYear != null &&
         e.billingMonth != null) {
       final mKey = RecurringExpense.monthKey(e.billingYear!, e.billingMonth!);
-      batch.set(
-        _recurringDoc(by.adminUid),
-        {
-          'items': {
-            e.recurringId!: {
-              'paidMonths': {
-                mKey: FieldValue.delete(),
-              },
-            },
-          },
-        },
-        SetOptions(merge: true),
-      );
+      batch.update(_recurringDoc(by.adminUid), {
+        'items.${e.recurringId}.paidMonths.$mKey': FieldValue.delete(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
     }
     CashboxService.registerExpense(
       batch: batch,
@@ -448,19 +540,11 @@ class ExpensesRepository {
           deletedExpense.billingMonth != null) {
         final mKey = RecurringExpense.monthKey(
             deletedExpense.billingYear!, deletedExpense.billingMonth!);
-        batch.set(
-          _recurringDoc(by.adminUid),
-          {
-            'items': {
-              deletedExpense.recurringId!: {
-                'paidMonths': {
-                  mKey: FieldValue.delete(),
-                },
-              },
-            },
-          },
-          SetOptions(merge: true),
-        );
+        batch.update(_recurringDoc(by.adminUid), {
+          'items.${deletedExpense.recurringId}.paidMonths.$mKey':
+              FieldValue.delete(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
       }
       CashboxService.registerExpense(
         batch: batch,

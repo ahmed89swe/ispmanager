@@ -349,6 +349,61 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen>
                           isAr: isAr,
                         ),
                       ),
+                      onUnpayCurrentMonth: () async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: Text(isAr
+                                ? 'التراجع عن تسديد الشهر'
+                                : 'Undo Month Payment'),
+                            content: Text(
+                              isAr
+                                  ? 'هل تريد التراجع عن تسديد شهر ${now.month}/${now.year} لـ "${item.title}"؟ سيتم إلغاء العملية وإرجاع المبلغ إلى الصندوق.'
+                                  : 'Undo payment for month ${now.month}/${now.year} of "${item.title}"? The amount will be refunded to the cashbox.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: Text(isAr ? 'إلغاء' : 'Cancel'),
+                              ),
+                              FilledButton(
+                                style: FilledButton.styleFrom(
+                                    backgroundColor: Colors.red),
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: Text(isAr
+                                    ? 'تأكيد التراجع'
+                                    : 'Confirm Undo'),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirm != true || !context.mounted) return;
+                        try {
+                          await ref
+                              .read(expensesRepositoryProvider)
+                              .unpayRecurringExpenseMonth(
+                                by: user,
+                                item: item,
+                                year: now.year,
+                                month: now.month,
+                              );
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                isAr
+                                    ? 'تم التراجع عن تسديد شهر ${now.month}/${now.year} وإرجاع المبلغ للصندوق'
+                                    : 'Payment undone and refunded to cashbox',
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('خطأ: $e')),
+                          );
+                        }
+                      },
                       onEdit: () => showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
@@ -1307,6 +1362,7 @@ class _RecurringExpenseCard extends StatelessWidget {
     required this.canPay,
     required this.onOpenMonths,
     required this.onPayCurrentMonth,
+    required this.onUnpayCurrentMonth,
     required this.onEdit,
     required this.onDelete,
   });
@@ -1318,6 +1374,7 @@ class _RecurringExpenseCard extends StatelessWidget {
   final bool canPay;
   final VoidCallback onOpenMonths;
   final VoidCallback onPayCurrentMonth;
+  final VoidCallback onUnpayCurrentMonth;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
@@ -1495,39 +1552,79 @@ class _RecurringExpenseCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (user.isAdmin)
+                  if (user.isAdmin || canPay)
                     PopupMenuButton<String>(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       icon: Icon(Icons.more_vert,
                           size: 19, color: theme.colorScheme.outline),
                       onSelected: (val) {
+                        if (val == 'edit_payment') onPayCurrentMonth();
+                        if (val == 'undo_payment') onUnpayCurrentMonth();
                         if (val == 'edit') onEdit();
                         if (val == 'delete') onDelete();
                       },
                       itemBuilder: (_) => [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.edit_outlined, size: 18),
-                              const SizedBox(width: 8),
-                              Text(l.edit),
-                            ],
+                        if (isPaidThisMonth && (user.isAdmin || canPay)) ...[
+                          PopupMenuItem(
+                            value: 'edit_payment',
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit_note_rounded,
+                                    size: 19, color: theme.colorScheme.primary),
+                                const SizedBox(width: 8),
+                                Text(isAr
+                                    ? 'تعديل تسديد شهر ${now.month}'
+                                    : 'Edit Month ${now.month} Payment'),
+                              ],
+                            ),
                           ),
-                        ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              const Icon(Icons.delete_outline,
-                                  size: 18, color: Colors.red),
-                              const SizedBox(width: 8),
-                              Text(l.delete,
-                                  style: const TextStyle(color: Colors.red)),
-                            ],
+                          PopupMenuItem(
+                            value: 'undo_payment',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.undo_rounded,
+                                    size: 18, color: Colors.orange),
+                                const SizedBox(width: 8),
+                                Text(
+                                  isAr
+                                      ? 'التراجع عن تسديد شهر ${now.month}'
+                                      : 'Undo Month ${now.month} Payment',
+                                  style: TextStyle(
+                                    color: Colors.orange.shade800,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
+                        if (user.isAdmin) ...[
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.edit_outlined, size: 18),
+                                const SizedBox(width: 8),
+                                Text(isAr
+                                    ? 'تعديل بيانات الالتزام'
+                                    : l.edit),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.delete_outline,
+                                    size: 18, color: Colors.red),
+                                const SizedBox(width: 8),
+                                Text(l.delete,
+                                    style: const TextStyle(color: Colors.red)),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                 ],
@@ -1612,17 +1709,74 @@ class _RecurringExpenseCard extends StatelessWidget {
                       ),
                     )
                   else if (isPaidThisMonth)
-                    Text(
-                      CurrencyFormatter.format(
-                        currentPayment.amount,
-                        currentPayment.currency,
-                        locale: locale,
-                      ),
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.green.shade700,
-                      ),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 4,
+                      children: [
+                        Text(
+                          CurrencyFormatter.format(
+                            currentPayment.amount,
+                            currentPayment.currency,
+                            locale: locale,
+                          ),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.green.shade700,
+                          ),
+                        ),
+                        if (user.isAdmin || canPay) ...[
+                          IconButton(
+                            visualDensity: VisualDensity.compact,
+                            constraints: const BoxConstraints(),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 4, vertical: 2),
+                            tooltip: isAr
+                                ? 'تعديل مبلغ التسديد'
+                                : 'Edit Payment Amount',
+                            icon: Icon(
+                              Icons.edit_outlined,
+                              size: 17,
+                              color: theme.colorScheme.primary,
+                            ),
+                            onPressed: onPayCurrentMonth,
+                          ),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(6),
+                            onTap: onUnpayCurrentMonth,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 7, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: Colors.red.withValues(alpha: 0.35),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.undo_rounded,
+                                    size: 13,
+                                    color: Colors.red,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    isAr ? 'تراجع' : 'Undo',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                 ],
               ),
@@ -1932,21 +2086,21 @@ class _RecurringExpenseMonthsDialogState
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
-            widget.isAr ? 'إلغاء تسديد الشهر' : 'Cancel Month Payment'),
+            widget.isAr ? 'التراجع عن تسديد الشهر' : 'Undo Month Payment'),
         content: Text(
           widget.isAr
-              ? 'هل تريد إلغاء تسديد شهر $month/$year لـ "${item.title}"؟ سيتم حذف المصروف المرتبط وإرجاع المبلغ للصندوق.'
+              ? 'هل تريد التراجع عن تسديد شهر $month/$year لـ "${item.title}"؟ سيتم حذف المصروف المرتبط وإرجاع المبلغ للصندوق.'
               : 'Undo payment for month $month/$year of "${item.title}"? The linked expense will be removed and refunded.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(widget.isAr ? 'تراجع' : 'Cancel'),
+            child: Text(widget.isAr ? 'إلغاء' : 'Cancel'),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text(widget.isAr ? 'إلغاء التسديد' : 'Undo Payment'),
+            child: Text(widget.isAr ? 'تأكيد التراجع' : 'Undo Payment'),
           ),
         ],
       ),
@@ -1966,7 +2120,7 @@ class _RecurringExpenseMonthsDialogState
         SnackBar(
           content: Text(
             widget.isAr
-                ? 'تم إلغاء تسديد شهر $month/$year'
+                ? 'تم التراجع عن تسديد شهر $month/$year وإرجاع المبلغ للصندوق'
                 : 'Payment for $month/$year undone',
           ),
         ),
@@ -2219,41 +2373,87 @@ class _RecurringExpenseMonthsDialogState
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           else if (isPaid)
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
+                            Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 4,
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Colors.green.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    widget.isAr ? 'مسدد ✓' : 'Paid ✓',
-                                    style: TextStyle(
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.green.shade800,
-                                    ),
-                                  ),
-                                ),
-                                if (widget.user.isAdmin) ...[
-                                  const SizedBox(width: 4),
+                                if (canPay || widget.user.isAdmin) ...[
                                   IconButton(
                                     visualDensity: VisualDensity.compact,
                                     tooltip: widget.isAr
-                                        ? 'إلغاء التسديد'
-                                        : 'Undo Payment',
-                                    icon: const Icon(
-                                        Icons.replay_rounded,
-                                        size: 18,
-                                        color: Colors.redAccent),
-                                    onPressed: () =>
-                                        _unpayMonth(item, _selectedYear, m),
+                                        ? 'تعديل مبلغ التسديد'
+                                        : 'Edit Payment',
+                                    icon: Icon(
+                                      Icons.edit_outlined,
+                                      size: 18,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                    onPressed: () => showDialog(
+                                      context: context,
+                                      builder: (_) => _PayRecurringMonthDialog(
+                                        item: item,
+                                        year: _selectedYear,
+                                        month: m,
+                                        user: widget.user,
+                                        isAr: widget.isAr,
+                                      ),
+                                    ),
                                   ),
-                                ],
+                                  InkWell(
+                                    borderRadius: BorderRadius.circular(8),
+                                    onTap: () =>
+                                        _unpayMonth(item, _selectedYear, m),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Colors.red.withValues(alpha: 0.12),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: Colors.red
+                                              .withValues(alpha: 0.35),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.undo_rounded,
+                                            size: 14,
+                                            color: Colors.red,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            widget.isAr ? 'تراجع' : 'Undo',
+                                            style: const TextStyle(
+                                              fontSize: 11.5,
+                                              fontWeight: FontWeight.w800,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ] else
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.green.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      widget.isAr ? 'مسدد ✓' : 'Paid ✓',
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.green.shade800,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             )
                           else if (canPay)
@@ -2321,15 +2521,18 @@ class _PayRecurringMonthDialogState
   late MoneyStorage _paidFrom;
   bool _busy = false;
 
+  RecurringExpenseMonthPayment? get _existingPayment =>
+      widget.item.paymentFor(widget.year, widget.month);
+
   @override
   void initState() {
     super.initState();
+    final existing = _existingPayment;
+    final initialAmount = existing?.amount ?? widget.item.defaultAmount;
     _amount = TextEditingController(
-      text: widget.item.defaultAmount > 0
-          ? '${widget.item.defaultAmount}'
-          : '',
+      text: initialAmount > 0 ? '$initialAmount' : '',
     );
-    _paidFrom = MoneyStorage.cashbox;
+    _paidFrom = existing?.paidFrom ?? MoneyStorage.cashbox;
   }
 
   @override
@@ -2368,10 +2571,16 @@ class _PayRecurringMonthDialogState
       return;
     }
 
+    final existing = _existingPayment;
     if (_paidFrom == MoneyStorage.cashbox) {
       final cashbox =
           ref.read(cashboxStreamProvider(widget.user.adminUid)).valueOrNull;
-      final available = cashbox?.balanceFor(widget.item.currency) ?? 0;
+      final currentBalance = cashbox?.balanceFor(widget.item.currency) ?? 0;
+      final refundedFromExisting =
+          (existing != null && existing.paidFrom == MoneyStorage.cashbox)
+              ? existing.amount
+              : 0;
+      final available = currentBalance + refundedFromExisting;
       if (amount > available) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -2400,9 +2609,13 @@ class _PayRecurringMonthDialogState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.isAr
-                ? 'تم تسديد شهر ${widget.month}/${widget.year} لـ "${widget.item.title}"'
-                : 'Paid month ${widget.month}/${widget.year} for "${widget.item.title}"',
+            existing != null
+                ? (widget.isAr
+                    ? 'تم تعديل تسديد شهر ${widget.month}/${widget.year} لـ "${widget.item.title}"'
+                    : 'Updated payment for ${widget.month}/${widget.year}')
+                : (widget.isAr
+                    ? 'تم تسديد شهر ${widget.month}/${widget.year} لـ "${widget.item.title}"'
+                    : 'Paid month ${widget.month}/${widget.year} for "${widget.item.title}"'),
           ),
         ),
       );
@@ -2416,19 +2629,57 @@ class _PayRecurringMonthDialogState
     }
   }
 
+  Future<void> _undoExistingPayment() async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(expensesRepositoryProvider).unpayRecurringExpenseMonth(
+            by: widget.user,
+            item: widget.item,
+            year: widget.year,
+            month: widget.month,
+          );
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.isAr
+                ? 'تم التراجع عن تسديد شهر ${widget.month}/${widget.year} وإرجاع المبلغ للصندوق'
+                : 'Payment undone and refunded to cashbox',
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('خطأ أثناء التراجع: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
     final cashbox =
         ref.watch(cashboxStreamProvider(widget.user.adminUid)).valueOrNull;
-    final availableBalance = cashbox?.balanceFor(widget.item.currency) ?? 0;
+    final existing = _existingPayment;
+    final availableBalance = (cashbox?.balanceFor(widget.item.currency) ?? 0) +
+        ((existing != null && existing.paidFrom == MoneyStorage.cashbox)
+            ? existing.amount
+            : 0);
 
     return AlertDialog(
       title: Text(
-        widget.isAr
-            ? 'تسديد شهر ${widget.month}/${widget.year} — ${widget.item.title}'
-            : 'Pay ${widget.month}/${widget.year} — ${widget.item.title}',
+        existing != null
+            ? (widget.isAr
+                ? 'تعديل تسديد شهر ${widget.month}/${widget.year} — ${widget.item.title}'
+                : 'Edit ${widget.month}/${widget.year} — ${widget.item.title}')
+            : (widget.isAr
+                ? 'تسديد شهر ${widget.month}/${widget.year} — ${widget.item.title}'
+                : 'Pay ${widget.month}/${widget.year} — ${widget.item.title}'),
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
       ),
       content: SingleChildScrollView(
@@ -2438,7 +2689,7 @@ class _PayRecurringMonthDialogState
             TextField(
               controller: _amount,
               keyboardType: TextInputType.number,
-              autofocus: !widget.item.isFixedAmount,
+              autofocus: !widget.item.isFixedAmount || existing != null,
               decoration: InputDecoration(
                 labelText: widget.item.isFixedAmount
                     ? (widget.isAr
@@ -2476,6 +2727,13 @@ class _PayRecurringMonthDialogState
         ),
       ),
       actions: [
+        if (existing != null)
+          TextButton.icon(
+            onPressed: _busy ? null : _undoExistingPayment,
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            icon: const Icon(Icons.undo_rounded, size: 17),
+            label: Text(widget.isAr ? 'إلغاء التسديد' : 'Undo Payment'),
+          ),
         TextButton(
           onPressed: _busy ? null : () => Navigator.pop(context),
           child: Text(l.cancel),
@@ -2489,7 +2747,11 @@ class _PayRecurringMonthDialogState
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.check_circle_outline_rounded, size: 18),
-          label: Text(widget.isAr ? 'تأكيد التسديد' : 'Confirm Payment'),
+          label: Text(
+            existing != null
+                ? (widget.isAr ? 'حفظ التعديل' : 'Save Changes')
+                : (widget.isAr ? 'تأكيد التسديد' : 'Confirm Payment'),
+          ),
         ),
       ],
     );
