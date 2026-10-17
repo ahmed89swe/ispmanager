@@ -10,8 +10,14 @@ import '../subscribers/subscribers_repository.dart';
 import 'advance_subscription_sheet.dart';
 
 class RecordPaymentSheet extends ConsumerStatefulWidget {
-  const RecordPaymentSheet({super.key, required this.subscriber});
+  const RecordPaymentSheet({
+    super.key,
+    required this.subscriber,
+    this.by,
+  });
+
   final Subscriber subscriber;
+  final AppUser? by;
 
   @override
   ConsumerState<RecordPaymentSheet> createState() => _RecordPaymentSheetState();
@@ -78,8 +84,13 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
           .showSnackBar(SnackBar(content: Text(l.invalidAmount)));
       return;
     }
-    final user = ref.read(currentAppUserProvider).valueOrNull;
-    if (user == null) return;
+    final user = widget.by ?? ref.read(currentAppUserProvider).valueOrNull;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l.errorOccurred)),
+      );
+      return;
+    }
     final effectiveReceivedIn =
         (!user.isAdmin && _receivedIn == MoneyStorage.none)
             ? MoneyStorage.cashbox
@@ -111,7 +122,10 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l.errorOccurred}: $e')),
+          SnackBar(
+            backgroundColor: Colors.red.shade700,
+            content: Text('${l.errorOccurred}: $e'),
+          ),
         );
       }
     } finally {
@@ -124,7 +138,7 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
     final isAr = loc.startsWith('ar');
-    final user = ref.watch(currentAppUserProvider).valueOrNull;
+    final user = widget.by ?? ref.watch(currentAppUserProvider).valueOrNull;
     final isAdmin = user?.isAdmin == true;
     return Padding(
       padding: EdgeInsets.only(
@@ -273,7 +287,16 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
                 onPressed: _busy ? null : _save,
                 style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(48)),
-                child: Text(l.save)),
+                child: _busy
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(l.save)),
             const SizedBox(height: 12),
           ],
         ),

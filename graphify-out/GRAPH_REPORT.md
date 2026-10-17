@@ -1,17 +1,17 @@
 # Graph Report - isp_user_manager  (2026-10-17)
 
 ## Corpus Check
-- 102 files · ~118,677 words
+- 102 files · ~118,854 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 58 file(s) not represented in the graph (top: (none) 9, .xcconfig 8, .xml 7)
 
 ## Summary
-- 1972 nodes · 2817 edges · 85 communities (72 shown, 13 thin omitted)
+- 1974 nodes · 2821 edges · 86 communities (69 shown, 17 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `39a6b910`
+- Built from commit: `ad38ebde`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -28,28 +28,28 @@
 - inbox_screen.dart
 - reports_screen.dart
 - package.json
-- suppliersStreamProvider
+- _DashboardScreenState
 - models.dart
 - chat_conversation_screen.dart
-- package:flutter_test/flutter_test.dart
+- app_avatar.dart
 - history_screen.dart
 - login_screen.dart
 - compilerOptions
 - notifications_sheet.dart
 - employees_screen.dart
 - .eslintrc.json
-- package:flutter_riverpod/flutter_riverpod.dart
+- router.dart
 - expenses_repository.dart
 - Cloud Functions
 - chat_repository.dart
 - cashbox_repository.dart
-- employees_repository.dart
+- main.dart
 - ../../l10n/app_localizations.dart
 - manifest.json
 - pdf_report_service.dart
 - authRepositoryProvider
 - auth_repository.dart
-- ../auth/auth_repository.dart
+- currentAppUserProvider
 - app_localizations.dart
 - constants.dart
 - record_payment_sheet.dart
@@ -62,16 +62,16 @@
 - ConsumerState
 - history_repository.dart
 - subscribersRepositoryProvider
-- firebase_service.dart
+- employees_repository.dart
 - app.dart
 - app_theme.dart
-- package:flutter/material.dart
-- auth_utils.dart
+- package:flutter_riverpod/flutter_riverpod.dart
+- employeesStreamProvider
 - StatelessWidget
-- currentAppUserProvider
+- _RefreshOnChange
 - win32_window.cpp
 - utils.cpp
-- ../../core/constants.dart
+- profile_repository.dart
 - MainActivity.kt
 - cashboxStreamProvider
 - advance_subscription_sheet.dart
@@ -80,21 +80,22 @@
 - cashboxRepositoryProvider
 - ../../core/models/models.dart
 - _AdminBottomTabBar
-- build
+- currencyProvider
 - AppLocalizations
 - isp_user_manager
 - LaunchImage.imageset/README.md
 - AppCurrency
 - .MessageHandler
-- _ReportsScreenState
+- _AddSubscriberDebtSheetState
 - Map
 - Point
 - web_notification_helper_web.dart
 - _InboxScreenState
 - web_notification_helper.dart
 - MaterialPageRoute
-- webNotificationsEnabledProvider
+- _SubscriberFormSheetState
 - web_notification_helper_stub.dart
+- _SubscribersScreenState
 
 ## God Nodes (most connected - your core abstractions)
 1. `currentAppUserProvider` - 43 edges
@@ -123,7 +124,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (85 total, 13 thin omitted)
+## Communities (86 total, 17 thin omitted)
 
 ### Community 0 - "cashbox_screen.dart"
 Cohesion: 0.03
@@ -159,7 +160,7 @@ Nodes (31): Card, CashboxScreen, Center, Container, Icon, _Kpi, _kpiGrid, _Legen
 
 ### Community 8 - "suppliers_screen.dart"
 Cohesion: 0.05
-Nodes (43): Center, Container, DefaultTabController, Expanded, launchUrl, ListTile, Padding, SafeArea (+35 more)
+Nodes (38): Center, Container, DefaultTabController, Expanded, launchUrl, ListTile, Padding, SafeArea (+30 more)
 
 ### Community 9 - "inbox_screen.dart"
 Cohesion: 0.04
@@ -173,9 +174,9 @@ Nodes (55): actionsRow, Card, Column, fmt, ListView, Padding, PdfReportService, 
 Cohesion: 0.06
 Nodes (34): dependencies, firebase-admin, firebase-functions, devDependencies, eslint, typescript, @typescript-eslint/eslint-plugin, @typescript-eslint/parser (+26 more)
 
-### Community 12 - "suppliersStreamProvider"
-Cohesion: 0.24
-Nodes (10): _supplierNames, subscribersStreamProvider, build, _exportDebtsReport, SubscriberFormSheet, _SubscriberFormSheetState, SubscribersScreen, _SubscribersScreenState (+2 more)
+### Community 12 - "_DashboardScreenState"
+Cohesion: 0.25
+Nodes (14): build, DashboardScreen, _DashboardScreenState, expensesStreamProvider, paymentsRepositoryProvider, build, ReportsScreen, _ReportsScreenState (+6 more)
 
 ### Community 13 - "models.dart"
 Cohesion: 0.01
@@ -185,9 +186,9 @@ Nodes (134): action, active, actorName, actorPhotoUrl, actorRole, actorUid, admi
 Cohesion: 0.06
 Nodes (31): Align, Center, Container, Padding, SafeArea, Scaffold, SizedBox, Text (+23 more)
 
-### Community 15 - "package:flutter_test/flutter_test.dart"
-Cohesion: 0.12
-Nodes (7): initializeDateFormatting, main, main, main, main, main, main
+### Community 15 - "app_avatar.dart"
+Cohesion: 0.06
+Nodes (19): initializeDateFormatting, buildEmployeeEmail, bytes, cleanAdmin, cleanUser, hash, AppAvatar, build (+11 more)
 
 ### Community 16 - "history_screen.dart"
 Cohesion: 0.12
@@ -202,20 +203,20 @@ Cohesion: 0.12
 Nodes (15): compilerOptions, esModuleInterop, lib, module, moduleResolution, noImplicitAny, noImplicitReturns, outDir (+7 more)
 
 ### Community 19 - "notifications_sheet.dart"
-Cohesion: 0.13
-Nodes (13): Center, Column, Dismissible, Divider, DraggableScrollableSheet, Icon, showModalBottomSheet, SizedBox (+5 more)
+Cohesion: 0.11
+Nodes (17): Center, Column, Dismissible, Divider, DraggableScrollableSheet, Icon, showModalBottomSheet, SizedBox (+9 more)
 
 ### Community 20 - "employees_screen.dart"
-Cohesion: 0.08
-Nodes (27): Center, ListTile, Padding, Scaffold, SizedBox, SnackBar, Employee, employeesRepositoryProvider (+19 more)
+Cohesion: 0.09
+Nodes (26): Center, ListTile, Padding, Scaffold, SizedBox, SnackBar, Employee, employeesRepositoryProvider (+18 more)
 
 ### Community 21 - ".eslintrc.json"
 Cohesion: 0.12
 Nodes (16): env, es2020, node, extends, ignorePatterns, parser, parserOptions, ecmaVersion (+8 more)
 
-### Community 22 - "package:flutter_riverpod/flutter_riverpod.dart"
-Cohesion: 0.17
-Nodes (5): GoRouter, Scaffold, build, _RefreshOnChange, authStateProvider
+### Community 22 - "router.dart"
+Cohesion: 0.18
+Nodes (4): GoRouter, Scaffold, _AuthLoadingScreen, build
 
 ### Community 23 - "expenses_repository.dart"
 Cohesion: 0.06
@@ -226,20 +227,20 @@ Cohesion: 0.22
 Nodes (8): Cloud Functions, `createEmployee` (callable), Deploy, Functions, Local emulator, `onSupplierPaymentRequestCreate` (Firestore trigger), `onSupplierPaymentRequestUpdated` (Firestore trigger), Setup
 
 ### Community 25 - "chat_repository.dart"
-Cohesion: 0.06
-Nodes (28): StateError, StateError, dart:io, _chatDoc, ChatRepository, _db, _imageContentType, markMessagesAsRead (+20 more)
+Cohesion: 0.11
+Nodes (17): StateError, _chatDoc, ChatRepository, _db, _imageContentType, markMessagesAsRead, _messagesCol, _notificationsRepo (+9 more)
 
 ### Community 26 - "cashbox_repository.dart"
 Cohesion: 0.06
 Nodes (31): Exception, extractBalance, authUser, balanceFor, balances, cashboxDebtToStaff, cashboxDebtToStaffFor, cashboxDebtToStaffForUid (+23 more)
 
-### Community 27 - "employees_repository.dart"
-Cohesion: 0.11
-Nodes (17): authUser, _col, create, _db, delete, EmployeesRepository, _imageContentType, _logger (+9 more)
+### Community 27 - "main.dart"
+Cohesion: 0.17
+Nodes (5): _firebaseMessagingBackgroundHandler, init, main, prefs, setPreferredOrientations
 
 ### Community 28 - "../../l10n/app_localizations.dart"
-Cohesion: 0.12
-Nodes (12): launchUrl, Padding, PopScope, SizedBox, Spacer, _Body, build, info (+4 more)
+Cohesion: 0.13
+Nodes (11): launchUrl, Padding, PopScope, SizedBox, Spacer, build, info, _openDownload (+3 more)
 
 ### Community 29 - "manifest.json"
 Cohesion: 0.18
@@ -250,16 +251,16 @@ Cohesion: 0.04
 Nodes (40): _bold, _buildCustomFooter, _buildCustomHeader, _buildEmptyBox, _buildFooter, _buildHeader, _buildInfoItem, _buildKpiCard (+32 more)
 
 ### Community 31 - "authRepositoryProvider"
-Cohesion: 0.23
-Nodes (9): authRepositoryProvider, _employeeSignIn, _googleSignIn, AdminShell, _AdminShellState, _buildDesktopShell, _buildMobileShell, _buildHeaderGreeting (+1 more)
+Cohesion: 0.17
+Nodes (12): authRepositoryProvider, _employeeSignIn, _googleSignIn, AdminShell, _AdminShellState, build, _buildDesktopShell, _buildMobileShell (+4 more)
 
 ### Community 32 - "auth_repository.dart"
 Cohesion: 0.10
-Nodes (17): AppUser, GoogleSignIn, StateError, addFcmToken, _auth, authStateChanges, currentAppUser, currentAppUserStream (+9 more)
+Nodes (18): AppUser, GoogleSignIn, StateError, addFcmToken, _auth, authStateChanges, currentAppUser, currentAppUserStream (+10 more)
 
-### Community 33 - "../auth/auth_repository.dart"
-Cohesion: 0.15
-Nodes (12): ListView, Scaffold, SizedBox, profileRepositoryProvider, _busy, createState, dispose, _initialized (+4 more)
+### Community 33 - "currentAppUserProvider"
+Cohesion: 0.10
+Nodes (22): ListView, Scaffold, SizedBox, dart:io, currentAppUserProvider, build, build, _submit (+14 more)
 
 ### Community 34 - "app_localizations.dart"
 Cohesion: 0.01
@@ -270,8 +271,8 @@ Cohesion: 0.09
 Nodes (19): all, code, ExpenseCategory, ExpenseEntryType, fromCode, fromName, manageSupplierPurchases, MoneyStorage (+11 more)
 
 ### Community 36 - "record_payment_sheet.dart"
-Cohesion: 0.11
-Nodes (16): Padding, SizedBox, Subscriber, _amount, _busy, createState, dispose, initState (+8 more)
+Cohesion: 0.10
+Nodes (16): Padding, SizedBox, AppUser, AuthRepository, _amount, _busy, by, createState (+8 more)
 
 ### Community 37 - "notifications_repository.dart"
 Cohesion: 0.15
@@ -299,43 +300,35 @@ Nodes (30): StateError, add, addBalanceTransaction, addPackage, addPurchase, app
 
 ### Community 43 - "ConsumerState"
 Cohesion: 0.14
-Nodes (21): DashboardScreen, _DashboardScreenState, PermissionsSheet, _PermissionsSheetState, RecurringExpenseFormSheet, _RecurringExpenseFormSheetState, _RecurringExpenseMonthsDialog, _RecurringExpenseMonthsDialogState (+13 more)
+Nodes (19): RecurringExpenseFormSheet, _RecurringExpenseFormSheetState, _RecurringExpenseMonthsDialog, _RecurringExpenseMonthsDialogState, RecordPaymentSheet, _RecordPaymentSheetState, suppliersRepositoryProvider, PackageFormSheet (+11 more)
 
 ### Community 44 - "history_repository.dart"
 Cohesion: 0.08
 Nodes (21): StateError, now, null, tsToDate, authUser, _db, eventData, _expenseIdFromDeleteRequestEvent (+13 more)
 
 ### Community 45 - "subscribersRepositoryProvider"
-Cohesion: 0.10
-Nodes (20): _syncDueDebts, _buildBody, subscribersRepositoryProvider, AddSubscriberDebtSheet, _AddSubscriberDebtSheetState, _confirmAndDeleteDebt, _confirmAndPayDebt, _confirmAndUnpayDebt (+12 more)
+Cohesion: 0.12
+Nodes (18): _syncDueDebts, _buildBody, subscribersRepositoryProvider, _confirmAndDeleteDebt, _confirmAndPayDebt, _confirmAndUnpayDebt, _exportStatement, _exportSubscriberStatement (+10 more)
 
-### Community 46 - "firebase_service.dart"
+### Community 46 - "employees_repository.dart"
 Cohesion: 0.06
-Nodes (19): UnsupportedError, firebaseAuthProvider, firebaseMessagingProvider, FirebaseService, firebaseStorageProvider, firestoreProvider, init, initialized (+11 more)
+Nodes (30): UnsupportedError, firebaseAuthProvider, firebaseMessagingProvider, FirebaseService, firebaseStorageProvider, firestoreProvider, init, initialized (+22 more)
 
 ### Community 47 - "app.dart"
 Cohesion: 0.12
-Nodes (8): CircularProgressIndicator, Icon, MaterialApp, Scaffold, SizedBox, UpdateScreen, message, onRetry
+Nodes (9): CircularProgressIndicator, Icon, MaterialApp, Scaffold, SizedBox, UpdateScreen, message, onRetry (+1 more)
 
 ### Community 48 - "app_theme.dart"
 Cohesion: 0.06
 Nodes (25): AppTheme, cardBorderColor, cardColor, cardDecoration, dark, darkBorder, darkCard, darkCardBorderColor (+17 more)
 
-### Community 49 - "package:flutter/material.dart"
-Cohesion: 0.13
-Nodes (8): showFullScreenImage, AppAvatar, build, fontSize, name, photoUrl, radius, main
-
-### Community 50 - "auth_utils.dart"
-Cohesion: 0.29
-Nodes (5): buildEmployeeEmail, bytes, cleanAdmin, cleanUser, hash
+### Community 50 - "employeesStreamProvider"
+Cohesion: 0.33
+Nodes (7): employeesStreamProvider, build, cashboxLedgerStreamProvider, build, _buildAdminStaffDebtsTab, CashboxScreen, _CashboxScreenState
 
 ### Community 51 - "StatelessWidget"
-Cohesion: 0.13
-Nodes (14): _SplashScreen, _UpdateCheckErrorScreen, _AuthLoadingScreen, _FeatureChip, _AdminBottomTabItem, _AvatarMini, _ChartLegend, _ModernKpiCard (+6 more)
-
-### Community 52 - "currentAppUserProvider"
-Cohesion: 0.18
-Nodes (13): currentAppUserProvider, build, notificationsRepositoryProvider, notificationsStreamProvider, build, NotificationsSheet, build, _submit (+5 more)
+Cohesion: 0.14
+Nodes (13): _UpdateCheckErrorScreen, _Body, _FeatureChip, _AdminBottomTabItem, _AvatarMini, _ChartLegend, _ModernKpiCard, _QuickActionButton (+5 more)
 
 ### Community 53 - "win32_window.cpp"
 Cohesion: 0.18
@@ -345,13 +338,17 @@ Nodes (5): Scale(), Win32Window::Win32Window(), WindowClassRegistrar, class_regi
 Cohesion: 0.19
 Nodes (4): wWinMain(), CreateAndAttachConsole(), GetCommandLineArguments(), Utf8FromUtf16()
 
+### Community 55 - "profile_repository.dart"
+Cohesion: 0.13
+Nodes (10): StateError, _auth, _db, _imageContentType, ProfileRepository, removeAvatar, _storage, updateDisplayName (+2 more)
+
 ### Community 58 - "cashboxStreamProvider"
 Cohesion: 0.16
 Nodes (15): expensesRepositoryProvider, recurringExpensesStreamProvider, build, _deleteExpense, ExpenseFormSheet, _ExpenseFormSheetState, ExpensesScreen, _ExpensesScreenState (+7 more)
 
 ### Community 59 - "advance_subscription_sheet.dart"
 Cohesion: 0.11
-Nodes (15): AdvanceSubscriptionSheet, _AdvanceSubscriptionSheetState, _amountController, _busy, createState, _cycles, dispose, initState (+7 more)
+Nodes (17): Subscriber, AdvanceSubscriptionSheet, _AdvanceSubscriptionSheetState, _amountController, _busy, by, createState, _cycles (+9 more)
 
 ### Community 60 - "Win32Window"
 Cohesion: 0.24
@@ -366,24 +363,20 @@ Cohesion: 0.25
 Nodes (8): cashboxRepositoryProvider, _ClaimReimbursementRequestSheet, _ClaimReimbursementRequestSheetState, _DirectAdjustmentSheet, _DirectAdjustmentSheetState, _SettleStaffDebtSheet, _SettleStaffDebtSheetState, _submit
 
 ### Community 63 - "../../core/models/models.dart"
-Cohesion: 0.14
-Nodes (8): AppUser, _authRepo, init, _messaging, NotificationService, syncUserToken, _tokenRefreshSub, AuthRepository
+Cohesion: 0.17
+Nodes (6): _authRepo, init, _messaging, NotificationService, syncUserToken, _tokenRefreshSub
 
 ### Community 64 - "_AdminBottomTabBar"
 Cohesion: 0.40
 Nodes (4): _AdminBottomTabBar, _AdminBottomTabBarState, _EmployeeAccountStatementSheet, _EmployeeAccountStatementSheetState
 
-### Community 65 - "build"
-Cohesion: 0.40
-Nodes (11): build, IspUserManagerApp, _MainAppRouter, routerProvider, notificationServiceProvider, appUpdateProvider, build, SettingsScreen (+3 more)
+### Community 65 - "currencyProvider"
+Cohesion: 0.36
+Nodes (12): build, IspUserManagerApp, _MainAppRouter, routerProvider, notificationServiceProvider, appUpdateProvider, build, SettingsScreen (+4 more)
 
 ### Community 70 - "AppCurrency"
-Cohesion: 0.25
-Nodes (6): AppColorTheme, AppCurrency, CurrencyNotifier, LocaleNotifier, WebColorThemeNotifier, WebNotificationsEnabledNotifier
-
-### Community 76 - "_ReportsScreenState"
-Cohesion: 0.47
-Nodes (6): build, expensesStreamProvider, paymentsRepositoryProvider, build, ReportsScreen, _ReportsScreenState
+Cohesion: 0.20
+Nodes (7): AppColorTheme, AppCurrency, CurrencyNotifier, LocaleNotifier, ThemeModeNotifier, WebColorThemeNotifier, WebNotificationsEnabledNotifier
 
 ### Community 78 - "Point"
 Cohesion: 0.21
@@ -405,33 +398,29 @@ Nodes (4): getPermission, requestPermission, showNotification, WebNotificationHe
 Cohesion: 0.33
 Nodes (5): _buildEmployeeDashboardCard, _buildGeneralCashboxSummaryCard, _buildHeroLiquidityCard, _buildQuickActions, _openImagePreview
 
-### Community 83 - "webNotificationsEnabledProvider"
-Cohesion: 0.67
-Nodes (3): build, initState, webNotificationsEnabledProvider
-
 ### Community 84 - "web_notification_helper_stub.dart"
 Cohesion: 0.50
 Nodes (3): getWebNotificationPermissionImpl, requestWebNotificationPermissionImpl, showWebBrowserNotificationImpl
 
 ## Knowledge Gaps
-- **1255 isolated node(s):** `eslint:recommended`, `plugin:@typescript-eslint/recommended`, `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser`, `eslint` (+1250 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1468 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1257 isolated node(s):** `eslint:recommended`, `plugin:@typescript-eslint/recommended`, `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser`, `eslint` (+1252 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1470 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `AppCurrency` connect `AppCurrency` to `cashbox_screen.dart`, `expenses_screen.dart`, `constants.dart`, `subscribers_screen.dart`, `suppliers_screen.dart`, `inbox_screen.dart`, `reports_screen.dart`, `models.dart`, `../../core/constants.dart`, `pdf_report_service.dart`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Why does `Win32Window` connect `Win32Window` to `.MessageHandler`, `FlutterWindow`, `Point`, `win32_window.cpp`, `string`?**
+  _High betweenness centrality (0.034) - this node is a cross-community bridge._
 - **What connects `eslint:recommended`, `plugin:@typescript-eslint/recommended`, `@typescript-eslint/eslint-plugin` to the rest of the system?**
-  _1255 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1257 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `cashbox_screen.dart` be split into smaller, more focused modules?**
   _Cohesion score 0.02702702702702703 - nodes in this community are weakly interconnected._
-- **Why does `Win32Window` connect `Win32Window` to `.MessageHandler`, `FlutterWindow`, `Point`, `win32_window.cpp`, `string`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+- **Why does `AppCurrency` connect `AppCurrency` to `cashbox_screen.dart`, `expenses_screen.dart`, `constants.dart`, `subscribers_screen.dart`, `suppliers_screen.dart`, `inbox_screen.dart`, `reports_screen.dart`, `models.dart`, `package:flutter_riverpod/flutter_riverpod.dart`, `pdf_report_service.dart`?**
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
 - **Should `my_application.cc` be split into smaller, more focused modules?**
   _Cohesion score 0.05426356589147287 - nodes in this community are weakly interconnected._
-- **Why does `AppUser` connect `../../core/models/models.dart` to `cashbox_screen.dart`, `expenses_screen.dart`, `admin_shell.dart`, `subscribers_screen.dart`, `suppliers_screen.dart`, `models.dart`, `employees_screen.dart`?**
-  _High betweenness centrality (0.013) - this node is a cross-community bridge._
+- **Why does `AppUser` connect `record_payment_sheet.dart` to `cashbox_screen.dart`, `expenses_screen.dart`, `admin_shell.dart`, `subscribers_screen.dart`, `suppliers_screen.dart`, `models.dart`, `employees_screen.dart`, `advance_subscription_sheet.dart`?**
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **Should `expenses_screen.dart` be split into smaller, more focused modules?**
   _Cohesion score 0.02857142857142857 - nodes in this community are weakly interconnected._

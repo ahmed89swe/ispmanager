@@ -442,12 +442,15 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                                         context: context,
                                         isScrollControlled: true,
                                         builder: (_) => RecordPaymentSheet(
-                                            subscriber: subscriber),
+                                          subscriber: subscriber,
+                                          by: user,
+                                        ),
                                       );
                                     },
                                     onPayAdvance: () =>
                                         AdvanceSubscriptionSheet.show(
-                                            context, subscriber),
+                                            context, subscriber,
+                                            by: user),
                                     onToggleAutoRenew: () async {
                                       await ref
                                           .read(subscribersRepositoryProvider)
@@ -1312,7 +1315,8 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                             icon: const Icon(Icons.event_repeat_rounded,
                                 color: Color(0xFF1976D2)),
                             onPressed: () => AdvanceSubscriptionSheet.show(
-                                context, subscriber),
+                                context, subscriber,
+                                by: by),
                           ),
                         IconButton(
                           tooltip: 'تصدير كشف حساب المشترك (PDF)',
@@ -1539,13 +1543,39 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                         ListTile(
                           leading: const Icon(Icons.account_balance_wallet),
                           title: Text(l.totalDebts),
-                          trailing: Text(
-                            CurrencyFormatter.format(
-                              totalDebt,
-                              subscriber.currency,
-                              locale: loc,
-                            ),
-                            style: Theme.of(context).textTheme.titleMedium,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                CurrencyFormatter.format(
+                                  totalDebt,
+                                  subscriber.currency,
+                                  locale: loc,
+                                ),
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              if (totalDebt > 0 &&
+                                  by.can(Permission.recordSubscriberPayment)) ...[
+                                const SizedBox(width: 8),
+                                FilledButton.tonalIcon(
+                                  style: FilledButton.styleFrom(
+                                    visualDensity: VisualDensity.compact,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 4),
+                                  ),
+                                  onPressed: () => showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (_) => RecordPaymentSheet(
+                                      subscriber: subscriber,
+                                      by: by,
+                                    ),
+                                  ),
+                                  icon: const Icon(Icons.payment, size: 16),
+                                  label: Text(l.recordPayment),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                         TabBar(tabs: [
@@ -1740,17 +1770,28 @@ class _SubscriberDebtsTab extends ConsumerWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      await ref.read(subscribersRepositoryProvider).markDebtPaid(
-            by,
-            subscriber,
-            debt,
-            receivedIn: selectedDestination,
-            paidAt: selectedPaidDate,
+      try {
+        await ref.read(subscribersRepositoryProvider).markDebtPaid(
+              by,
+              subscriber,
+              debt,
+              receivedIn: selectedDestination,
+              paidAt: selectedPaidDate,
+            );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l.saved)),
           );
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l.saved)),
-        );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red.shade700,
+              content: Text('${l.errorOccurred}: $e'),
+            ),
+          );
+        }
       }
     }
   }

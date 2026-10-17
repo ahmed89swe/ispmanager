@@ -524,16 +524,19 @@ class SubscribersRepository {
       'paidAt': Timestamp.fromDate(paymentDate),
       'paidBy': by.uid,
     });
+    final subSnap = await subRef.get();
+    final currentBalance =
+        (subSnap.data()?['balance'] ?? subscriber.balance) as num;
     final nextBalance =
-        (subscriber.balance - remainingDue).clamp(0, double.infinity);
-    batch.update(subRef, {
+        (currentBalance - remainingDue).clamp(0, double.infinity);
+    batch.set(subRef, {
       'balance': nextBalance,
       'status': nextBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name,
       'lastPaymentAmount': remainingDue,
       'lastPaymentAt': Timestamp.fromDate(paymentDate),
-    });
+    }, SetOptions(merge: true));
     CashboxService.registerSubscriptionPayment(
       batch: batch,
       db: db,
@@ -545,39 +548,44 @@ class SubscribersRepository {
       subscriberName: subscriber.name,
     );
     await batch.commit();
-    await _logger.log(
-      actor: by,
-      action: 'subscriber.debt.pay',
-      targetType: 'subscriberDebt',
-      targetId: debt.id,
-      summary:
-          'Paid debt ${debt.amount} ${debt.currency.code} for ${subscriber.name}',
-      before: {
-        'subscriberId': subscriber.id,
-        'subscriberName': subscriber.name,
-        'subscriberBalance': subscriber.balance,
-        'subscriberStatus': subscriber.status.name,
-        'debt': debt.toMap(),
-      },
-      after: {
-        ...payment.toMap(),
-        'paymentId': paymentRef.id,
-        'debtId': debt.id,
-        'subscriberName': subscriber.name,
-      },
-    );
-
-    if (!by.isAdmin && _notificationsRepo != null) {
-      await _notificationsRepo.sendNotification(
-        adminUid: by.adminUid,
-        recipientUid: 'admin',
-        title: 'تسديد دين مشترك',
-        body: 'قام الموظف ${by.displayName} بتسديد دين بقيمة $remainingDue ${debt.currency.code} للمشترك: ${subscriber.name}',
-        type: 'subscriber_payment',
+    try {
+      await _logger.log(
         actor: by,
-        targetId: subscriber.id,
-        targetType: 'subscriber',
+        action: 'subscriber.debt.pay',
+        targetType: 'subscriberDebt',
+        targetId: debt.id,
+        summary:
+            'Paid debt ${debt.amount} ${debt.currency.code} for ${subscriber.name}',
+        before: {
+          'subscriberId': subscriber.id,
+          'subscriberName': subscriber.name,
+          'subscriberBalance': currentBalance,
+          'subscriberStatus': subscriber.status.name,
+          'debt': debt.toMap(),
+        },
+        after: {
+          ...payment.toMap(),
+          'paymentId': paymentRef.id,
+          'debtId': debt.id,
+          'subscriberName': subscriber.name,
+        },
       );
+
+      if (!by.isAdmin && _notificationsRepo != null) {
+        await _notificationsRepo.sendNotification(
+          adminUid: by.adminUid,
+          recipientUid: 'admin',
+          title: 'تسديد دين مشترك',
+          body:
+              'قام الموظف ${by.displayName} بتسديد دين بقيمة $remainingDue ${debt.currency.code} للمشترك: ${subscriber.name}',
+          type: 'subscriber_payment',
+          actor: by,
+          targetId: subscriber.id,
+          targetType: 'subscriber',
+        );
+      }
+    } catch (e) {
+      debugPrint('Non-fatal error logging debt payment: $e');
     }
   }
 
@@ -1059,14 +1067,14 @@ class SubscribersRepository {
 
     final newBalance =
         (currentBalance - payment.amount).clamp(0, double.infinity);
-    batch.update(subRef, {
+    batch.set(subRef, {
       'balance': newBalance,
       'status': newBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name,
       'lastPaymentAmount': payment.amount,
       'lastPaymentAt': Timestamp.fromDate(payment.recordedAt),
-    });
+    }, SetOptions(merge: true));
 
     CashboxService.registerSubscriptionPayment(
       batch: batch,

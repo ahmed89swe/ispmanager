@@ -9,16 +9,28 @@ import '../auth/auth_repository.dart';
 import '../subscribers/subscribers_repository.dart';
 
 class AdvanceSubscriptionSheet extends ConsumerStatefulWidget {
-  const AdvanceSubscriptionSheet({super.key, required this.subscriber});
+  const AdvanceSubscriptionSheet({
+    super.key,
+    required this.subscriber,
+    this.by,
+  });
 
   final Subscriber subscriber;
+  final AppUser? by;
 
-  static Future<void> show(BuildContext context, Subscriber subscriber) {
+  static Future<void> show(
+    BuildContext context,
+    Subscriber subscriber, {
+    AppUser? by,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => AdvanceSubscriptionSheet(subscriber: subscriber),
+      builder: (_) => AdvanceSubscriptionSheet(
+        subscriber: subscriber,
+        by: by,
+      ),
     );
   }
 
@@ -96,8 +108,13 @@ class _AdvanceSubscriptionSheetState
       return;
     }
 
-    final user = ref.read(currentAppUserProvider).valueOrNull;
-    if (user == null) return;
+    final user = widget.by ?? ref.read(currentAppUserProvider).valueOrNull;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l.errorOccurred)),
+      );
+      return;
+    }
 
     setState(() => _busy = true);
     try {
@@ -377,7 +394,9 @@ class _AdvanceSubscriptionSheetState
                   value: MoneyStorage.personal,
                   child: Text(l.t('keptByCollectorDebt')),
                 ),
-                if (ref.watch(currentAppUserProvider).valueOrNull?.isAdmin ==
+                if ((widget.by ??
+                        ref.watch(currentAppUserProvider).valueOrNull)
+                    ?.isAdmin ==
                     true)
                   DropdownMenuItem(
                     value: MoneyStorage.none,

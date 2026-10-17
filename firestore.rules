@@ -73,24 +73,28 @@ service cloud.firestore {
       // Subscribers
       match /subscribers/{subId} {
         allow read: if isMember(adminUid);
-        allow create: if hasPerm(adminUid, 'addSubscriber');
-        allow update: if hasPerm(adminUid, 'editSubscriber')
+        allow create: if isAdmin(adminUid) || hasPerm(adminUid, 'addSubscriber');
+        allow update: if isAdmin(adminUid)
+                       || hasPerm(adminUid, 'editSubscriber')
                        || hasPerm(adminUid, 'recordSubscriberPayment'); // balance updates via payment tx
-        allow delete: if hasPerm(adminUid, 'deleteSubscriber');
+        allow delete: if isAdmin(adminUid) || hasPerm(adminUid, 'deleteSubscriber');
 
         // Payments under a subscriber
         match /payments/{payId} {
           allow read: if isMember(adminUid);
-          allow create: if hasPerm(adminUid, 'recordSubscriberPayment')
-                         && request.resource.data.recordedBy == uid();
+          allow create: if isAdmin(adminUid)
+                         || (hasPerm(adminUid, 'recordSubscriberPayment')
+                             && request.resource.data.recordedBy == uid());
           allow update, delete: if isAdmin(adminUid);
         }
 
         match /debts/{debtId} {
           allow read: if isMember(adminUid);
-          allow create: if hasPerm(adminUid, 'editSubscriber')
+          allow create: if isAdmin(adminUid)
+                         || hasPerm(adminUid, 'editSubscriber')
                          || hasPerm(adminUid, 'recordSubscriberPayment');
-          allow update: if hasPerm(adminUid, 'editSubscriber')
+          allow update: if isAdmin(adminUid)
+                         || hasPerm(adminUid, 'editSubscriber')
                          || hasPerm(adminUid, 'recordSubscriberPayment');
           allow delete: if isAdmin(adminUid);
         }
@@ -186,9 +190,9 @@ service cloud.firestore {
 
       // History (append-only audit log)
       match /history/{evId} {
-        allow read: if hasPerm(adminUid, 'viewHistory') || isAdmin(adminUid);
-        allow create: if isMember(adminUid)
-                       && request.resource.data.actor.uid == uid();
+        allow read: if isAdmin(adminUid) || hasPerm(adminUid, 'viewHistory');
+        allow create: if isAdmin(adminUid)
+                       || (isMember(adminUid) && request.resource.data.actor.uid == uid());
         allow update, delete: if false;
       }
 
