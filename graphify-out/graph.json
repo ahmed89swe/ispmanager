@@ -26,63 +26,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "flutterwindow",
       "source_file": "windows/runner/flutter_window.h",
       "source_location": "L12"
-    },
-    {
-      "id": "windows_runner_win32_window_point",
-      "label": "Point",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "point",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L15"
-    },
-    {
-      "id": "windows_runner_win32_window_size",
-      "label": "Size",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "size",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L21"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window",
-      "label": "Win32Window",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "win32window",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L13"
-    },
-    {
-      "id": "windows_runner_win32_window_windowclassregistrar",
-      "label": "WindowClassRegistrar",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "windowclassregistrar",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L59"
     },
     {
       "id": "ios_runner_appdelegate_appdelegate",
@@ -150,6 +98,19 @@
       "source_location": "L5"
     },
     {
+      "id": "windows_runner_win32_window_windowclassregistrar",
+      "label": "WindowClassRegistrar",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "file_type": "code",
+      "norm_label": "windowclassregistrar",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L59"
+    },
+    {
       "id": "android_app_src_main_kotlin_com_isp_user_manager_mainactivity_mainactivity",
       "label": "MainActivity",
       "_callable": true,
@@ -161,6 +122,45 @@
       "norm_label": "mainactivity",
       "source_file": "android/app/src/main/kotlin/com/isp_user_manager/MainActivity.kt",
       "source_location": "L11"
+    },
+    {
+      "id": "windows_runner_win32_window_size",
+      "label": "Size",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "size",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L21"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window",
+      "label": "Win32Window",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "win32window",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L13"
+    },
+    {
+      "id": "windows_runner_win32_window_point",
+      "label": "Point",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "Point",
+      "file_type": "code",
+      "norm_label": "point",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L15"
     },
     {
       "id": "linux_flutter_generated_plugin_registrant_fl_register_plugins",
@@ -307,26 +307,12 @@
       "source_location": "L30"
     },
     {
-      "id": "windows_runner_flutter_window_flutterwindow_oncreate",
-      "label": ".OnCreate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/flutter_window.cpp",
-      "definition_location": "L12",
-      "file_type": "code",
-      "norm_label": ".oncreate()",
-      "source_file": "windows/runner/flutter_window.h",
-      "source_location": "L20"
-    },
-    {
       "id": "windows_runner_flutter_window_flutterwindow_ondestroy",
       "label": ".OnDestroy()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "definition_file": "windows/runner/flutter_window.cpp",
       "definition_location": "L42",
       "file_type": "code",
@@ -340,7 +326,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "definition_file": "windows/runner/flutter_window.cpp",
       "definition_location": "L50",
       "file_type": "code",
@@ -349,166 +335,12 @@
       "source_location": "L22"
     },
     {
-      "id": "windows_runner_win32_window_win32window_create",
-      "label": ".Create()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L123",
-      "file_type": "code",
-      "norm_label": ".create()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L37"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_show",
-      "label": ".Show()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L152",
-      "file_type": "code",
-      "norm_label": ".show()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L40"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_wndproc",
-      "label": ".WndProc()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L157",
-      "file_type": "code",
-      "norm_label": ".wndproc()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L82"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_messagehandler",
-      "label": ".MessageHandler()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L176",
-      "file_type": "code",
-      "norm_label": ".messagehandler()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L62"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_destroy",
-      "label": ".Destroy()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L224",
-      "file_type": "code",
-      "norm_label": ".destroy()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L43"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_getthisfromhandle",
-      "label": ".GetThisFromHandle()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L236",
-      "file_type": "code",
-      "norm_label": ".getthisfromhandle()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L88"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_setchildcontent",
-      "label": ".SetChildContent()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L241",
-      "file_type": "code",
-      "norm_label": ".setchildcontent()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L46"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_getclientarea",
-      "label": ".GetClientArea()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L252",
-      "file_type": "code",
-      "norm_label": ".getclientarea()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L56"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_gethandle",
-      "label": ".GetHandle()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L258",
-      "file_type": "code",
-      "norm_label": ".gethandle()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L50"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_setquitonclose",
-      "label": ".SetQuitOnClose()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L262",
-      "file_type": "code",
-      "norm_label": ".setquitonclose()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L53"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_oncreate",
-      "label": ".OnCreate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L266",
-      "file_type": "code",
-      "norm_label": ".oncreate()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L69"
-    },
-    {
       "id": "windows_runner_win32_window_win32window_ondestroy",
       "label": ".OnDestroy()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "definition_file": "windows/runner/win32_window.cpp",
       "definition_location": "L271",
       "file_type": "code",
@@ -517,138 +349,16 @@
       "source_location": "L72"
     },
     {
-      "id": "windows_runner_win32_window_win32window_updatetheme",
-      "label": ".UpdateTheme()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "definition_file": "windows/runner/win32_window.cpp",
-      "definition_location": "L275",
-      "file_type": "code",
-      "norm_label": ".updatetheme()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L91"
-    },
-    {
       "id": "windows_runner_flutter_window_flutterwindow_flutterwindow",
       "label": "FlutterWindow::FlutterWindow()",
       "_callable": true,
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "flutterwindow::flutterwindow()",
       "source_file": "windows/runner/flutter_window.cpp",
       "source_location": "L7"
-    },
-    {
-      "id": "windows_runner_win32_window_enablefulldpisupportifavailable",
-      "label": "EnableFullDpiSupportIfAvailable()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "enablefulldpisupportifavailable()",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L42"
-    },
-    {
-      "id": "windows_runner_win32_window_point_point",
-      "label": ".Point()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": ".point()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L18"
-    },
-    {
-      "id": "windows_runner_win32_window_scale",
-      "label": "Scale()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "scale()",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L36"
-    },
-    {
-      "id": "windows_runner_win32_window_size_size",
-      "label": ".Size()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": ".size()",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L24"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_win32window",
-      "label": "Win32Window::Win32Window()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "win32window::win32window()",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L114"
-    },
-    {
-      "id": "windows_runner_win32_window_windowclassregistrar_getinstance",
-      "label": ".GetInstance()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": ".getinstance()",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L64"
-    },
-    {
-      "id": "windows_runner_win32_window_windowclassregistrar_getwindowclass",
-      "label": ".GetWindowClass()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": ".getwindowclass()",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L73"
-    },
-    {
-      "id": "windows_runner_win32_window_windowclassregistrar_unregisterwindowclass",
-      "label": ".UnregisterWindowClass()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": ".unregisterwindowclass()",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L77"
-    },
-    {
-      "id": "windows_runner_win32_window_windowclassregistrar_windowclassregistrar",
-      "label": ".~WindowClassRegistrar()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": ".~windowclassregistrar()",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L61"
     },
     {
       "id": "ios_runner_appdelegate_appdelegate_application",
@@ -851,6 +561,134 @@
       "source_location": "L7"
     },
     {
+      "id": "windows_runner_win32_window_win32window_create",
+      "label": ".Create()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L123",
+      "file_type": "code",
+      "norm_label": ".create()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L37"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_show",
+      "label": ".Show()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L152",
+      "file_type": "code",
+      "norm_label": ".show()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L40"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_destroy",
+      "label": ".Destroy()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L224",
+      "file_type": "code",
+      "norm_label": ".destroy()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L43"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_updatetheme",
+      "label": ".UpdateTheme()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L275",
+      "file_type": "code",
+      "norm_label": ".updatetheme()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L91"
+    },
+    {
+      "id": "windows_runner_win32_window_scale",
+      "label": "Scale()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "file_type": "code",
+      "norm_label": "scale()",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L36"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_win32window",
+      "label": "Win32Window::Win32Window()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "file_type": "code",
+      "norm_label": "win32window::win32window()",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L114"
+    },
+    {
+      "id": "windows_runner_win32_window_windowclassregistrar_getinstance",
+      "label": ".GetInstance()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "file_type": "code",
+      "norm_label": ".getinstance()",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L64"
+    },
+    {
+      "id": "windows_runner_win32_window_windowclassregistrar_getwindowclass",
+      "label": ".GetWindowClass()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "file_type": "code",
+      "norm_label": ".getwindowclass()",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L73"
+    },
+    {
+      "id": "windows_runner_win32_window_windowclassregistrar_unregisterwindowclass",
+      "label": ".UnregisterWindowClass()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "file_type": "code",
+      "norm_label": ".unregisterwindowclass()",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L77"
+    },
+    {
+      "id": "windows_runner_win32_window_windowclassregistrar_windowclassregistrar",
+      "label": ".~WindowClassRegistrar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "file_type": "code",
+      "norm_label": ".~windowclassregistrar()",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L61"
+    },
+    {
       "id": "windows_runner_main_wwinmain",
       "label": "wWinMain()",
       "_callable": true,
@@ -931,6 +769,168 @@
       "norm_label": ".oncreate()",
       "source_file": "android/app/src/main/kotlin/com/isp_user_manager/MainActivity.kt",
       "source_location": "L12"
+    },
+    {
+      "id": "windows_runner_flutter_window_flutterwindow_oncreate",
+      "label": ".OnCreate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "definition_file": "windows/runner/flutter_window.cpp",
+      "definition_location": "L12",
+      "file_type": "code",
+      "norm_label": ".oncreate()",
+      "source_file": "windows/runner/flutter_window.h",
+      "source_location": "L20"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_setchildcontent",
+      "label": ".SetChildContent()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L241",
+      "file_type": "code",
+      "norm_label": ".setchildcontent()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L46"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_getclientarea",
+      "label": ".GetClientArea()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L252",
+      "file_type": "code",
+      "norm_label": ".getclientarea()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L56"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_setquitonclose",
+      "label": ".SetQuitOnClose()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L262",
+      "file_type": "code",
+      "norm_label": ".setquitonclose()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L53"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_oncreate",
+      "label": ".OnCreate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L266",
+      "file_type": "code",
+      "norm_label": ".oncreate()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L69"
+    },
+    {
+      "id": "windows_runner_win32_window_size_size",
+      "label": ".Size()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": ".size()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L24"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_wndproc",
+      "label": ".WndProc()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L157",
+      "file_type": "code",
+      "norm_label": ".wndproc()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L82"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_messagehandler",
+      "label": ".MessageHandler()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L176",
+      "file_type": "code",
+      "norm_label": ".messagehandler()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L62"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_getthisfromhandle",
+      "label": ".GetThisFromHandle()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L236",
+      "file_type": "code",
+      "norm_label": ".getthisfromhandle()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L88"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_gethandle",
+      "label": ".GetHandle()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "definition_file": "windows/runner/win32_window.cpp",
+      "definition_location": "L258",
+      "file_type": "code",
+      "norm_label": ".gethandle()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L50"
+    },
+    {
+      "id": "windows_runner_win32_window_enablefulldpisupportifavailable",
+      "label": "EnableFullDpiSupportIfAvailable()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "file_type": "code",
+      "norm_label": "enablefulldpisupportifavailable()",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L42"
+    },
+    {
+      "id": "windows_runner_win32_window_point_point",
+      "label": ".Point()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "Point",
+      "file_type": "code",
+      "norm_label": ".point()",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L18"
     },
     {
       "id": "cashbox_repository_dart",
@@ -2737,6 +2737,17 @@
       "source_location": "L613"
     },
     {
+      "id": "lib_features_expenses_expenses_repository_recurringexpensesstreamprovider",
+      "label": "recurringExpensesStreamProvider",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "recurringexpensesstreamprovider",
+      "source_file": "lib/features/expenses/expenses_repository.dart",
+      "source_location": "L620"
+    },
+    {
       "id": "lib_features_expenses_expenses_screen_build",
       "label": "build",
       "_origin": "ast",
@@ -2746,6 +2757,28 @@
       "norm_label": "build",
       "source_file": "lib/features/expenses/expenses_screen.dart",
       "source_location": "L52"
+    },
+    {
+      "id": "lib_features_expenses_expenses_screen_expensesscreen",
+      "label": "ExpensesScreen",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "expensesscreen",
+      "source_file": "lib/features/expenses/expenses_screen.dart",
+      "source_location": "L21"
+    },
+    {
+      "id": "lib_features_expenses_expenses_screen_expensesscreenstate",
+      "label": "_ExpensesScreenState",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "_expensesscreenstate",
+      "source_file": "lib/features/expenses/expenses_screen.dart",
+      "source_location": "L31"
     },
     {
       "id": "lib_features_finance_cashbox_repository_cashboxledgerstreamprovider",
@@ -2880,17 +2913,6 @@
       "source_location": "L382"
     },
     {
-      "id": "lib_features_suppliers_suppliers_screen_supplierpaymentrequestsheetstate",
-      "label": "_SupplierPaymentRequestSheetState",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "currentAppUserProvider",
-      "file_type": "code",
-      "norm_label": "_supplierpaymentrequestsheetstate",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L1155"
-    },
-    {
       "id": "lib_features_suppliers_suppliers_screen_suppliersscreenstate",
       "label": "_SuppliersScreenState",
       "_origin": "ast",
@@ -2911,6 +2933,17 @@
       "norm_label": "currencyprovider",
       "source_file": "lib/shared/providers/preferences_providers.dart",
       "source_location": "L123"
+    },
+    {
+      "id": "singletickerproviderstatemixin",
+      "label": "SingleTickerProviderStateMixin",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "currentAppUserProvider",
+      "file_type": "code",
+      "norm_label": "singletickerproviderstatemixin",
+      "source_file": null,
+      "source_location": null
     },
     {
       "id": "int",
@@ -4838,17 +4871,6 @@
       "source_location": null
     },
     {
-      "id": "package_printing_printing_dart",
-      "label": "package:printing/printing.dart",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "package:flutter_test/flutter_test.dart",
-      "file_type": "code",
-      "norm_label": "package:printing/printing.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
       "id": "test_advance_subscription_test",
       "label": "advance_subscription_test.dart",
       "_origin": "ast",
@@ -4959,28 +4981,6 @@
       "source_location": "L7"
     },
     {
-      "id": "test_widget_test",
-      "label": "widget_test.dart",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "package:flutter_test/flutter_test.dart",
-      "file_type": "code",
-      "norm_label": "widget_test.dart",
-      "source_file": "test/widget_test.dart",
-      "source_location": null
-    },
-    {
-      "id": "test_widget_test_main",
-      "label": "main",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "package:flutter_test/flutter_test.dart",
-      "file_type": "code",
-      "norm_label": "main",
-      "source_file": "test/widget_test.dart",
-      "source_location": "L5"
-    },
-    {
       "id": "dart_async",
       "label": "dart:async",
       "_origin": "ast",
@@ -5011,7 +5011,7 @@
       "file_type": "code",
       "norm_label": "historyrepositoryprovider",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L394"
+      "source_location": "L396"
     },
     {
       "id": "lib_features_history_history_repository_historystreamprovider",
@@ -5022,7 +5022,7 @@
       "file_type": "code",
       "norm_label": "historystreamprovider",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L404"
+      "source_location": "L406"
     },
     {
       "id": "lib_features_history_history_screen",
@@ -6367,6 +6367,17 @@
       "source_location": null
     },
     {
+      "id": "lib_core_models_models_appuser",
+      "label": "AppUser",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "employees_screen.dart",
+      "file_type": "code",
+      "norm_label": "appuser",
+      "source_file": "lib/core/models/models.dart",
+      "source_location": "L7"
+    },
+    {
       "id": "lib_core_models_models_employee",
       "label": "Employee",
       "_origin": "ast",
@@ -6376,6 +6387,17 @@
       "norm_label": "employee",
       "source_file": "lib/core/models/models.dart",
       "source_location": "L893"
+    },
+    {
+      "id": "lib_features_auth_auth_repository_authrepository",
+      "label": "AuthRepository",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "employees_screen.dart",
+      "file_type": "code",
+      "norm_label": "authrepository",
+      "source_file": "lib/features/auth/auth_repository.dart",
+      "source_location": "L12"
     },
     {
       "id": "lib_features_employees_employees_repository_employeesrepositoryprovider",
@@ -7211,7 +7233,7 @@
       "file_type": "code",
       "norm_label": "historylogger",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L11"
+      "source_location": "L12"
     },
     {
       "id": "lib_features_payments_payments_repository",
@@ -7421,6 +7443,61 @@
       "source_location": "L3"
     },
     {
+      "id": "auth_auth_repository_dart",
+      "label": "../auth/auth_repository.dart",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "../auth/auth_repository.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "lib_core_utils_firestore_helpers",
+      "label": "firestore_helpers.dart",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "firestore_helpers.dart",
+      "source_file": "lib/core/utils/firestore_helpers.dart",
+      "source_location": null
+    },
+    {
+      "id": "lib_core_utils_firestore_helpers_now",
+      "label": "now",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "now",
+      "source_file": "lib/core/utils/firestore_helpers.dart",
+      "source_location": "L8"
+    },
+    {
+      "id": "lib_core_utils_firestore_helpers_null",
+      "label": "null",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "null",
+      "source_file": "lib/core/utils/firestore_helpers.dart",
+      "source_location": "L16"
+    },
+    {
+      "id": "lib_core_utils_firestore_helpers_tstodate",
+      "label": "tsToDate",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "tstodate",
+      "source_file": "lib/core/utils/firestore_helpers.dart",
+      "source_location": "L3"
+    },
+    {
       "id": "lib_features_inbox_chat_repository",
       "label": "chat_repository.dart",
       "_origin": "ast",
@@ -7608,6 +7685,149 @@
       "source_location": "L35"
     },
     {
+      "id": "lib_features_notifications_notifications_repository",
+      "label": "notifications_repository.dart",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "notifications_repository.dart",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": null
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_col",
+      "label": "_col",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "_col",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L12"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_db",
+      "label": "_db",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "_db",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L10"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_delete",
+      "label": "delete",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "delete",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L105"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_markallasread",
+      "label": "markAllAsRead",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "markallasread",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L84"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_markasread",
+      "label": "markAsRead",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "markasread",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L79"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_notificationsrepository",
+      "label": "NotificationsRepository",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "notificationsrepository",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L8"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_ref",
+      "label": "ref",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "ref",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L119"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_sendnotification",
+      "label": "sendNotification",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "sendnotification",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L51"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_user",
+      "label": "user",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "user",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L117"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_watchnotifications",
+      "label": "watchNotifications",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "watchnotifications",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L15"
+    },
+    {
+      "id": "lib_features_notifications_notifications_repository_watchunreadcount",
+      "label": "watchUnreadCount",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "watchunreadcount",
+      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "source_location": "L42"
+    },
+    {
+      "id": "package_cloud_firestore_cloud_firestore_dart",
+      "label": "package:cloud_firestore/cloud_firestore.dart",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "package:cloud_firestore/cloud_firestore.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "package_uuid_uuid_dart",
       "label": "package:uuid/uuid.dart",
       "_origin": "ast",
@@ -7615,6 +7835,17 @@
       "community_name": "chat_repository.dart",
       "file_type": "code",
       "norm_label": "package:uuid/uuid.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "return",
+      "label": "return",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "chat_repository.dart",
+      "file_type": "code",
+      "norm_label": "return",
       "source_file": null,
       "source_location": null
     },
@@ -8004,6 +8235,17 @@
       "source_location": null
     },
     {
+      "id": "lib_features_app_update_update_screen_body",
+      "label": "_Body",
+      "_origin": "ast",
+      "community": 28,
+      "community_name": "../../l10n/app_localizations.dart",
+      "file_type": "code",
+      "norm_label": "_body",
+      "source_file": "lib/features/app_update/update_screen.dart",
+      "source_location": "L23"
+    },
+    {
       "id": "lib_features_app_update_update_screen_build",
       "label": "build",
       "_origin": "ast",
@@ -8057,17 +8299,6 @@
       "norm_label": "t",
       "source_file": "lib/features/app_update/update_screen.dart",
       "source_location": "L26"
-    },
-    {
-      "id": "lib_features_app_update_update_screen_updatescreen",
-      "label": "UpdateScreen",
-      "_origin": "ast",
-      "community": 28,
-      "community_name": "../../l10n/app_localizations.dart",
-      "file_type": "code",
-      "norm_label": "updatescreen",
-      "source_file": "lib/features/app_update/update_screen.dart",
-      "source_location": "L7"
     },
     {
       "id": "package_url_launcher_url_launcher_dart",
@@ -8213,138 +8444,6 @@
       "source_location": null
     },
     {
-      "id": "lib_app_app_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "lib/app/app.dart",
-      "source_location": "L19"
-    },
-    {
-      "id": "lib_app_app_ispusermanagerapp",
-      "label": "IspUserManagerApp",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "ispusermanagerapp",
-      "source_file": "lib/app/app.dart",
-      "source_location": "L15"
-    },
-    {
-      "id": "lib_app_app_mainapprouter",
-      "label": "_MainAppRouter",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "_mainapprouter",
-      "source_file": "lib/app/app.dart",
-      "source_location": "L90"
-    },
-    {
-      "id": "lib_app_router_routerprovider",
-      "label": "routerProvider",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "routerprovider",
-      "source_file": "lib/app/router.dart",
-      "source_location": "L10"
-    },
-    {
-      "id": "lib_app_theme_app_theme_appcolortheme",
-      "label": "AppColorTheme",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "appcolortheme",
-      "source_file": "lib/app/theme/app_theme.dart",
-      "source_location": "L5"
-    },
-    {
-      "id": "lib_core_constants_appcurrency",
-      "label": "AppCurrency",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "appcurrency",
-      "source_file": "lib/core/constants.dart",
-      "source_location": "L1"
-    },
-    {
-      "id": "lib_core_services_notification_service_notificationserviceprovider",
-      "label": "notificationServiceProvider",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "notificationserviceprovider",
-      "source_file": "lib/core/services/notification_service.dart",
-      "source_location": "L81"
-    },
-    {
-      "id": "lib_features_app_update_app_update_repository_appupdateprovider",
-      "label": "appUpdateProvider",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "appupdateprovider",
-      "source_file": "lib/features/app_update/app_update_repository.dart",
-      "source_location": "L99"
-    },
-    {
-      "id": "lib_features_dashboard_admin_shell_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L175"
-    },
-    {
-      "id": "lib_features_dashboard_admin_shell_initstate",
-      "label": "initState",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "initstate",
-      "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L63"
-    },
-    {
-      "id": "lib_features_settings_settings_screen_build",
-      "label": "build",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "build",
-      "source_file": "lib/features/settings/settings_screen.dart",
-      "source_location": "L15"
-    },
-    {
-      "id": "lib_features_settings_settings_screen_settingsscreen",
-      "label": "SettingsScreen",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "settingsscreen",
-      "source_file": "lib/features/settings/settings_screen.dart",
-      "source_location": "L11"
-    },
-    {
       "id": "lib_shared_providers_preferences_providers",
       "label": "preferences_providers.dart",
       "_origin": "ast",
@@ -8376,17 +8475,6 @@
       "norm_label": "apppreferencesprovider",
       "source_file": "lib/shared/providers/preferences_providers.dart",
       "source_location": "L63"
-    },
-    {
-      "id": "lib_shared_providers_preferences_providers_currencynotifier",
-      "label": "CurrencyNotifier",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "currencynotifier",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L104"
     },
     {
       "id": "lib_shared_providers_preferences_providers_kcurrency",
@@ -8442,28 +8530,6 @@
       "norm_label": "_kwebnotificationsenabled",
       "source_file": "lib/shared/providers/preferences_providers.dart",
       "source_location": "L14"
-    },
-    {
-      "id": "lib_shared_providers_preferences_providers_localenotifier",
-      "label": "LocaleNotifier",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "localenotifier",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L95"
-    },
-    {
-      "id": "lib_shared_providers_preferences_providers_localeprovider",
-      "label": "localeProvider",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "localeprovider",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L121"
     },
     {
       "id": "lib_shared_providers_preferences_providers_prefs",
@@ -8543,50 +8609,6 @@
       "source_location": "L59"
     },
     {
-      "id": "lib_shared_providers_preferences_providers_thememodenotifier",
-      "label": "ThemeModeNotifier",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "thememodenotifier",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L67"
-    },
-    {
-      "id": "lib_shared_providers_preferences_providers_thememodeprovider",
-      "label": "themeModeProvider",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "thememodeprovider",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L113"
-    },
-    {
-      "id": "lib_shared_providers_preferences_providers_webcolorthemenotifier",
-      "label": "WebColorThemeNotifier",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "webcolorthemenotifier",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L76"
-    },
-    {
-      "id": "lib_shared_providers_preferences_providers_webcolorthemeprovider",
-      "label": "webColorThemeProvider",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "webcolorthemeprovider",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L115"
-    },
-    {
       "id": "lib_shared_providers_preferences_providers_webnotificationsenabled",
       "label": "webNotificationsEnabled",
       "_origin": "ast",
@@ -8598,39 +8620,6 @@
       "source_location": "L36"
     },
     {
-      "id": "lib_shared_providers_preferences_providers_webnotificationsenablednotifier",
-      "label": "WebNotificationsEnabledNotifier",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "webnotificationsenablednotifier",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L85"
-    },
-    {
-      "id": "lib_shared_providers_preferences_providers_webnotificationsenabledprovider",
-      "label": "webNotificationsEnabledProvider",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "webnotificationsenabledprovider",
-      "source_file": "lib/shared/providers/preferences_providers.dart",
-      "source_location": "L118"
-    },
-    {
-      "id": "locale",
-      "label": "Locale",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "locale",
-      "source_file": null,
-      "source_location": null
-    },
-    {
       "id": "sharedpreferences",
       "label": "SharedPreferences",
       "_origin": "ast",
@@ -8638,28 +8627,6 @@
       "community_name": "preferences_providers.dart",
       "file_type": "code",
       "norm_label": "sharedpreferences",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "statenotifier",
-      "label": "StateNotifier",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "statenotifier",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "thememode",
-      "label": "ThemeMode",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "preferences_providers.dart",
-      "file_type": "code",
-      "norm_label": "thememode",
       "source_file": null,
       "source_location": null
     },
@@ -9575,17 +9542,6 @@
       "norm_label": "_savename",
       "source_file": "lib/features/profile/profile_screen.dart",
       "source_location": "L85"
-    },
-    {
-      "id": "package_image_picker_image_picker_dart",
-      "label": "package:image_picker/image_picker.dart",
-      "_origin": "ast",
-      "community": 33,
-      "community_name": "profile_screen.dart",
-      "file_type": "code",
-      "norm_label": "package:image_picker/image_picker.dart",
-      "source_file": null,
-      "source_location": null
     },
     {
       "id": "profile_repository_dart",
@@ -11737,20 +11693,9 @@
       "label": "FlutterViewController",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "flutterviewcontroller",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "rect",
-      "label": "RECT",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "rect",
       "source_file": "",
       "source_location": ""
     },
@@ -11759,7 +11704,7 @@
       "label": "unique_ptr",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "unique_ptr",
       "source_file": "",
@@ -11770,7 +11715,7 @@
       "label": "DartProject",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "dartproject",
       "source_file": "",
@@ -11781,7 +11726,7 @@
       "label": "HWND",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "hwnd",
       "source_file": "",
@@ -11792,7 +11737,7 @@
       "label": "LPARAM",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "lparam",
       "source_file": "",
@@ -11803,7 +11748,7 @@
       "label": "LRESULT",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "lresult",
       "source_file": "",
@@ -11814,7 +11759,7 @@
       "label": "UINT",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "uint",
       "source_file": "",
@@ -11825,7 +11770,7 @@
       "label": "flutter_window.cpp",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "flutter_window.cpp",
       "source_file": "windows/runner/flutter_window.cpp",
@@ -11836,7 +11781,7 @@
       "label": "WPARAM",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "wparam",
       "source_file": "",
@@ -11847,7 +11792,7 @@
       "label": "flutter_controller_",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "flutter_controller_",
       "source_file": "windows/runner/flutter_window.h",
@@ -11858,7 +11803,7 @@
       "label": "project_",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "project_",
       "source_file": "windows/runner/flutter_window.h",
@@ -11869,218 +11814,9 @@
       "label": "DartProject",
       "_origin": "ast",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "file_type": "code",
       "norm_label": "dartproject",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "windows_runner_resource",
-      "label": "resource.h",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "resource.h",
-      "source_file": "windows/runner/resource.h",
-      "source_location": "L1"
-    },
-    {
-      "id": "windows_runner_win32_window_cpp_hwnd",
-      "label": "HWND",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "hwnd",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "windows_runner_win32_window_cpp_lparam",
-      "label": "LPARAM",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "lparam",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "windows_runner_win32_window_cpp_lresult",
-      "label": "LRESULT",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "lresult",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "windows_runner_win32_window_cpp_uint",
-      "label": "UINT",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "uint",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "windows_runner_win32_window_cpp_wchar_t",
-      "label": "wchar_t",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "wchar_t",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "windows_runner_win32_window_cpp_windows_runner_win32_window",
-      "label": "win32_window.cpp",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "win32_window.cpp",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L1"
-    },
-    {
-      "id": "windows_runner_win32_window_cpp_wparam",
-      "label": "WPARAM",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "wparam",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "windows_runner_win32_window_h_hwnd",
-      "label": "HWND",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "hwnd",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "windows_runner_win32_window_point_x",
-      "label": "x",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "x",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L16"
-    },
-    {
-      "id": "windows_runner_win32_window_point_y",
-      "label": "y",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "y",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L17"
-    },
-    {
-      "id": "windows_runner_win32_window_size_height",
-      "label": "height",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "height",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L23"
-    },
-    {
-      "id": "windows_runner_win32_window_size_width",
-      "label": "width",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "width",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L22"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_child_content",
-      "label": "child_content_",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "child_content_",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L99"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_quit_on_close",
-      "label": "quit_on_close_",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "quit_on_close_",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L93"
-    },
-    {
-      "id": "windows_runner_win32_window_win32window_window_handle",
-      "label": "window_handle_",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "window_handle_",
-      "source_file": "windows/runner/win32_window.h",
-      "source_location": "L96"
-    },
-    {
-      "id": "windows_runner_win32_window_windowclassregistrar_class_registered",
-      "label": "class_registered_",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "class_registered_",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L84"
-    },
-    {
-      "id": "windows_runner_win32_window_windowclassregistrar_instance",
-      "label": "instance_",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "instance_",
-      "source_file": "windows/runner/win32_window.cpp",
-      "source_location": "L82"
-    },
-    {
-      "id": "wstring",
-      "label": "wstring",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "file_type": "code",
-      "norm_label": "wstring",
       "source_file": "",
       "source_location": ""
     },
@@ -12888,6 +12624,17 @@
       "source_location": ""
     },
     {
+      "id": "firebasefirestore",
+      "label": "FirebaseFirestore?",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "app_update_repository.dart",
+      "file_type": "code",
+      "norm_label": "firebasefirestore?",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "lib_features_app_update_app_update_repository",
       "label": "app_update_repository.dart",
       "_origin": "ast",
@@ -13482,39 +13229,6 @@
       "source_location": "L2082"
     },
     {
-      "id": "lib_features_finance_cashbox_repository_cashboxrepositoryprovider",
-      "label": "cashboxRepositoryProvider",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "cashboxrepositoryprovider",
-      "source_file": "lib/features/finance/cashbox_repository.dart",
-      "source_location": "L488"
-    },
-    {
-      "id": "lib_features_finance_cashbox_screen_claimreimbursementrequestsheet",
-      "label": "_ClaimReimbursementRequestSheet",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_claimreimbursementrequestsheet",
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2123"
-    },
-    {
-      "id": "lib_features_finance_cashbox_screen_claimreimbursementrequestsheetstate",
-      "label": "_ClaimReimbursementRequestSheetState",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_claimreimbursementrequestsheetstate",
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2143"
-    },
-    {
       "id": "lib_features_finance_cashbox_screen_directadjustmentsheet",
       "label": "_DirectAdjustmentSheet",
       "_origin": "ast",
@@ -13535,28 +13249,6 @@
       "norm_label": "_directadjustmentsheetstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
       "source_location": "L1975"
-    },
-    {
-      "id": "lib_features_finance_cashbox_screen_settlestaffdebtsheet",
-      "label": "_SettleStaffDebtSheet",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_settlestaffdebtsheet",
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2365"
-    },
-    {
-      "id": "lib_features_finance_cashbox_screen_settlestaffdebtsheetstate",
-      "label": "_SettleStaffDebtSheetState",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "ConsumerState",
-      "file_type": "code",
-      "norm_label": "_settlestaffdebtsheetstate",
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2393"
     },
     {
       "id": "lib_features_reports_reports_screen_reportsscreen",
@@ -13625,6 +13317,39 @@
       "source_location": "L1044"
     },
     {
+      "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionsheet",
+      "label": "SupplierBalanceTransactionSheet",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "supplierbalancetransactionsheet",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L634"
+    },
+    {
+      "id": "lib_features_suppliers_suppliers_screen_supplierformsheet",
+      "label": "SupplierFormSheet",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "supplierformsheet",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L311"
+    },
+    {
+      "id": "lib_features_suppliers_suppliers_screen_supplierformsheetstate",
+      "label": "_SupplierFormSheetState",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "_supplierformsheetstate",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L320"
+    },
+    {
       "id": "lib_features_suppliers_suppliers_screen_supplierpaymentrequestsheet",
       "label": "SupplierPaymentRequestSheet",
       "_origin": "ast",
@@ -13636,6 +13361,17 @@
       "source_location": "L1146"
     },
     {
+      "id": "lib_features_suppliers_suppliers_screen_supplierpaymentrequestsheetstate",
+      "label": "_SupplierPaymentRequestSheetState",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "ConsumerState",
+      "file_type": "code",
+      "norm_label": "_supplierpaymentrequestsheetstate",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
+      "source_location": "L1155"
+    },
+    {
       "id": "lib_features_suppliers_suppliers_screen_suppliersscreen",
       "label": "SuppliersScreen",
       "_origin": "ast",
@@ -13645,6 +13381,17 @@
       "norm_label": "suppliersscreen",
       "source_file": "lib/features/suppliers/suppliers_screen.dart",
       "source_location": "L19"
+    },
+    {
+      "id": "core_utils_firestore_helpers_dart",
+      "label": "../../core/utils/firestore_helpers.dart",
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "history_repository.dart",
+      "file_type": "code",
+      "norm_label": "../../core/utils/firestore_helpers.dart",
+      "source_file": null,
+      "source_location": null
     },
     {
       "id": "lib_features_history_history_repository",
@@ -13666,7 +13413,7 @@
       "file_type": "code",
       "norm_label": "authuser",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L406"
+      "source_location": "L408"
     },
     {
       "id": "lib_features_history_history_repository_db",
@@ -13677,7 +13424,7 @@
       "file_type": "code",
       "norm_label": "_db",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L13"
+      "source_location": "L14"
     },
     {
       "id": "lib_features_history_history_repository_eventdata",
@@ -13688,7 +13435,7 @@
       "file_type": "code",
       "norm_label": "eventdata",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "lib_features_history_history_repository_expenseidfromdeleterequestevent",
@@ -13699,7 +13446,7 @@
       "file_type": "code",
       "norm_label": "_expenseidfromdeleterequestevent",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L387"
+      "source_location": "L389"
     },
     {
       "id": "lib_features_history_history_repository_historyloggerprovider",
@@ -13710,7 +13457,7 @@
       "file_type": "code",
       "norm_label": "historyloggerprovider",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L401"
+      "source_location": "L403"
     },
     {
       "id": "lib_features_history_history_repository_historyrepository",
@@ -13721,7 +13468,7 @@
       "file_type": "code",
       "norm_label": "historyrepository",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L69"
+      "source_location": "L70"
     },
     {
       "id": "lib_features_history_history_repository_issubscriptionpaymentaction",
@@ -13732,7 +13479,7 @@
       "file_type": "code",
       "norm_label": "issubscriptionpaymentaction",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L74"
+      "source_location": "L75"
     },
     {
       "id": "lib_features_history_history_repository_isundoable",
@@ -13743,7 +13490,7 @@
       "file_type": "code",
       "norm_label": "_isundoable",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L334"
+      "source_location": "L336"
     },
     {
       "id": "lib_features_history_history_repository_log",
@@ -13754,7 +13501,7 @@
       "file_type": "code",
       "norm_label": "log",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L45"
+      "source_location": "L46"
     },
     {
       "id": "lib_features_history_history_repository_logger",
@@ -13765,7 +13512,7 @@
       "file_type": "code",
       "norm_label": "_logger",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L72"
+      "source_location": "L73"
     },
     {
       "id": "lib_features_history_history_repository_neweventref",
@@ -13776,7 +13523,7 @@
       "file_type": "code",
       "norm_label": "neweventref",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L17"
+      "source_location": "L18"
     },
     {
       "id": "lib_features_history_history_repository_operationtimeout",
@@ -13787,7 +13534,7 @@
       "file_type": "code",
       "norm_label": "operationtimeout",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "lib_features_history_history_repository_restoreddata",
@@ -13798,7 +13545,7 @@
       "file_type": "code",
       "norm_label": "_restoreddata",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L348"
+      "source_location": "L350"
     },
     {
       "id": "lib_features_history_history_repository_targetref",
@@ -13809,7 +13556,7 @@
       "file_type": "code",
       "norm_label": "_targetref",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L355"
+      "source_location": "L357"
     },
     {
       "id": "lib_features_history_history_repository_undodeletescurrent",
@@ -13820,7 +13567,7 @@
       "file_type": "code",
       "norm_label": "_undodeletescurrent",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L343"
+      "source_location": "L345"
     },
     {
       "id": "lib_features_history_history_repository_undoedit",
@@ -13831,7 +13578,7 @@
       "file_type": "code",
       "norm_label": "undoedit",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L79"
+      "source_location": "L80"
     },
     {
       "id": "lib_features_history_history_repository_undosubscriptionpayment",
@@ -13842,7 +13589,7 @@
       "file_type": "code",
       "norm_label": "_undosubscriptionpayment",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L133"
+      "source_location": "L134"
     },
     {
       "id": "consumerwidget",
@@ -14527,15 +14274,15 @@
       "source_location": "L62"
     },
     {
-      "id": "lib_app_app_updatecheckerrorscreen",
-      "label": "_UpdateCheckErrorScreen",
+      "id": "lib_app_app_splashscreen",
+      "label": "_SplashScreen",
       "_origin": "ast",
       "community": 47,
       "community_name": "app.dart",
       "file_type": "code",
-      "norm_label": "_updatecheckerrorscreen",
+      "norm_label": "_splashscreen",
       "source_file": "lib/app/app.dart",
-      "source_location": "L55"
+      "source_location": "L142"
     },
     {
       "id": "router_dart",
@@ -14912,55 +14659,22 @@
       "source_location": null
     },
     {
-      "id": "dart_convert",
-      "label": "dart:convert",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "dart:convert",
-      "source_file": null,
-      "source_location": null
-    },
-    {
       "id": "double",
       "label": "double?",
       "_origin": "ast",
       "community": 49,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "app_avatar.dart",
       "file_type": "code",
       "norm_label": "double?",
       "source_file": null,
       "source_location": null
     },
     {
-      "id": "lib_core_utils_image_preview_dialog",
-      "label": "image_preview_dialog.dart",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "image_preview_dialog.dart",
-      "source_file": "lib/core/utils/image_preview_dialog.dart",
-      "source_location": null
-    },
-    {
-      "id": "lib_core_utils_image_preview_dialog_showfullscreenimage",
-      "label": "showFullScreenImage",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "showfullscreenimage",
-      "source_file": "lib/core/utils/image_preview_dialog.dart",
-      "source_location": "L4"
-    },
-    {
       "id": "lib_core_widgets_app_avatar",
       "label": "app_avatar.dart",
       "_origin": "ast",
       "community": 49,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "app_avatar.dart",
       "file_type": "code",
       "norm_label": "app_avatar.dart",
       "source_file": "lib/core/widgets/app_avatar.dart",
@@ -14971,7 +14685,7 @@
       "label": "AppAvatar",
       "_origin": "ast",
       "community": 49,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "app_avatar.dart",
       "file_type": "code",
       "norm_label": "appavatar",
       "source_file": "lib/core/widgets/app_avatar.dart",
@@ -14982,7 +14696,7 @@
       "label": "build",
       "_origin": "ast",
       "community": 49,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "app_avatar.dart",
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/core/widgets/app_avatar.dart",
@@ -14993,7 +14707,7 @@
       "label": "fontSize",
       "_origin": "ast",
       "community": 49,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "app_avatar.dart",
       "file_type": "code",
       "norm_label": "fontsize",
       "source_file": "lib/core/widgets/app_avatar.dart",
@@ -15004,7 +14718,7 @@
       "label": "name",
       "_origin": "ast",
       "community": 49,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "app_avatar.dart",
       "file_type": "code",
       "norm_label": "name",
       "source_file": "lib/core/widgets/app_avatar.dart",
@@ -15015,7 +14729,7 @@
       "label": "photoUrl",
       "_origin": "ast",
       "community": 49,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "app_avatar.dart",
       "file_type": "code",
       "norm_label": "photourl",
       "source_file": "lib/core/widgets/app_avatar.dart",
@@ -15026,66 +14740,11 @@
       "label": "radius",
       "_origin": "ast",
       "community": 49,
-      "community_name": "package:flutter/material.dart",
+      "community_name": "app_avatar.dart",
       "file_type": "code",
       "norm_label": "radius",
       "source_file": "lib/core/widgets/app_avatar.dart",
       "source_location": "L19"
-    },
-    {
-      "id": "package_cached_network_image_cached_network_image_dart",
-      "label": "package:cached_network_image/cached_network_image.dart",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "package:cached_network_image/cached_network_image.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_flutter_material_dart",
-      "label": "package:flutter/material.dart",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "package:flutter/material.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "package_isp_user_manager_core_widgets_app_avatar_dart",
-      "label": "package:isp_user_manager/core/widgets/app_avatar.dart",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "package:isp_user_manager/core/widgets/app_avatar.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "test_app_avatar_test",
-      "label": "app_avatar_test.dart",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "app_avatar_test.dart",
-      "source_file": "test/app_avatar_test.dart",
-      "source_location": null
-    },
-    {
-      "id": "test_app_avatar_test_main",
-      "label": "main",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "package:flutter/material.dart",
-      "file_type": "code",
-      "norm_label": "main",
-      "source_file": "test/app_avatar_test.dart",
-      "source_location": "L6"
     },
     {
       "id": "asyncvalue",
@@ -15616,6 +15275,17 @@
       "source_location": null
     },
     {
+      "id": "dart_convert",
+      "label": "dart:convert",
+      "_origin": "ast",
+      "community": 50,
+      "community_name": "auth_utils.dart",
+      "file_type": "code",
+      "norm_label": "dart:convert",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "lib_core_utils_auth_utils",
       "label": "auth_utils.dart",
       "_origin": "ast",
@@ -15693,26 +15363,59 @@
       "source_location": null
     },
     {
-      "id": "lib_app_app_splashscreen",
-      "label": "_SplashScreen",
+      "id": "package_isp_user_manager_core_widgets_app_avatar_dart",
+      "label": "package:isp_user_manager/core/widgets/app_avatar.dart",
       "_origin": "ast",
-      "community": 51,
-      "community_name": "StatelessWidget",
+      "community": 50,
+      "community_name": "auth_utils.dart",
       "file_type": "code",
-      "norm_label": "_splashscreen",
-      "source_file": "lib/app/app.dart",
-      "source_location": "L142"
+      "norm_label": "package:isp_user_manager/core/widgets/app_avatar.dart",
+      "source_file": null,
+      "source_location": null
     },
     {
-      "id": "lib_features_app_update_update_screen_body",
-      "label": "_Body",
+      "id": "test_app_avatar_test",
+      "label": "app_avatar_test.dart",
+      "_origin": "ast",
+      "community": 50,
+      "community_name": "auth_utils.dart",
+      "file_type": "code",
+      "norm_label": "app_avatar_test.dart",
+      "source_file": "test/app_avatar_test.dart",
+      "source_location": null
+    },
+    {
+      "id": "test_app_avatar_test_main",
+      "label": "main",
+      "_origin": "ast",
+      "community": 50,
+      "community_name": "auth_utils.dart",
+      "file_type": "code",
+      "norm_label": "main",
+      "source_file": "test/app_avatar_test.dart",
+      "source_location": "L6"
+    },
+    {
+      "id": "lib_app_app_updatecheckerrorscreen",
+      "label": "_UpdateCheckErrorScreen",
       "_origin": "ast",
       "community": 51,
       "community_name": "StatelessWidget",
       "file_type": "code",
-      "norm_label": "_body",
+      "norm_label": "_updatecheckerrorscreen",
+      "source_file": "lib/app/app.dart",
+      "source_location": "L55"
+    },
+    {
+      "id": "lib_features_app_update_update_screen_updatescreen",
+      "label": "UpdateScreen",
+      "_origin": "ast",
+      "community": 51,
+      "community_name": "StatelessWidget",
+      "file_type": "code",
+      "norm_label": "updatescreen",
       "source_file": "lib/features/app_update/update_screen.dart",
-      "source_location": "L23"
+      "source_location": "L7"
     },
     {
       "id": "lib_features_auth_login_screen_featurechip",
@@ -15869,213 +15572,70 @@
       "source_location": "L2184"
     },
     {
-      "id": "auth_auth_repository_dart",
-      "label": "../auth/auth_repository.dart",
+      "id": "windows_runner_resource",
+      "label": "resource.h",
       "_origin": "ast",
       "community": 53,
-      "community_name": "../auth/auth_repository.dart",
+      "community_name": "win32_window.cpp",
       "file_type": "code",
-      "norm_label": "../auth/auth_repository.dart",
-      "source_file": null,
-      "source_location": null
+      "norm_label": "resource.h",
+      "source_file": "windows/runner/resource.h",
+      "source_location": "L1"
     },
     {
-      "id": "lib_core_utils_firestore_helpers",
-      "label": "firestore_helpers.dart",
+      "id": "windows_runner_win32_window_cpp_wchar_t",
+      "label": "wchar_t",
       "_origin": "ast",
       "community": 53,
-      "community_name": "../auth/auth_repository.dart",
+      "community_name": "win32_window.cpp",
       "file_type": "code",
-      "norm_label": "firestore_helpers.dart",
-      "source_file": "lib/core/utils/firestore_helpers.dart",
-      "source_location": null
+      "norm_label": "wchar_t",
+      "source_file": "",
+      "source_location": ""
     },
     {
-      "id": "lib_core_utils_firestore_helpers_now",
-      "label": "now",
+      "id": "windows_runner_win32_window_cpp_windows_runner_win32_window",
+      "label": "win32_window.cpp",
       "_origin": "ast",
       "community": 53,
-      "community_name": "../auth/auth_repository.dart",
+      "community_name": "win32_window.cpp",
       "file_type": "code",
-      "norm_label": "now",
-      "source_file": "lib/core/utils/firestore_helpers.dart",
-      "source_location": "L8"
+      "norm_label": "win32_window.cpp",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L1"
     },
     {
-      "id": "lib_core_utils_firestore_helpers_null",
-      "label": "null",
+      "id": "windows_runner_win32_window_windowclassregistrar_class_registered",
+      "label": "class_registered_",
       "_origin": "ast",
       "community": 53,
-      "community_name": "../auth/auth_repository.dart",
+      "community_name": "win32_window.cpp",
       "file_type": "code",
-      "norm_label": "null",
-      "source_file": "lib/core/utils/firestore_helpers.dart",
-      "source_location": "L16"
-    },
-    {
-      "id": "lib_core_utils_firestore_helpers_tstodate",
-      "label": "tsToDate",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "tstodate",
-      "source_file": "lib/core/utils/firestore_helpers.dart",
-      "source_location": "L3"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository",
-      "label": "notifications_repository.dart",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "notifications_repository.dart",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": null
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_col",
-      "label": "_col",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "_col",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L12"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_db",
-      "label": "_db",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "_db",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L10"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_delete",
-      "label": "delete",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "delete",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L105"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_markallasread",
-      "label": "markAllAsRead",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "markallasread",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
+      "norm_label": "class_registered_",
+      "source_file": "windows/runner/win32_window.cpp",
       "source_location": "L84"
     },
     {
-      "id": "lib_features_notifications_notifications_repository_markasread",
-      "label": "markAsRead",
+      "id": "windows_runner_win32_window_windowclassregistrar_instance",
+      "label": "instance_",
       "_origin": "ast",
       "community": 53,
-      "community_name": "../auth/auth_repository.dart",
+      "community_name": "win32_window.cpp",
       "file_type": "code",
-      "norm_label": "markasread",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L79"
+      "norm_label": "instance_",
+      "source_file": "windows/runner/win32_window.cpp",
+      "source_location": "L82"
     },
     {
-      "id": "lib_features_notifications_notifications_repository_notificationsrepository",
-      "label": "NotificationsRepository",
+      "id": "wstring",
+      "label": "wstring",
       "_origin": "ast",
       "community": 53,
-      "community_name": "../auth/auth_repository.dart",
+      "community_name": "win32_window.cpp",
       "file_type": "code",
-      "norm_label": "notificationsrepository",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L8"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_ref",
-      "label": "ref",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "ref",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L119"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_sendnotification",
-      "label": "sendNotification",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "sendnotification",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L51"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_user",
-      "label": "user",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "user",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L117"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_watchnotifications",
-      "label": "watchNotifications",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "watchnotifications",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L15"
-    },
-    {
-      "id": "lib_features_notifications_notifications_repository_watchunreadcount",
-      "label": "watchUnreadCount",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "watchunreadcount",
-      "source_file": "lib/features/notifications/notifications_repository.dart",
-      "source_location": "L42"
-    },
-    {
-      "id": "package_cloud_firestore_cloud_firestore_dart",
-      "label": "package:cloud_firestore/cloud_firestore.dart",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "package:cloud_firestore/cloud_firestore.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "return",
-      "label": "return",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "../auth/auth_repository.dart",
-      "file_type": "code",
-      "norm_label": "return",
-      "source_file": null,
-      "source_location": null
+      "norm_label": "wstring",
+      "source_file": "",
+      "source_location": ""
     },
     {
       "id": "in",
@@ -16540,28 +16100,6 @@
       "source_location": "L503"
     },
     {
-      "id": "lib_features_finance_cashbox_repository_reimbursementrequestsstreamprovider",
-      "label": "reimbursementRequestsStreamProvider",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "cashboxStreamProvider",
-      "file_type": "code",
-      "norm_label": "reimbursementrequestsstreamprovider",
-      "source_file": "lib/features/finance/cashbox_repository.dart",
-      "source_location": "L496"
-    },
-    {
-      "id": "lib_features_inbox_inbox_screen_buildrequeststab",
-      "label": "_buildRequestsTab",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "cashboxStreamProvider",
-      "file_type": "code",
-      "norm_label": "_buildrequeststab",
-      "source_file": "lib/features/inbox/inbox_screen.dart",
-      "source_location": "L313"
-    },
-    {
       "id": "lib_features_suppliers_suppliers_repository_suppliersrepositoryprovider",
       "label": "suppliersRepositoryProvider",
       "_origin": "ast",
@@ -16593,17 +16131,6 @@
       "norm_label": "_save",
       "source_file": "lib/features/suppliers/suppliers_screen.dart",
       "source_location": "L338"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionsheet",
-      "label": "SupplierBalanceTransactionSheet",
-      "_origin": "ast",
-      "community": 58,
-      "community_name": "cashboxStreamProvider",
-      "file_type": "code",
-      "norm_label": "supplierbalancetransactionsheet",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L634"
     },
     {
       "id": "lib_features_suppliers_suppliers_screen_supplierbalancetransactionsheetstate",
@@ -16977,7 +16504,7 @@
       "file_type": "code",
       "norm_label": "_buildpaymentmodetile",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L3144"
+      "source_location": "L3149"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_busy",
@@ -17373,7 +16900,7 @@
       "file_type": "code",
       "norm_label": "_pickenddate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L3214"
+      "source_location": "L3219"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_pickfrom",
@@ -17651,6 +17178,83 @@
       "source_location": null
     },
     {
+      "id": "rect",
+      "label": "RECT",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "rect",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "windows_runner_win32_window_h_hwnd",
+      "label": "HWND",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "hwnd",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "windows_runner_win32_window_size_height",
+      "label": "height",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "height",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L23"
+    },
+    {
+      "id": "windows_runner_win32_window_size_width",
+      "label": "width",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "width",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L22"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_child_content",
+      "label": "child_content_",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "child_content_",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L99"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_quit_on_close",
+      "label": "quit_on_close_",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "quit_on_close_",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L93"
+    },
+    {
+      "id": "windows_runner_win32_window_win32window_window_handle",
+      "label": "window_handle_",
+      "_origin": "ast",
+      "community": 60,
+      "community_name": "Win32Window",
+      "file_type": "code",
+      "norm_label": "window_handle_",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L96"
+    },
+    {
       "id": "constants_dart",
       "label": "../constants.dart",
       "_origin": "ast",
@@ -17794,17 +17398,6 @@
       "source_location": null
     },
     {
-      "id": "firebasefirestore",
-      "label": "FirebaseFirestore?",
-      "_origin": "ast",
-      "community": 62,
-      "community_name": "profile_repository.dart",
-      "file_type": "code",
-      "norm_label": "firebasefirestore?",
-      "source_file": null,
-      "source_location": null
-    },
-    {
       "id": "firebasestorage",
       "label": "FirebaseStorage?",
       "_origin": "ast",
@@ -17926,6 +17519,17 @@
       "source_location": "L81"
     },
     {
+      "id": "package_image_picker_image_picker_dart",
+      "label": "package:image_picker/image_picker.dart",
+      "_origin": "ast",
+      "community": 62,
+      "community_name": "profile_repository.dart",
+      "file_type": "code",
+      "norm_label": "package:image_picker/image_picker.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
       "id": "core_models_models_dart",
       "label": "../../core/models/models.dart",
       "_origin": "ast",
@@ -17957,17 +17561,6 @@
       "norm_label": "firebasemessaging?",
       "source_file": null,
       "source_location": null
-    },
-    {
-      "id": "lib_core_models_models_appuser",
-      "label": "AppUser",
-      "_origin": "ast",
-      "community": 63,
-      "community_name": "../../core/models/models.dart",
-      "file_type": "code",
-      "norm_label": "appuser",
-      "source_file": "lib/core/models/models.dart",
-      "source_location": "L7"
     },
     {
       "id": "lib_core_services_notification_service",
@@ -18044,17 +17637,6 @@
       "file_type": "code",
       "norm_label": "_tokenrefreshsub",
       "source_file": "lib/core/services/notification_service.dart",
-      "source_location": "L12"
-    },
-    {
-      "id": "lib_features_auth_auth_repository_authrepository",
-      "label": "AuthRepository",
-      "_origin": "ast",
-      "community": 63,
-      "community_name": "../../core/models/models.dart",
-      "file_type": "code",
-      "norm_label": "authrepository",
-      "source_file": "lib/features/auth/auth_repository.dart",
       "source_location": "L12"
     },
     {
@@ -18144,6 +17726,160 @@
       "norm_label": "statefulwidget",
       "source_file": null,
       "source_location": null
+    },
+    {
+      "id": "lib_app_app_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "lib/app/app.dart",
+      "source_location": "L19"
+    },
+    {
+      "id": "lib_app_app_ispusermanagerapp",
+      "label": "IspUserManagerApp",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "ispusermanagerapp",
+      "source_file": "lib/app/app.dart",
+      "source_location": "L15"
+    },
+    {
+      "id": "lib_app_app_mainapprouter",
+      "label": "_MainAppRouter",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "_mainapprouter",
+      "source_file": "lib/app/app.dart",
+      "source_location": "L90"
+    },
+    {
+      "id": "lib_app_router_routerprovider",
+      "label": "routerProvider",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "routerprovider",
+      "source_file": "lib/app/router.dart",
+      "source_location": "L10"
+    },
+    {
+      "id": "lib_core_services_notification_service_notificationserviceprovider",
+      "label": "notificationServiceProvider",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "notificationserviceprovider",
+      "source_file": "lib/core/services/notification_service.dart",
+      "source_location": "L81"
+    },
+    {
+      "id": "lib_features_app_update_app_update_repository_appupdateprovider",
+      "label": "appUpdateProvider",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "appupdateprovider",
+      "source_file": "lib/features/app_update/app_update_repository.dart",
+      "source_location": "L99"
+    },
+    {
+      "id": "lib_features_dashboard_admin_shell_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "lib/features/dashboard/admin_shell.dart",
+      "source_location": "L175"
+    },
+    {
+      "id": "lib_features_dashboard_admin_shell_initstate",
+      "label": "initState",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "initstate",
+      "source_file": "lib/features/dashboard/admin_shell.dart",
+      "source_location": "L63"
+    },
+    {
+      "id": "lib_features_settings_settings_screen_build",
+      "label": "build",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "build",
+      "source_file": "lib/features/settings/settings_screen.dart",
+      "source_location": "L15"
+    },
+    {
+      "id": "lib_features_settings_settings_screen_settingsscreen",
+      "label": "SettingsScreen",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "settingsscreen",
+      "source_file": "lib/features/settings/settings_screen.dart",
+      "source_location": "L11"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_localeprovider",
+      "label": "localeProvider",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "localeprovider",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L121"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_thememodeprovider",
+      "label": "themeModeProvider",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "thememodeprovider",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L113"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_webcolorthemeprovider",
+      "label": "webColorThemeProvider",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "webcolorthemeprovider",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L115"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_webnotificationsenabledprovider",
+      "label": "webNotificationsEnabledProvider",
+      "_origin": "ast",
+      "community": 65,
+      "community_name": "build",
+      "file_type": "code",
+      "norm_label": "webnotificationsenabledprovider",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L118"
     },
     {
       "id": "lib_l10n_app_localizations_appdelegate",
@@ -18268,17 +18004,6 @@
       "community_name": "dashboard_screen.dart",
       "file_type": "code",
       "norm_label": "../expenses/expenses_screen.dart",
-      "source_file": null,
-      "source_location": null
-    },
-    {
-      "id": "finance_cashbox_repository_dart",
-      "label": "../finance/cashbox_repository.dart",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "dashboard_screen.dart",
-      "file_type": "code",
-      "norm_label": "../finance/cashbox_repository.dart",
       "source_file": null,
       "source_location": null
     },
@@ -18525,6 +18250,171 @@
       "source_location": null
     },
     {
+      "id": "lib_app_theme_app_theme_appcolortheme",
+      "label": "AppColorTheme",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "appcolortheme",
+      "source_file": "lib/app/theme/app_theme.dart",
+      "source_location": "L5"
+    },
+    {
+      "id": "lib_core_constants_appcurrency",
+      "label": "AppCurrency",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "appcurrency",
+      "source_file": "lib/core/constants.dart",
+      "source_location": "L1"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_currencynotifier",
+      "label": "CurrencyNotifier",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "currencynotifier",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L104"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_localenotifier",
+      "label": "LocaleNotifier",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "localenotifier",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L95"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_thememodenotifier",
+      "label": "ThemeModeNotifier",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "thememodenotifier",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L67"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_webcolorthemenotifier",
+      "label": "WebColorThemeNotifier",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "webcolorthemenotifier",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L76"
+    },
+    {
+      "id": "lib_shared_providers_preferences_providers_webnotificationsenablednotifier",
+      "label": "WebNotificationsEnabledNotifier",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "webnotificationsenablednotifier",
+      "source_file": "lib/shared/providers/preferences_providers.dart",
+      "source_location": "L85"
+    },
+    {
+      "id": "locale",
+      "label": "Locale",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "locale",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "statenotifier",
+      "label": "StateNotifier",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "statenotifier",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "thememode",
+      "label": "ThemeMode",
+      "_origin": "ast",
+      "community": 70,
+      "community_name": "AppCurrency",
+      "file_type": "code",
+      "norm_label": "thememode",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "windows_runner_win32_window_cpp_hwnd",
+      "label": "HWND",
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "file_type": "code",
+      "norm_label": "hwnd",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "windows_runner_win32_window_cpp_lparam",
+      "label": "LPARAM",
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "file_type": "code",
+      "norm_label": "lparam",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "windows_runner_win32_window_cpp_lresult",
+      "label": "LRESULT",
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "file_type": "code",
+      "norm_label": "lresult",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "windows_runner_win32_window_cpp_uint",
+      "label": "UINT",
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "file_type": "code",
+      "norm_label": "uint",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "windows_runner_win32_window_cpp_wparam",
+      "label": "WPARAM",
+      "_origin": "ast",
+      "community": 71,
+      "community_name": ".MessageHandler",
+      "file_type": "code",
+      "norm_label": "wparam",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "android_app_build_gradle",
       "label": "app/build.gradle.kts",
       "_origin": "ast",
@@ -18565,6 +18455,50 @@
       "community_name": "String?",
       "file_type": "code",
       "norm_label": "string?",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "lib_core_utils_image_preview_dialog",
+      "label": "image_preview_dialog.dart",
+      "_origin": "ast",
+      "community": 76,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "image_preview_dialog.dart",
+      "source_file": "lib/core/utils/image_preview_dialog.dart",
+      "source_location": null
+    },
+    {
+      "id": "lib_core_utils_image_preview_dialog_showfullscreenimage",
+      "label": "showFullScreenImage",
+      "_origin": "ast",
+      "community": 76,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "showfullscreenimage",
+      "source_file": "lib/core/utils/image_preview_dialog.dart",
+      "source_location": "L4"
+    },
+    {
+      "id": "package_cached_network_image_cached_network_image_dart",
+      "label": "package:cached_network_image/cached_network_image.dart",
+      "_origin": "ast",
+      "community": 76,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "package:cached_network_image/cached_network_image.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "package_flutter_material_dart",
+      "label": "package:flutter/material.dart",
+      "_origin": "ast",
+      "community": 76,
+      "community_name": "package:flutter/material.dart",
+      "file_type": "code",
+      "norm_label": "package:flutter/material.dart",
       "source_file": null,
       "source_location": null
     },
@@ -18622,6 +18556,28 @@
       "norm_label": "map",
       "source_file": null,
       "source_location": null
+    },
+    {
+      "id": "windows_runner_win32_window_point_x",
+      "label": "x",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "Point",
+      "file_type": "code",
+      "norm_label": "x",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L16"
+    },
+    {
+      "id": "windows_runner_win32_window_point_y",
+      "label": "y",
+      "_origin": "ast",
+      "community": 78,
+      "community_name": "Point",
+      "file_type": "code",
+      "norm_label": "y",
+      "source_file": "windows/runner/win32_window.h",
+      "source_location": "L17"
     },
     {
       "id": "dart_html",
@@ -18987,28 +18943,6 @@
       "source_location": "L423"
     },
     {
-      "id": "lib_features_suppliers_suppliers_screen_supplierformsheet",
-      "label": "SupplierFormSheet",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "suppliers_screen.dart",
-      "file_type": "code",
-      "norm_label": "supplierformsheet",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L311"
-    },
-    {
-      "id": "lib_features_suppliers_suppliers_screen_supplierformsheetstate",
-      "label": "_SupplierFormSheetState",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "suppliers_screen.dart",
-      "file_type": "code",
-      "norm_label": "_supplierformsheetstate",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": "L320"
-    },
-    {
       "id": "lib_features_suppliers_suppliers_screen_supplierid",
       "label": "supplierId",
       "_origin": "ast",
@@ -19053,37 +18987,70 @@
       "source_location": "L305"
     },
     {
-      "id": "lib_features_expenses_expenses_repository_recurringexpensesstreamprovider",
-      "label": "recurringExpensesStreamProvider",
+      "id": "lib_features_finance_cashbox_repository_cashboxrepositoryprovider",
+      "label": "cashboxRepositoryProvider",
       "_origin": "ast",
       "community": 80,
       "community_name": "_InboxScreenState",
       "file_type": "code",
-      "norm_label": "recurringexpensesstreamprovider",
-      "source_file": "lib/features/expenses/expenses_repository.dart",
-      "source_location": "L620"
+      "norm_label": "cashboxrepositoryprovider",
+      "source_file": "lib/features/finance/cashbox_repository.dart",
+      "source_location": "L488"
     },
     {
-      "id": "lib_features_expenses_expenses_screen_expensesscreen",
-      "label": "ExpensesScreen",
+      "id": "lib_features_finance_cashbox_repository_reimbursementrequestsstreamprovider",
+      "label": "reimbursementRequestsStreamProvider",
       "_origin": "ast",
       "community": 80,
       "community_name": "_InboxScreenState",
       "file_type": "code",
-      "norm_label": "expensesscreen",
-      "source_file": "lib/features/expenses/expenses_screen.dart",
-      "source_location": "L21"
+      "norm_label": "reimbursementrequestsstreamprovider",
+      "source_file": "lib/features/finance/cashbox_repository.dart",
+      "source_location": "L496"
     },
     {
-      "id": "lib_features_expenses_expenses_screen_expensesscreenstate",
-      "label": "_ExpensesScreenState",
+      "id": "lib_features_finance_cashbox_screen_claimreimbursementrequestsheet",
+      "label": "_ClaimReimbursementRequestSheet",
       "_origin": "ast",
       "community": 80,
       "community_name": "_InboxScreenState",
       "file_type": "code",
-      "norm_label": "_expensesscreenstate",
-      "source_file": "lib/features/expenses/expenses_screen.dart",
-      "source_location": "L31"
+      "norm_label": "_claimreimbursementrequestsheet",
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L2123"
+    },
+    {
+      "id": "lib_features_finance_cashbox_screen_claimreimbursementrequestsheetstate",
+      "label": "_ClaimReimbursementRequestSheetState",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "_InboxScreenState",
+      "file_type": "code",
+      "norm_label": "_claimreimbursementrequestsheetstate",
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L2143"
+    },
+    {
+      "id": "lib_features_finance_cashbox_screen_settlestaffdebtsheet",
+      "label": "_SettleStaffDebtSheet",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "_InboxScreenState",
+      "file_type": "code",
+      "norm_label": "_settlestaffdebtsheet",
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L2365"
+    },
+    {
+      "id": "lib_features_finance_cashbox_screen_settlestaffdebtsheetstate",
+      "label": "_SettleStaffDebtSheetState",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "_InboxScreenState",
+      "file_type": "code",
+      "norm_label": "_settlestaffdebtsheetstate",
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L2393"
     },
     {
       "id": "lib_features_inbox_chat_repository_chatthreadsstreamprovider",
@@ -19119,6 +19086,17 @@
       "source_location": "L81"
     },
     {
+      "id": "lib_features_inbox_inbox_screen_buildrequeststab",
+      "label": "_buildRequestsTab",
+      "_origin": "ast",
+      "community": 80,
+      "community_name": "_InboxScreenState",
+      "file_type": "code",
+      "norm_label": "_buildrequeststab",
+      "source_file": "lib/features/inbox/inbox_screen.dart",
+      "source_location": "L313"
+    },
+    {
       "id": "lib_features_inbox_inbox_screen_inboxscreen",
       "label": "InboxScreen",
       "_origin": "ast",
@@ -19139,17 +19117,6 @@
       "norm_label": "_inboxscreenstate",
       "source_file": "lib/features/inbox/inbox_screen.dart",
       "source_location": "L23"
-    },
-    {
-      "id": "singletickerproviderstatemixin",
-      "label": "SingleTickerProviderStateMixin",
-      "_origin": "ast",
-      "community": 80,
-      "community_name": "_InboxScreenState",
-      "file_type": "code",
-      "norm_label": "singletickerproviderstatemixin",
-      "source_file": null,
-      "source_location": null
     },
     {
       "id": "lib_core_services_web_notification_helper",
@@ -19295,6 +19262,39 @@
       "source_location": null
     },
     {
+      "id": "package_printing_printing_dart",
+      "label": "package:printing/printing.dart",
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "widget_test.dart",
+      "file_type": "code",
+      "norm_label": "package:printing/printing.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "test_widget_test",
+      "label": "widget_test.dart",
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "widget_test.dart",
+      "file_type": "code",
+      "norm_label": "widget_test.dart",
+      "source_file": "test/widget_test.dart",
+      "source_location": null
+    },
+    {
+      "id": "test_widget_test_main",
+      "label": "main",
+      "_origin": "ast",
+      "community": 83,
+      "community_name": "widget_test.dart",
+      "file_type": "code",
+      "norm_label": "main",
+      "source_file": "test/widget_test.dart",
+      "source_location": "L5"
+    },
+    {
       "id": "lib_core_services_web_notification_helper_stub",
       "label": "web_notification_helper_stub.dart",
       "_origin": "ast",
@@ -19357,6 +19357,17 @@
       "community_name": "inbox_screen.dart",
       "file_type": "code",
       "norm_label": "../employees/employees_repository.dart",
+      "source_file": null,
+      "source_location": null
+    },
+    {
+      "id": "finance_cashbox_repository_dart",
+      "label": "../finance/cashbox_repository.dart",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "inbox_screen.dart",
+      "file_type": "code",
+      "norm_label": "../finance/cashbox_repository.dart",
       "source_file": null,
       "source_location": null
     },
@@ -20461,17 +20472,6 @@
       "source_location": null
     },
     {
-      "id": "dart_io",
-      "label": "dart:io",
-      "_origin": "semantic",
-      "community": 25,
-      "community_name": "chat_repository.dart",
-      "file_type": "code",
-      "norm_label": "dart:io",
-      "source_file": "lib/features/suppliers/suppliers_screen.dart",
-      "source_location": null
-    },
-    {
       "id": "c_users_msr_studioprojects_isp_user_management_isp_user_manager_lib_features_finance_cashbox_repository_dart_exception",
       "label": "Exception",
       "_origin": "semantic",
@@ -20645,6 +20645,17 @@
       "file_type": "code",
       "norm_label": "sizedbox",
       "source_file": "lib/features/profile/profile_screen.dart",
+      "source_location": null
+    },
+    {
+      "id": "dart_io",
+      "label": "dart:io",
+      "_origin": "semantic",
+      "community": 33,
+      "community_name": "profile_screen.dart",
+      "file_type": "code",
+      "norm_label": "dart:io",
+      "source_file": "lib/features/suppliers/suppliers_screen.dart",
       "source_location": null
     },
     {
@@ -21726,21 +21737,10 @@
       "type": "external"
     },
     {
-      "id": "dwmapi",
-      "label": "dwmapi",
-      "community": 39,
-      "community_name": "win32_window.cpp",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "dwmapi",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "generated_plugin_registrant",
       "label": "generated_plugin_registrant",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "external": true,
       "file_type": "concept",
       "norm_label": "generated_plugin_registrant",
@@ -21751,10 +21751,21 @@
       "id": "optional",
       "label": "optional",
       "community": 39,
-      "community_name": "win32_window.cpp",
+      "community_name": "FlutterWindow",
       "external": true,
       "file_type": "concept",
       "norm_label": "optional",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "dwmapi",
+      "label": "dwmapi",
+      "community": 53,
+      "community_name": "win32_window.cpp",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "dwmapi",
       "source_file": "",
       "type": "external"
     },
@@ -28395,7 +28406,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -28407,7 +28418,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -28419,7 +28430,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L410",
+      "source_location": "L412",
       "weight": 1.0
     },
     {
@@ -37954,18 +37965,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_history_history_repository",
-      "target": "lib_features_history_history_repository_db",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L13",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -37976,7 +37976,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L133",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_history_history_repository",
+      "target": "lib_features_history_history_repository_db",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/history/history_repository.dart",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -37987,7 +37998,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -37998,7 +38009,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -38009,7 +38020,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -38020,7 +38031,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L334",
+      "source_location": "L336",
       "weight": 1.0
     },
     {
@@ -38031,7 +38042,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L343",
+      "source_location": "L345",
       "weight": 1.0
     },
     {
@@ -38042,7 +38053,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L348",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -38053,7 +38064,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L355",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -38064,7 +38075,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L387",
+      "source_location": "L389",
       "weight": 1.0
     },
     {
@@ -38075,7 +38086,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L394",
+      "source_location": "L396",
       "weight": 1.0
     },
     {
@@ -38086,7 +38097,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L401",
+      "source_location": "L403",
       "weight": 1.0
     },
     {
@@ -38097,7 +38108,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L404",
+      "source_location": "L406",
       "weight": 1.0
     },
     {
@@ -38108,7 +38119,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L406",
+      "source_location": "L408",
       "weight": 1.0
     },
     {
@@ -38119,7 +38130,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -38130,7 +38141,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -38141,7 +38152,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -38152,7 +38163,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L74",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -38163,7 +38174,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -41650,7 +41661,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L3144",
+      "source_location": "L3149",
       "weight": 1.0
     },
     {
@@ -41672,7 +41683,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L3214",
+      "source_location": "L3219",
       "weight": 1.0
     },
     {
@@ -46546,6 +46557,17 @@
       "confidence_score": 1.0,
       "source_file": "lib/features/history/history_repository.dart",
       "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_history_history_repository",
+      "target": "core_utils_firestore_helpers_dart",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/history/history_repository.dart",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -53508,5 +53530,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "47575d4d6d1e0f4842e9012fa59c55cd3188a93b"
+  "built_at_commit": "8ed507ccd2111d8cd4cc23e9a1d8be4de0a28efc"
 }

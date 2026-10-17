@@ -359,6 +359,7 @@ class _AdvanceSubscriptionSheetState
 
             // Payment destination (Cashbox vs Collector)
             DropdownButtonFormField<MoneyStorage>(
+              isExpanded: true,
               initialValue: _receivedIn,
               decoration: InputDecoration(
                 labelText: l.t('paymentDestination'),
@@ -375,6 +376,10 @@ class _AdvanceSubscriptionSheetState
                 DropdownMenuItem(
                   value: MoneyStorage.personal,
                   child: Text(l.t('keptByCollectorDebt')),
+                ),
+                DropdownMenuItem(
+                  value: MoneyStorage.none,
+                  child: Text(l.t('noCashboxSettlement')),
                 ),
               ],
               onChanged: (v) =>

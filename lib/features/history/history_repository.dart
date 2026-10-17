@@ -5,6 +5,7 @@ import '../../core/constants.dart';
 import '../../core/firebase_service.dart';
 import '../../core/models/models.dart';
 import '../../core/services/cashbox_service.dart';
+import '../../core/utils/firestore_helpers.dart';
 import '../auth/auth_repository.dart';
 
 /// Writes a single history event under /admins/{adminUid}/history.
@@ -138,7 +139,9 @@ class HistoryRepository {
 
     final subscriberId = (after['subscriberId'] ??
         before['subscriberId'] ??
-        (before['debt'] is Map ? (before['debt'] as Map)['subscriberId'] : null) ??
+        (before['debt'] is Map
+            ? (before['debt'] as Map)['subscriberId']
+            : null) ??
         (event.targetType == 'subscriber' ? event.targetId : null)) as String?;
 
     if (subscriberId == null || subscriberId.isEmpty) {
@@ -157,7 +160,9 @@ class HistoryRepository {
         '') as String;
 
     final amount = ((after['amount'] ??
-            (before['debt'] is Map ? (before['debt'] as Map)['amount'] : null) ??
+            (before['debt'] is Map
+                ? (before['debt'] as Map)['amount']
+                : null) ??
             0) as num)
         .toDouble();
     if (amount <= 0) {
@@ -170,15 +175,12 @@ class HistoryRepository {
         'IQD') as String?;
     final currency = AppCurrency.fromCode(currencyCode ?? 'IQD');
 
-    var receivedIn = switch (after['receivedIn'] as String?) {
-      'personal' => MoneyStorage.personal,
-      'none' => MoneyStorage.none,
-      _ => MoneyStorage.cashbox,
-    };
-    var collectorUid =
-        (after['recordedBy'] as String?)?.isNotEmpty == true
-            ? (after['recordedBy'] as String)
-            : event.actorUid;
+    var receivedIn =
+        enumFromName(MoneyStorage.values, after['receivedIn'] as String?) ??
+            MoneyStorage.cashbox;
+    var collectorUid = (after['recordedBy'] as String?)?.isNotEmpty == true
+        ? (after['recordedBy'] as String)
+        : event.actorUid;
 
     String? paymentId = (after['paymentId'] ??
         (event.targetType == 'payment' ? event.targetId : null)) as String?;

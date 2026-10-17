@@ -3093,6 +3093,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                       ),
                       const SizedBox(height: 10),
                       DropdownButtonFormField<MoneyStorage>(
+                        isExpanded: true,
                         value: _initialReceivedIn,
                         decoration: InputDecoration(
                           labelText: l.t('paymentDestination'),
@@ -3108,6 +3109,10 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                           DropdownMenuItem(
                             value: MoneyStorage.personal,
                             child: Text(l.t('keptByCollectorDebt')),
+                          ),
+                          DropdownMenuItem(
+                            value: MoneyStorage.none,
+                            child: Text(l.t('noCashboxSettlement')),
                           ),
                         ],
                         onChanged: (v) => setState(() =>
