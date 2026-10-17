@@ -71,6 +71,9 @@ class CashboxService {
     required String subscriberId,
     required String subscriberName,
   }) {
+    if (payment.receivedIn == MoneyStorage.none) {
+      return;
+    }
     final boxRef = cashboxRef(db, adminUid);
     final key = debtKey(actor.uid, payment.currency);
     final amt = payment.amount.toDouble();
@@ -128,6 +131,9 @@ class CashboxService {
     String? paymentId,
     String? note,
   }) {
+    if (receivedIn == MoneyStorage.none) {
+      return;
+    }
     final boxRef = cashboxRef(db, adminUid);
     final key = debtKey(collectorUid, currency);
     final amt = amount.toDouble();

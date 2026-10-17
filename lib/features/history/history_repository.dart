@@ -170,9 +170,11 @@ class HistoryRepository {
         'IQD') as String?;
     final currency = AppCurrency.fromCode(currencyCode ?? 'IQD');
 
-    var receivedIn = (after['receivedIn'] as String?) == 'personal'
-        ? MoneyStorage.personal
-        : MoneyStorage.cashbox;
+    var receivedIn = switch (after['receivedIn'] as String?) {
+      'personal' => MoneyStorage.personal,
+      'none' => MoneyStorage.none,
+      _ => MoneyStorage.cashbox,
+    };
     var collectorUid =
         (after['recordedBy'] as String?)?.isNotEmpty == true
             ? (after['recordedBy'] as String)

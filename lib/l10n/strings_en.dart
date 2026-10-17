@@ -52,6 +52,9 @@ const Map<String, String> englishStrings = {
   'paymentDestination': 'Payment destination',
   'putInCashbox': 'Added to cashbox',
   'keptByCollectorDebt': 'Kept by employee/admin (they owe cashbox)',
+  'noCashboxSettlement': 'Without adding to cashbox (settle old accounts)',
+  'noCashboxSettlementHint':
+      'Deducts the amount from subscriber debt only without adding to cashbox or employee debt.',
   'newSupplier': 'New supplier',
   'supplierName': 'Supplier name',
   'packages': 'Packages',

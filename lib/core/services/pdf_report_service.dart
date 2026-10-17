@@ -497,9 +497,13 @@ class PdfReportService {
     final paymentRowsRaw = sortedPayments.asMap().entries.map((entry) {
       final idx = entry.key + 1;
       final p = entry.value;
-      final destStr = p.receivedIn == MoneyStorage.personal
-          ? (isArabic ? 'جيب الموظف' : 'Employee Pocket')
-          : (isArabic ? 'الصندوق العام' : 'General Cashbox');
+      final destStr = switch (p.receivedIn) {
+        MoneyStorage.personal => isArabic ? 'جيب الموظف' : 'Employee Pocket',
+        MoneyStorage.none => isArabic
+            ? 'تصفية حساب قديم (بدون صندوق)'
+            : 'Old Account Settlement (No Cashbox)',
+        MoneyStorage.cashbox => isArabic ? 'الصندوق العام' : 'General Cashbox',
+      };
       final row = [
         '$idx',
         DateFormatter.dateTime(p.recordedAt, locale: locale),

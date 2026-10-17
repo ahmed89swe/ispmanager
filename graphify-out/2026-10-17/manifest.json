@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "lib/core/constants.dart": {
-    "mtime": 1788515654.1647792,
-    "seen": 1792169497.611921,
-    "ast_hash": "f13d68f72767d65fac805677aa2f1eb7",
+    "mtime": 1792227217.606315,
+    "seen": 1792227370.3985634,
+    "ast_hash": "772c162d60f1ffed3f09b73faac7838e",
     "semantic_hash": ""
   },
   "lib/core/firebase_service.dart": {
@@ -144,15 +144,15 @@
     "semantic_hash": ""
   },
   "lib/core/models/models.dart": {
-    "mtime": 1792225332.4831383,
-    "seen": 1792226008.9935784,
+    "mtime": 1792226225.201656,
+    "seen": 1792227370.398567,
     "ast_hash": "617d4b8a23030a7a48952b2b79eb7c53",
     "semantic_hash": ""
   },
   "lib/core/services/cashbox_service.dart": {
-    "mtime": 1792224992.4818363,
-    "seen": 1792226008.993581,
-    "ast_hash": "4d4af8ebda2b7247bf88a9e464902cd5",
+    "mtime": 1792227262.1436212,
+    "seen": 1792227370.3985686,
+    "ast_hash": "e86ef9063665874bc1847a7fcb4fd29a",
     "semantic_hash": ""
   },
   "lib/core/services/notification_service.dart": {
@@ -162,9 +162,9 @@
     "semantic_hash": ""
   },
   "lib/core/services/pdf_report_service.dart": {
-    "mtime": 1792219161.6759944,
-    "seen": 1792220919.415093,
-    "ast_hash": "5bc4876d90b02e1373e57ff1fe7d1d34",
+    "mtime": 1792227357.8895802,
+    "seen": 1792227370.398572,
+    "ast_hash": "442bda9a88fc3fc41d2ec2f57bbbe35d",
     "semantic_hash": ""
   },
   "lib/core/utils/auth_utils.dart": {
@@ -216,9 +216,9 @@
     "semantic_hash": ""
   },
   "lib/features/dashboard/admin_shell.dart": {
-    "mtime": 1792225231.1383595,
-    "seen": 1792226008.9936075,
-    "ast_hash": "3f91be5ff64e6d138c5bc2f97081cc8c",
+    "mtime": 1792226225.572364,
+    "seen": 1792227370.398595,
+    "ast_hash": "788d157ad6863d142e0b605a00bf5513",
     "semantic_hash": ""
   },
   "lib/features/dashboard/dashboard_screen.dart": {
@@ -264,9 +264,9 @@
     "semantic_hash": ""
   },
   "lib/features/history/history_repository.dart": {
-    "mtime": 1792224994.0606444,
-    "seen": 1792226008.9936254,
-    "ast_hash": "e0d05884e65c65a13a776ae9c7f410cb",
+    "mtime": 1792227356.723914,
+    "seen": 1792227370.3986087,
+    "ast_hash": "da06ec9a5175687cc13382869685ff50",
     "semantic_hash": ""
   },
   "lib/features/history/history_screen.dart": {
@@ -312,9 +312,9 @@
     "semantic_hash": ""
   },
   "lib/features/payments/record_payment_sheet.dart": {
-    "mtime": 1792225498.3428676,
-    "seen": 1792226008.9936404,
-    "ast_hash": "710a120b5d2b7aba47a9c8ac3be62f2a",
+    "mtime": 1792227301.903182,
+    "seen": 1792227370.3986242,
+    "ast_hash": "114b22da0ed1563662f50e7663873e0f",
     "semantic_hash": ""
   },
   "lib/features/profile/profile_repository.dart": {
@@ -342,15 +342,15 @@
     "semantic_hash": ""
   },
   "lib/features/subscribers/subscribers_repository.dart": {
-    "mtime": 1792225463.0626054,
-    "seen": 1792226008.993648,
-    "ast_hash": "d671184c97a3bcd608869eb05264cfb2",
+    "mtime": 1792227354.8110836,
+    "seen": 1792227370.3986325,
+    "ast_hash": "2760ef5a79eb763781f4383ce7e360f4",
     "semantic_hash": ""
   },
   "lib/features/subscribers/subscribers_screen.dart": {
-    "mtime": 1792225957.7459605,
-    "seen": 1792226008.9936495,
-    "ast_hash": "145617c997d94f3018e0d41458b3bba1",
+    "mtime": 1792227337.8614352,
+    "seen": 1792227370.398634,
+    "ast_hash": "87c1805ebdbd28036a81f1732f87a1a7",
     "semantic_hash": ""
   },
   "lib/features/suppliers/suppliers_repository.dart": {
@@ -372,15 +372,15 @@
     "semantic_hash": ""
   },
   "lib/l10n/strings_ar.dart": {
-    "mtime": 1792222452.2701645,
-    "seen": 1792224560.792634,
-    "ast_hash": "cd19f5310ba23e777c10737f910c0ee6",
+    "mtime": 1792227228.6428664,
+    "seen": 1792227370.398642,
+    "ast_hash": "55df07c3a54fb817283a81f8c69e87fd",
     "semantic_hash": ""
   },
   "lib/l10n/strings_en.dart": {
-    "mtime": 1792216232.0642414,
-    "seen": 1792218744.1086316,
-    "ast_hash": "d0f6fc088db07c4727bb746415b4fde2",
+    "mtime": 1792227230.7150965,
+    "seen": 1792227370.3986437,
+    "ast_hash": "607bfd5c156fc45480edd9ae049d0658",
     "semantic_hash": ""
   },
   "lib/shared/providers/preferences_providers.dart": {

@@ -40,7 +40,7 @@ enum ExpenseCategory { rent, salary, maintenance, utilities, other }
 
 enum ExpenseEntryType { expense, withdrawal }
 
-enum MoneyStorage { cashbox, personal }
+enum MoneyStorage { cashbox, personal, none }
 
 enum SupplierPackageType { data, time, hybrid }
 

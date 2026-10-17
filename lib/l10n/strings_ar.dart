@@ -52,6 +52,9 @@ const Map<String, String> arabicStrings = {
   'paymentDestination': 'موقع مبلغ التسديد',
   'putInCashbox': 'تم إيداعه في الصندوق',
   'keptByCollectorDebt': 'بقي عند الموظف/المدير (دين عليهم للصندوق)',
+  'noCashboxSettlement': 'بدون إضافة للصندوق (تصفية حسابات قديمة)',
+  'noCashboxSettlementHint':
+      'سيتم تنزيل المبلغ من دين المشترك فقط دون إضافته لرصيد الصندوق أو ذمة الموظف.',
   'newSupplier': 'مجهز جديد',
   'supplierName': 'اسم المجهز',
   'packages': 'الباقات',

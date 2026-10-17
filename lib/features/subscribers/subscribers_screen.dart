@@ -1666,6 +1666,7 @@ class _SubscriberDebtsTab extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<MoneyStorage>(
+                isExpanded: true,
                 value: selectedDestination,
                 decoration: InputDecoration(
                   labelText: l.t('paymentDestination'),
@@ -1681,11 +1682,46 @@ class _SubscriberDebtsTab extends ConsumerWidget {
                     value: MoneyStorage.personal,
                     child: Text(l.t('keptByCollectorDebt')),
                   ),
+                  DropdownMenuItem(
+                    value: MoneyStorage.none,
+                    child: Text(l.t('noCashboxSettlement')),
+                  ),
                 ],
                 onChanged: (v) {
                   if (v != null) setState(() => selectedDestination = v);
                 },
               ),
+              if (selectedDestination == MoneyStorage.none) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.amber.shade700.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline_rounded,
+                          size: 16, color: Colors.amber.shade900),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          l.t('noCashboxSettlementHint'),
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.amber.shade900,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           ),
           actions: [
@@ -2090,9 +2126,11 @@ class _SubscriberPaymentsTab extends ConsumerWidget {
           separatorBuilder: (_, __) => const Divider(height: 1),
           itemBuilder: (_, i) {
             final p = payments[i];
-            final destLabel = p.receivedIn == MoneyStorage.cashbox
-                ? l.t('putInCashbox')
-                : l.t('keptByCollectorDebt');
+            final destLabel = switch (p.receivedIn) {
+              MoneyStorage.cashbox => l.t('putInCashbox'),
+              MoneyStorage.personal => l.t('keptByCollectorDebt'),
+              MoneyStorage.none => l.t('noCashboxSettlement'),
+            };
             return ListTile(
               leading: CircleAvatar(
                 radius: 18,

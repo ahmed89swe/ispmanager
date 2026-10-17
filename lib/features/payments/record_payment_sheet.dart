@@ -71,7 +71,11 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
         amount: amount,
         currency: widget.subscriber.currency,
         receivedIn: _receivedIn,
-        note: _note.text.trim().isEmpty ? null : _note.text.trim(),
+        note: _note.text.trim().isNotEmpty
+            ? _note.text.trim()
+            : (_receivedIn == MoneyStorage.none
+                ? 'تصفية حساب قديم (بدون صندوق)'
+                : null),
         recordedBy: user.uid,
         recordedAt: _paymentDate,
       );
@@ -177,6 +181,7 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<MoneyStorage>(
+              isExpanded: true,
               value: _receivedIn,
               decoration: InputDecoration(labelText: l.t('paymentDestination')),
               items: [
@@ -188,10 +193,45 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
                   value: MoneyStorage.personal,
                   child: Text(l.t('keptByCollectorDebt')),
                 ),
+                DropdownMenuItem(
+                  value: MoneyStorage.none,
+                  child: Text(l.t('noCashboxSettlement')),
+                ),
               ],
               onChanged: (v) =>
                   setState(() => _receivedIn = v ?? MoneyStorage.cashbox),
             ),
+            if (_receivedIn == MoneyStorage.none) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Colors.amber.shade700.withValues(alpha: 0.4),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded,
+                        size: 18, color: Colors.amber.shade900),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l.t('noCashboxSettlementHint'),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.amber.shade900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 8),
             TextField(
                 controller: _note,

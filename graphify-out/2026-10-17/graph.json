@@ -2833,7 +2833,7 @@
       "file_type": "code",
       "norm_label": "subscribersstreamprovider",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1119"
+      "source_location": "L1122"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_build",
@@ -8705,7 +8705,7 @@
       "file_type": "code",
       "norm_label": "_buildcustomfooter",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L950"
+      "source_location": "L954"
     },
     {
       "id": "lib_core_services_pdf_report_service_buildcustomheader",
@@ -8716,7 +8716,7 @@
       "file_type": "code",
       "norm_label": "_buildcustomheader",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L896"
+      "source_location": "L900"
     },
     {
       "id": "lib_core_services_pdf_report_service_buildemptybox",
@@ -8727,7 +8727,7 @@
       "file_type": "code",
       "norm_label": "_buildemptybox",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L1120"
+      "source_location": "L1124"
     },
     {
       "id": "lib_core_services_pdf_report_service_buildfooter",
@@ -8760,7 +8760,7 @@
       "file_type": "code",
       "norm_label": "_buildinfoitem",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L1056"
+      "source_location": "L1060"
     },
     {
       "id": "lib_core_services_pdf_report_service_buildkpicard",
@@ -8771,7 +8771,7 @@
       "file_type": "code",
       "norm_label": "_buildkpicard",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L1085"
+      "source_location": "L1089"
     },
     {
       "id": "lib_core_services_pdf_report_service_buildkpigrid",
@@ -8815,7 +8815,7 @@
       "file_type": "code",
       "norm_label": "_buildsubscriberinfocard",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L978"
+      "source_location": "L982"
     },
     {
       "id": "lib_core_services_pdf_report_service_buildsubscribersdebtreportpdf",
@@ -8826,7 +8826,7 @@
       "file_type": "code",
       "norm_label": "buildsubscribersdebtreportpdf",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L674"
+      "source_location": "L678"
     },
     {
       "id": "lib_core_services_pdf_report_service_buildsubscriberstatementpdf",
@@ -9024,7 +9024,7 @@
       "file_type": "code",
       "norm_label": "previewsubscribersdebtreport",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L879"
+      "source_location": "L883"
     },
     {
       "id": "lib_core_services_pdf_report_service_previewsubscriberstatement",
@@ -9035,7 +9035,7 @@
       "file_type": "code",
       "norm_label": "previewsubscriberstatement",
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L655"
+      "source_location": "L659"
     },
     {
       "id": "lib_core_services_pdf_report_service_regular",
@@ -9178,7 +9178,7 @@
       "file_type": "code",
       "norm_label": "_builddesktopshell",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L422"
+      "source_location": "L424"
     },
     {
       "id": "lib_features_dashboard_admin_shell_buildmobileshell",
@@ -9189,7 +9189,7 @@
       "file_type": "code",
       "norm_label": "_buildmobileshell",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L371"
+      "source_location": "L373"
     },
     {
       "id": "lib_features_dashboard_dashboard_screen_buildheadergreeting",
@@ -11400,7 +11400,7 @@
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
-      "source_location": "L92"
+      "source_location": "L96"
     },
     {
       "id": "lib_features_payments_record_payment_sheet_busy",
@@ -11532,7 +11532,7 @@
       "file_type": "code",
       "norm_label": "addsubscriberdebtsheet",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2429"
+      "source_location": "L2467"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_addsubscriberdebtsheetstate",
@@ -11543,7 +11543,7 @@
       "file_type": "code",
       "norm_label": "_addsubscriberdebtsheetstate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2446"
+      "source_location": "L2484"
     },
     {
       "id": "lib_core_services_cashbox_service",
@@ -11642,7 +11642,7 @@
       "file_type": "code",
       "norm_label": "registerdirectadjustment",
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L349"
+      "source_location": "L355"
     },
     {
       "id": "lib_core_services_cashbox_service_registerexpense",
@@ -11653,7 +11653,7 @@
       "file_type": "code",
       "norm_label": "registerexpense",
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L175"
+      "source_location": "L181"
     },
     {
       "id": "lib_core_services_cashbox_service_registersubscriptionpayment",
@@ -11675,7 +11675,7 @@
       "file_type": "code",
       "norm_label": "registersupplierpayment",
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L233"
+      "source_location": "L239"
     },
     {
       "id": "lib_core_services_cashbox_service_reversesubscriptionpayment",
@@ -11686,7 +11686,7 @@
       "file_type": "code",
       "norm_label": "reversesubscriptionpayment",
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L117"
+      "source_location": "L120"
     },
     {
       "id": "lib_core_services_cashbox_service_settlestaffdebt",
@@ -11697,7 +11697,7 @@
       "file_type": "code",
       "norm_label": "settlestaffdebt",
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L291"
+      "source_location": "L297"
     },
     {
       "id": "lib_core_services_cashbox_service_updatemeta",
@@ -12137,7 +12137,7 @@
       "file_type": "code",
       "norm_label": "authuser",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1121"
+      "source_location": "L1124"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_canceladvancepayment",
@@ -12148,7 +12148,7 @@
       "file_type": "code",
       "norm_label": "canceladvancepayment",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L948"
+      "source_location": "L951"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_col",
@@ -12170,7 +12170,7 @@
       "file_type": "code",
       "norm_label": "_datefromfirestore",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1102"
+      "source_location": "L1105"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_db",
@@ -12280,7 +12280,7 @@
       "file_type": "code",
       "norm_label": "_maxdate",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1108"
+      "source_location": "L1111"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_notificationsrepo",
@@ -12302,7 +12302,7 @@
       "file_type": "code",
       "norm_label": "_perioddebtid",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1097"
+      "source_location": "L1100"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_recordadvancesubscriptionpayment",
@@ -12313,7 +12313,7 @@
       "file_type": "code",
       "norm_label": "recordadvancesubscriptionpayment",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L860"
+      "source_location": "L863"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_recordpaymentanddistribute",
@@ -12324,7 +12324,7 @@
       "file_type": "code",
       "norm_label": "recordpaymentanddistribute",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L971"
+      "source_location": "L974"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_setautorenew",
@@ -12335,7 +12335,7 @@
       "file_type": "code",
       "norm_label": "setautorenew",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L726"
+      "source_location": "L729"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_shiftautorenewal",
@@ -12346,7 +12346,7 @@
       "file_type": "code",
       "norm_label": "shiftautorenewal",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L803"
+      "source_location": "L806"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_subscribersrepository",
@@ -12368,7 +12368,7 @@
       "file_type": "code",
       "norm_label": "syncduedebts",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L659"
+      "source_location": "L662"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_unpaydebt",
@@ -12379,7 +12379,7 @@
       "file_type": "code",
       "norm_label": "unpaydebt",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L580"
+      "source_location": "L583"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_update",
@@ -12412,7 +12412,7 @@
       "file_type": "code",
       "norm_label": "watch",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1123"
+      "source_location": "L1126"
     },
     {
       "id": "lib_features_subscribers_subscribers_repository_watchall",
@@ -13578,7 +13578,7 @@
       "file_type": "code",
       "norm_label": "subscriberformsheet",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2667"
+      "source_location": "L2705"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_subscriberformsheetstate",
@@ -13589,7 +13589,7 @@
       "file_type": "code",
       "norm_label": "_subscriberformsheetstate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2677"
+      "source_location": "L2715"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_subscribersscreen",
@@ -13886,7 +13886,7 @@
       "file_type": "code",
       "norm_label": "subscribersrepositoryprovider",
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1111"
+      "source_location": "L1114"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_confirmanddeletedebt",
@@ -13897,7 +13897,7 @@
       "file_type": "code",
       "norm_label": "_confirmanddeletedebt",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1721"
+      "source_location": "L1757"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_confirmandpaydebt",
@@ -13919,7 +13919,7 @@
       "file_type": "code",
       "norm_label": "_confirmandunpaydebt",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1899"
+      "source_location": "L1935"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_exportstatement",
@@ -13952,7 +13952,7 @@
       "file_type": "code",
       "norm_label": "_paidsubscriptionstab",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1888"
+      "source_location": "L1924"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_save",
@@ -13963,7 +13963,7 @@
       "file_type": "code",
       "norm_label": "_save",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2240"
+      "source_location": "L2278"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_subscriberdebtstab",
@@ -13996,7 +13996,7 @@
       "file_type": "code",
       "norm_label": "_subscriberpaymentstab",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2061"
+      "source_location": "L2097"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_syncduedebts",
@@ -15195,7 +15195,7 @@
       "file_type": "code",
       "norm_label": "_buildanimatedtabbody",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L768"
+      "source_location": "L770"
     },
     {
       "id": "lib_features_dashboard_admin_shell_builder",
@@ -15239,7 +15239,7 @@
       "file_type": "code",
       "norm_label": "didupdatewidget",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L825"
+      "source_location": "L827"
     },
     {
       "id": "lib_features_dashboard_admin_shell_dispose",
@@ -15294,7 +15294,7 @@
       "file_type": "code",
       "norm_label": "_itemkeys",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L815"
+      "source_location": "L817"
     },
     {
       "id": "lib_features_dashboard_admin_shell_label",
@@ -15305,7 +15305,7 @@
       "file_type": "code",
       "norm_label": "label",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L918"
+      "source_location": "L920"
     },
     {
       "id": "lib_features_dashboard_admin_shell_localizations",
@@ -15316,7 +15316,7 @@
       "file_type": "code",
       "norm_label": "localizations",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L804"
+      "source_location": "L806"
     },
     {
       "id": "lib_features_dashboard_admin_shell_onselected",
@@ -15327,7 +15327,7 @@
       "file_type": "code",
       "norm_label": "onselected",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L805"
+      "source_location": "L807"
     },
     {
       "id": "lib_features_dashboard_admin_shell_ontap",
@@ -15338,7 +15338,7 @@
       "file_type": "code",
       "norm_label": "ontap",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L920"
+      "source_location": "L922"
     },
     {
       "id": "lib_features_dashboard_admin_shell_pageswitchduration",
@@ -15371,7 +15371,7 @@
       "file_type": "code",
       "norm_label": "_scrollcontroller",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L814"
+      "source_location": "L816"
     },
     {
       "id": "lib_features_dashboard_admin_shell_scrollduration",
@@ -15382,7 +15382,7 @@
       "file_type": "code",
       "norm_label": "_scrollduration",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L812"
+      "source_location": "L814"
     },
     {
       "id": "lib_features_dashboard_admin_shell_seennotificationids",
@@ -15404,7 +15404,7 @@
       "file_type": "code",
       "norm_label": "selected",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L919"
+      "source_location": "L921"
     },
     {
       "id": "lib_features_dashboard_admin_shell_selectedindex",
@@ -15415,7 +15415,7 @@
       "file_type": "code",
       "norm_label": "selectedindex",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L803"
+      "source_location": "L805"
     },
     {
       "id": "lib_features_dashboard_admin_shell_selecttab",
@@ -15437,7 +15437,7 @@
       "file_type": "code",
       "norm_label": "_showselectedtab",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L846"
+      "source_location": "L848"
     },
     {
       "id": "lib_features_dashboard_admin_shell_showwebnotificationbanner",
@@ -15459,7 +15459,7 @@
       "file_type": "code",
       "norm_label": "_synckeys",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L842"
+      "source_location": "L844"
     },
     {
       "id": "lib_features_dashboard_admin_shell_tab",
@@ -15492,7 +15492,7 @@
       "file_type": "code",
       "norm_label": "user",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L1023"
+      "source_location": "L1025"
     },
     {
       "id": "lib_features_dashboard_admin_shell_visibletabs",
@@ -15734,7 +15734,7 @@
       "file_type": "code",
       "norm_label": "_adminbottomtabitem",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L909"
+      "source_location": "L911"
     },
     {
       "id": "lib_features_dashboard_admin_shell_avatarmini",
@@ -15745,7 +15745,7 @@
       "file_type": "code",
       "norm_label": "_avatarmini",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L1021"
+      "source_location": "L1023"
     },
     {
       "id": "lib_features_dashboard_dashboard_screen_chartlegend",
@@ -15855,7 +15855,7 @@
       "file_type": "code",
       "norm_label": "shiftautorenewaldialog",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2120"
+      "source_location": "L2158"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_shiftautorenewaldialogstate",
@@ -15866,7 +15866,7 @@
       "file_type": "code",
       "norm_label": "_shiftautorenewaldialogstate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2146"
+      "source_location": "L2184"
     },
     {
       "id": "auth_auth_repository_dart",
@@ -16878,7 +16878,7 @@
       "file_type": "code",
       "norm_label": "_activatefromdate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2206"
+      "source_location": "L2244"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_agentcost",
@@ -16889,7 +16889,7 @@
       "file_type": "code",
       "norm_label": "_agentcost",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2457"
+      "source_location": "L2495"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_agentprice",
@@ -16900,7 +16900,7 @@
       "file_type": "code",
       "norm_label": "_agentprice",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2693"
+      "source_location": "L2731"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_amount",
@@ -16911,7 +16911,7 @@
       "file_type": "code",
       "norm_label": "_amount",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2452"
+      "source_location": "L2490"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_applyshiftdays",
@@ -16922,7 +16922,7 @@
       "file_type": "code",
       "norm_label": "_applyshiftdays",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2198"
+      "source_location": "L2236"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_autorenew",
@@ -16933,7 +16933,7 @@
       "file_type": "code",
       "norm_label": "_autorenew",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2697"
+      "source_location": "L2735"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_baseend",
@@ -16944,7 +16944,7 @@
       "file_type": "code",
       "norm_label": "_baseend",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2150"
+      "source_location": "L2188"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_basestart",
@@ -16955,7 +16955,7 @@
       "file_type": "code",
       "norm_label": "_basestart",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2149"
+      "source_location": "L2187"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_buildfilterchip",
@@ -16977,7 +16977,7 @@
       "file_type": "code",
       "norm_label": "_buildpaymentmodetile",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L3106"
+      "source_location": "L3144"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_busy",
@@ -16988,7 +16988,7 @@
       "file_type": "code",
       "norm_label": "_busy",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2464"
+      "source_location": "L2502"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_by",
@@ -17032,7 +17032,7 @@
       "file_type": "code",
       "norm_label": "_currency",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2694"
+      "source_location": "L2732"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_dayscontroller",
@@ -17043,7 +17043,7 @@
       "file_type": "code",
       "norm_label": "_dayscontroller",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2153"
+      "source_location": "L2191"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_debts",
@@ -17076,7 +17076,7 @@
       "file_type": "code",
       "norm_label": "existing",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2670"
+      "source_location": "L2708"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_existingdebt",
@@ -17087,7 +17087,7 @@
       "file_type": "code",
       "norm_label": "existingdebt",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2439"
+      "source_location": "L2477"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_filtertype",
@@ -17109,7 +17109,7 @@
       "file_type": "code",
       "norm_label": "_from",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2448"
+      "source_location": "L2486"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_initialpaiddate",
@@ -17120,7 +17120,7 @@
       "file_type": "code",
       "norm_label": "_initialpaiddate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2701"
+      "source_location": "L2739"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_initialpaymentmode",
@@ -17131,7 +17131,7 @@
       "file_type": "code",
       "norm_label": "_initialpaymentmode",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2699"
+      "source_location": "L2737"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_initialreceivedin",
@@ -17142,7 +17142,7 @@
       "file_type": "code",
       "norm_label": "_initialreceivedin",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2700"
+      "source_location": "L2738"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_initstate",
@@ -17153,7 +17153,7 @@
       "file_type": "code",
       "norm_label": "initstate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2160"
+      "source_location": "L2198"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_latestdebt",
@@ -17164,7 +17164,7 @@
       "file_type": "code",
       "norm_label": "_latestdebt",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2148"
+      "source_location": "L2186"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_loading",
@@ -17175,7 +17175,7 @@
       "file_type": "code",
       "norm_label": "_loading",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2156"
+      "source_location": "L2194"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_loadlatestdebt",
@@ -17186,7 +17186,7 @@
       "file_type": "code",
       "norm_label": "_loadlatestdebt",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2175"
+      "source_location": "L2213"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_name",
@@ -17197,7 +17197,7 @@
       "file_type": "code",
       "norm_label": "_name",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2678"
+      "source_location": "L2716"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_newend",
@@ -17208,7 +17208,7 @@
       "file_type": "code",
       "norm_label": "_newend",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2152"
+      "source_location": "L2190"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_newstart",
@@ -17219,7 +17219,7 @@
       "file_type": "code",
       "norm_label": "_newstart",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2151"
+      "source_location": "L2189"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_note",
@@ -17230,7 +17230,7 @@
       "file_type": "code",
       "norm_label": "_note",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2462"
+      "source_location": "L2500"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_ondelete",
@@ -17329,7 +17329,7 @@
       "file_type": "code",
       "norm_label": "_packageid",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2689"
+      "source_location": "L2727"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_packagename",
@@ -17340,7 +17340,7 @@
       "file_type": "code",
       "norm_label": "_packagename",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2690"
+      "source_location": "L2728"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_paidat",
@@ -17351,7 +17351,7 @@
       "file_type": "code",
       "norm_label": "_paidat",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2451"
+      "source_location": "L2489"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_phone",
@@ -17362,7 +17362,7 @@
       "file_type": "code",
       "norm_label": "_phone",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2680"
+      "source_location": "L2718"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_pickenddate",
@@ -17373,7 +17373,7 @@
       "file_type": "code",
       "norm_label": "_pickenddate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L3176"
+      "source_location": "L3214"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_pickfrom",
@@ -17384,7 +17384,7 @@
       "file_type": "code",
       "norm_label": "_pickfrom",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2639"
+      "source_location": "L2677"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_picknewenddate",
@@ -17395,7 +17395,7 @@
       "file_type": "code",
       "norm_label": "_picknewenddate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2228"
+      "source_location": "L2266"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_picknewstartdate",
@@ -17406,7 +17406,7 @@
       "file_type": "code",
       "norm_label": "_picknewstartdate",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2216"
+      "source_location": "L2254"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_pickpaidat",
@@ -17417,7 +17417,7 @@
       "file_type": "code",
       "norm_label": "_pickpaidat",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2617"
+      "source_location": "L2655"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_pickto",
@@ -17428,7 +17428,7 @@
       "file_type": "code",
       "norm_label": "_pickto",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2656"
+      "source_location": "L2694"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_price",
@@ -17439,7 +17439,7 @@
       "file_type": "code",
       "norm_label": "_price",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2682"
+      "source_location": "L2720"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_query",
@@ -17461,7 +17461,7 @@
       "file_type": "code",
       "norm_label": "_saving",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2157"
+      "source_location": "L2195"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_searchcontroller",
@@ -17494,7 +17494,7 @@
       "file_type": "code",
       "norm_label": "_shiftlatestdebt",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2155"
+      "source_location": "L2193"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_show",
@@ -17505,7 +17505,7 @@
       "file_type": "code",
       "norm_label": "show",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2130"
+      "source_location": "L2168"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_showform",
@@ -17549,7 +17549,7 @@
       "file_type": "code",
       "norm_label": "_subscriberprice",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2692"
+      "source_location": "L2730"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_subscriptionendsat",
@@ -17560,7 +17560,7 @@
       "file_type": "code",
       "norm_label": "_subscriptionendsat",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2695"
+      "source_location": "L2733"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_supplierid",
@@ -17571,7 +17571,7 @@
       "file_type": "code",
       "norm_label": "_supplierid",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2687"
+      "source_location": "L2725"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_suppliername",
@@ -17582,7 +17582,7 @@
       "file_type": "code",
       "norm_label": "_suppliername",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2688"
+      "source_location": "L2726"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_syncedsubscribers",
@@ -17604,7 +17604,7 @@
       "file_type": "code",
       "norm_label": "_to",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2449"
+      "source_location": "L2487"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_user",
@@ -18088,7 +18088,7 @@
       "file_type": "code",
       "norm_label": "_adminbottomtabbar",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L794"
+      "source_location": "L796"
     },
     {
       "id": "lib_features_dashboard_admin_shell_adminbottomtabbarstate",
@@ -18099,7 +18099,7 @@
       "file_type": "code",
       "norm_label": "_adminbottomtabbarstate",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L811"
+      "source_location": "L813"
     },
     {
       "id": "lib_features_finance_cashbox_screen_employeeaccountstatementsheet",
@@ -24483,7 +24483,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L385",
+      "source_location": "L387",
       "weight": 1.0
     },
     {
@@ -24495,7 +24495,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L405",
+      "source_location": "L407",
       "weight": 1.0
     },
     {
@@ -24543,7 +24543,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L651",
+      "source_location": "L653",
       "weight": 1.0
     },
     {
@@ -24555,7 +24555,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L385",
+      "source_location": "L387",
       "weight": 1.0
     },
     {
@@ -24567,7 +24567,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L405",
+      "source_location": "L407",
       "weight": 1.0
     },
     {
@@ -26259,7 +26259,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2480",
+      "source_location": "L2518",
       "weight": 1.0
     },
     {
@@ -26307,7 +26307,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1761",
+      "source_location": "L1797",
       "weight": 1.0
     },
     {
@@ -26319,7 +26319,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1706",
+      "source_location": "L1742",
       "weight": 1.0
     },
     {
@@ -26331,7 +26331,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1942",
+      "source_location": "L1978",
       "weight": 1.0
     },
     {
@@ -26403,7 +26403,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1942",
+      "source_location": "L1978",
       "weight": 1.0
     },
     {
@@ -26415,7 +26415,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2243",
+      "source_location": "L2281",
       "weight": 1.0
     },
     {
@@ -26427,7 +26427,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2243",
+      "source_location": "L2281",
       "weight": 1.0
     },
     {
@@ -26439,7 +26439,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1706",
+      "source_location": "L1742",
       "weight": 1.0
     },
     {
@@ -26463,7 +26463,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2739",
+      "source_location": "L2777",
       "weight": 1.0
     },
     {
@@ -26475,7 +26475,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2812",
+      "source_location": "L2850",
       "weight": 1.0
     },
     {
@@ -26871,7 +26871,7 @@
       "confidence_score": 1.0,
       "context": "route_path",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L617",
+      "source_location": "L619",
       "weight": 1.0
     },
     {
@@ -26883,7 +26883,7 @@
       "confidence_score": 1.0,
       "context": "route_path",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L650",
+      "source_location": "L652",
       "weight": 1.0
     },
     {
@@ -26895,7 +26895,7 @@
       "confidence_score": 1.0,
       "context": "route_path",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L398",
+      "source_location": "L400",
       "weight": 1.0
     },
     {
@@ -26907,7 +26907,7 @@
       "confidence_score": 1.0,
       "context": "route_path",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L404",
+      "source_location": "L406",
       "weight": 1.0
     },
     {
@@ -26967,7 +26967,7 @@
       "confidence_score": 1.0,
       "context": "type_lookup",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L774",
+      "source_location": "L776",
       "weight": 1.0
     },
     {
@@ -27075,7 +27075,7 @@
       "confidence_score": 1.0,
       "context": "type_lookup",
       "source_file": "lib/features/payments/record_payment_sheet.dart",
-      "source_location": "L179",
+      "source_location": "L183",
       "weight": 1.0
     },
     {
@@ -27747,7 +27747,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L1023",
+      "source_location": "L1025",
       "weight": 1.0
     },
     {
@@ -27843,7 +27843,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L802",
+      "source_location": "L804",
       "weight": 1.0
     },
     {
@@ -27855,7 +27855,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L804",
+      "source_location": "L806",
       "weight": 1.0
     },
     {
@@ -27867,7 +27867,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L805",
+      "source_location": "L807",
       "weight": 1.0
     },
     {
@@ -27879,7 +27879,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L920",
+      "source_location": "L922",
       "weight": 1.0
     },
     {
@@ -28863,7 +28863,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2146",
+      "source_location": "L2184",
       "weight": 1.0
     },
     {
@@ -28875,7 +28875,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2148",
+      "source_location": "L2186",
       "weight": 1.0
     },
     {
@@ -28887,7 +28887,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2149",
+      "source_location": "L2187",
       "weight": 1.0
     },
     {
@@ -28899,7 +28899,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2153",
+      "source_location": "L2191",
       "weight": 1.0
     },
     {
@@ -28911,7 +28911,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2694",
+      "source_location": "L2732",
       "weight": 1.0
     },
     {
@@ -32938,7 +32938,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L117",
+      "source_location": "L120",
       "weight": 1.0
     },
     {
@@ -32949,7 +32949,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L175",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -32971,7 +32971,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L233",
+      "source_location": "L239",
       "weight": 1.0
     },
     {
@@ -32982,7 +32982,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L291",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -32998,17 +32998,6 @@
     },
     {
       "source": "lib_core_services_cashbox_service",
-      "target": "lib_core_services_cashbox_service_registerdirectadjustment",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/core/services/cashbox_service.dart",
-      "source_location": "L349",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_core_services_cashbox_service",
       "target": "lib_core_services_cashbox_service_initialdata",
       "relation": "defines",
       "_origin": "ast",
@@ -33016,6 +33005,17 @@
       "confidence_score": 1.0,
       "source_file": "lib/core/services/cashbox_service.dart",
       "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_core_services_cashbox_service",
+      "target": "lib_core_services_cashbox_service_registerdirectadjustment",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/core/services/cashbox_service.dart",
+      "source_location": "L355",
       "weight": 1.0
     },
     {
@@ -33169,7 +33169,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L1056",
+      "source_location": "L1060",
       "weight": 1.0
     },
     {
@@ -33180,7 +33180,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L1085",
+      "source_location": "L1089",
       "weight": 1.0
     },
     {
@@ -33202,7 +33202,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L1120",
+      "source_location": "L1124",
       "weight": 1.0
     },
     {
@@ -33532,7 +33532,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L655",
+      "source_location": "L659",
       "weight": 1.0
     },
     {
@@ -33543,7 +33543,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L674",
+      "source_location": "L678",
       "weight": 1.0
     },
     {
@@ -33565,7 +33565,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L879",
+      "source_location": "L883",
       "weight": 1.0
     },
     {
@@ -33576,7 +33576,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L896",
+      "source_location": "L900",
       "weight": 1.0
     },
     {
@@ -33587,7 +33587,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L950",
+      "source_location": "L954",
       "weight": 1.0
     },
     {
@@ -33598,7 +33598,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core/services/pdf_report_service.dart",
-      "source_location": "L978",
+      "source_location": "L982",
       "weight": 1.0
     },
     {
@@ -34632,7 +34632,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L1021",
+      "source_location": "L1023",
       "weight": 1.0
     },
     {
@@ -34643,7 +34643,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L1023",
+      "source_location": "L1025",
       "weight": 1.0
     },
     {
@@ -34753,7 +34753,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L371",
+      "source_location": "L373",
       "weight": 1.0
     },
     {
@@ -34764,7 +34764,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L422",
+      "source_location": "L424",
       "weight": 1.0
     },
     {
@@ -34885,7 +34885,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L768",
+      "source_location": "L770",
       "weight": 1.0
     },
     {
@@ -34896,7 +34896,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L794",
+      "source_location": "L796",
       "weight": 1.0
     },
     {
@@ -34918,7 +34918,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L803",
+      "source_location": "L805",
       "weight": 1.0
     },
     {
@@ -34929,7 +34929,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L804",
+      "source_location": "L806",
       "weight": 1.0
     },
     {
@@ -34940,7 +34940,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L805",
+      "source_location": "L807",
       "weight": 1.0
     },
     {
@@ -34951,7 +34951,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L811",
+      "source_location": "L813",
       "weight": 1.0
     },
     {
@@ -34962,7 +34962,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L812",
+      "source_location": "L814",
       "weight": 1.0
     },
     {
@@ -34973,7 +34973,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L814",
+      "source_location": "L816",
       "weight": 1.0
     },
     {
@@ -34984,7 +34984,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L815",
+      "source_location": "L817",
       "weight": 1.0
     },
     {
@@ -34995,7 +34995,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L825",
+      "source_location": "L827",
       "weight": 1.0
     },
     {
@@ -35006,7 +35006,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L842",
+      "source_location": "L844",
       "weight": 1.0
     },
     {
@@ -35017,7 +35017,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L846",
+      "source_location": "L848",
       "weight": 1.0
     },
     {
@@ -35039,7 +35039,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L909",
+      "source_location": "L911",
       "weight": 1.0
     },
     {
@@ -35050,7 +35050,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L918",
+      "source_location": "L920",
       "weight": 1.0
     },
     {
@@ -35061,7 +35061,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L919",
+      "source_location": "L921",
       "weight": 1.0
     },
     {
@@ -35072,7 +35072,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L920",
+      "source_location": "L922",
       "weight": 1.0
     },
     {
@@ -39681,7 +39681,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/payments/record_payment_sheet.dart",
-      "source_location": "L92",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -40506,7 +40506,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1097",
+      "source_location": "L1100",
       "weight": 1.0
     },
     {
@@ -40517,7 +40517,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1102",
+      "source_location": "L1105",
       "weight": 1.0
     },
     {
@@ -40528,7 +40528,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1108",
+      "source_location": "L1111",
       "weight": 1.0
     },
     {
@@ -40539,7 +40539,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1111",
+      "source_location": "L1114",
       "weight": 1.0
     },
     {
@@ -40550,7 +40550,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1119",
+      "source_location": "L1122",
       "weight": 1.0
     },
     {
@@ -40561,7 +40561,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1121",
+      "source_location": "L1124",
       "weight": 1.0
     },
     {
@@ -40572,7 +40572,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L1123",
+      "source_location": "L1126",
       "weight": 1.0
     },
     {
@@ -40803,7 +40803,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L580",
+      "source_location": "L583",
       "weight": 1.0
     },
     {
@@ -40825,7 +40825,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L659",
+      "source_location": "L662",
       "weight": 1.0
     },
     {
@@ -40836,7 +40836,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L726",
+      "source_location": "L729",
       "weight": 1.0
     },
     {
@@ -40847,7 +40847,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L803",
+      "source_location": "L806",
       "weight": 1.0
     },
     {
@@ -40858,7 +40858,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L860",
+      "source_location": "L863",
       "weight": 1.0
     },
     {
@@ -40869,7 +40869,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L948",
+      "source_location": "L951",
       "weight": 1.0
     },
     {
@@ -40880,7 +40880,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_repository.dart",
-      "source_location": "L971",
+      "source_location": "L974",
       "weight": 1.0
     },
     {
@@ -40968,7 +40968,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1721",
+      "source_location": "L1757",
       "weight": 1.0
     },
     {
@@ -40990,7 +40990,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1888",
+      "source_location": "L1924",
       "weight": 1.0
     },
     {
@@ -41001,7 +41001,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1899",
+      "source_location": "L1935",
       "weight": 1.0
     },
     {
@@ -41012,7 +41012,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2061",
+      "source_location": "L2097",
       "weight": 1.0
     },
     {
@@ -41023,7 +41023,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2120",
+      "source_location": "L2158",
       "weight": 1.0
     },
     {
@@ -41034,7 +41034,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2130",
+      "source_location": "L2168",
       "weight": 1.0
     },
     {
@@ -41045,7 +41045,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2146",
+      "source_location": "L2184",
       "weight": 1.0
     },
     {
@@ -41056,7 +41056,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2148",
+      "source_location": "L2186",
       "weight": 1.0
     },
     {
@@ -41067,7 +41067,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2149",
+      "source_location": "L2187",
       "weight": 1.0
     },
     {
@@ -41078,7 +41078,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2150",
+      "source_location": "L2188",
       "weight": 1.0
     },
     {
@@ -41089,7 +41089,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2151",
+      "source_location": "L2189",
       "weight": 1.0
     },
     {
@@ -41100,7 +41100,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2152",
+      "source_location": "L2190",
       "weight": 1.0
     },
     {
@@ -41111,7 +41111,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2153",
+      "source_location": "L2191",
       "weight": 1.0
     },
     {
@@ -41122,7 +41122,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2155",
+      "source_location": "L2193",
       "weight": 1.0
     },
     {
@@ -41133,7 +41133,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2156",
+      "source_location": "L2194",
       "weight": 1.0
     },
     {
@@ -41144,34 +41144,12 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2157",
+      "source_location": "L2195",
       "weight": 1.0
     },
     {
       "source": "lib_features_subscribers_subscribers_screen",
       "target": "lib_features_subscribers_subscribers_screen_initstate",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2160",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_loadlatestdebt",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2175",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_applyshiftdays",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41193,13 +41171,35 @@
     },
     {
       "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_loadlatestdebt",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2213",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_applyshiftdays",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2236",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
       "target": "lib_features_subscribers_subscribers_screen_activatefromdate",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2206",
+      "source_location": "L2244",
       "weight": 1.0
     },
     {
@@ -41210,7 +41210,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2216",
+      "source_location": "L2254",
       "weight": 1.0
     },
     {
@@ -41221,7 +41221,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2228",
+      "source_location": "L2266",
       "weight": 1.0
     },
     {
@@ -41232,7 +41232,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2240",
+      "source_location": "L2278",
       "weight": 1.0
     },
     {
@@ -41243,7 +41243,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2429",
+      "source_location": "L2467",
       "weight": 1.0
     },
     {
@@ -41254,7 +41254,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2439",
+      "source_location": "L2477",
       "weight": 1.0
     },
     {
@@ -41265,7 +41265,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2446",
+      "source_location": "L2484",
       "weight": 1.0
     },
     {
@@ -41276,7 +41276,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2448",
+      "source_location": "L2486",
       "weight": 1.0
     },
     {
@@ -41287,7 +41287,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2449",
+      "source_location": "L2487",
       "weight": 1.0
     },
     {
@@ -41298,7 +41298,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2451",
+      "source_location": "L2489",
       "weight": 1.0
     },
     {
@@ -41309,7 +41309,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2452",
+      "source_location": "L2490",
       "weight": 1.0
     },
     {
@@ -41320,29 +41320,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2457",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_note",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2462",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_busy",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2464",
+      "source_location": "L2495",
       "weight": 1.0
     },
     {
@@ -41358,13 +41336,35 @@
     },
     {
       "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_note",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2500",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_busy",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2502",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
       "target": "lib_features_subscribers_subscribers_screen_pickpaidat",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2617",
+      "source_location": "L2655",
       "weight": 1.0
     },
     {
@@ -41375,7 +41375,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2639",
+      "source_location": "L2677",
       "weight": 1.0
     },
     {
@@ -41386,183 +41386,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2656",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_subscriberformsheet",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2667",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_existing",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2670",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_subscriberformsheetstate",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2677",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_name",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2678",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_phone",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2680",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_price",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2682",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_supplierid",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2687",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_suppliername",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2688",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_packageid",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2689",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_packagename",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2690",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_subscriberprice",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2692",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_agentprice",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2693",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_currency",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
       "source_location": "L2694",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_subscriptionendsat",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2695",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_autorenew",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2697",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_initialpaymentmode",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2699",
       "weight": 1.0
     },
     {
@@ -41578,13 +41402,189 @@
     },
     {
       "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_subscriberformsheet",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2705",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_existing",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2708",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_subscriberformsheetstate",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2715",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_name",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2716",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_phone",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2718",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_price",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2720",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_supplierid",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2725",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_suppliername",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2726",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_packageid",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2727",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_packagename",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2728",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_subscriberprice",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2730",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_agentprice",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2731",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_currency",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2732",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_subscriptionendsat",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2733",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_autorenew",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2735",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_initialpaymentmode",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L2737",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
       "target": "lib_features_subscribers_subscribers_screen_initialreceivedin",
       "relation": "defines",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2700",
+      "source_location": "L2738",
       "weight": 1.0
     },
     {
@@ -41595,7 +41595,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2701",
+      "source_location": "L2739",
       "weight": 1.0
     },
     {
@@ -41650,18 +41650,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L3106",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_subscribers_subscribers_screen",
-      "target": "lib_features_subscribers_subscribers_screen_pickenddate",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L3176",
+      "source_location": "L3144",
       "weight": 1.0
     },
     {
@@ -41673,6 +41662,17 @@
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
       "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_subscribers_subscribers_screen",
+      "target": "lib_features_subscribers_subscribers_screen_pickenddate",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/subscribers/subscribers_screen.dart",
+      "source_location": "L3214",
       "weight": 1.0
     },
     {
@@ -48536,7 +48536,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L794",
+      "source_location": "L796",
       "weight": 1.0
     },
     {
@@ -48547,7 +48547,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L811",
+      "source_location": "L813",
       "weight": 1.0
     },
     {
@@ -48558,7 +48558,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L909",
+      "source_location": "L911",
       "weight": 1.0
     },
     {
@@ -48591,7 +48591,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L1021",
+      "source_location": "L1023",
       "weight": 1.0
     },
     {
@@ -49163,7 +49163,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2429",
+      "source_location": "L2467",
       "weight": 1.0
     },
     {
@@ -49174,7 +49174,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2446",
+      "source_location": "L2484",
       "weight": 1.0
     },
     {
@@ -49196,7 +49196,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L1888",
+      "source_location": "L1924",
       "weight": 1.0
     },
     {
@@ -49207,7 +49207,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2120",
+      "source_location": "L2158",
       "weight": 1.0
     },
     {
@@ -49218,7 +49218,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2146",
+      "source_location": "L2184",
       "weight": 1.0
     },
     {
@@ -49251,7 +49251,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2667",
+      "source_location": "L2705",
       "weight": 1.0
     },
     {
@@ -49262,7 +49262,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2677",
+      "source_location": "L2715",
       "weight": 1.0
     },
     {
@@ -49273,7 +49273,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2061",
+      "source_location": "L2097",
       "weight": 1.0
     },
     {
@@ -49922,7 +49922,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/dashboard/admin_shell.dart",
-      "source_location": "L811",
+      "source_location": "L813",
       "weight": 1.0
     },
     {
@@ -50175,7 +50175,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2446",
+      "source_location": "L2484",
       "weight": 1.0
     },
     {
@@ -50186,7 +50186,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2146",
+      "source_location": "L2184",
       "weight": 1.0
     },
     {
@@ -50197,7 +50197,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/subscribers/subscribers_screen.dart",
-      "source_location": "L2677",
+      "source_location": "L2715",
       "weight": 1.0
     },
     {
@@ -53508,5 +53508,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b11e0b1d083e9955bb7d3b269fdfa94f5d2b8b39"
+  "built_at_commit": "47575d4d6d1e0f4842e9012fa59c55cd3188a93b"
 }

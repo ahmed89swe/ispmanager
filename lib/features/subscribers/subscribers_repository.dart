@@ -506,7 +506,10 @@ class SubscribersRepository {
       currency: debt.currency,
       receivedIn: receivedIn,
       method: 'subscription',
-      note: debt.note,
+      note: debt.note ??
+          (receivedIn == MoneyStorage.none
+              ? 'تصفية حساب قديم (بدون صندوق)'
+              : null),
       recordedBy: by.uid,
       recordedAt: paymentDate,
     );
