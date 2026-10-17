@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/theme/app_theme.dart';
 import '../../core/models/models.dart';
 import '../../core/utils/formatters.dart';
 import '../../l10n/app_localizations.dart';
@@ -28,18 +29,31 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     if (user == null) return const SizedBox.shrink();
     final stream = ref.watch(historyStreamProvider(user.adminUid));
     final loc = Localizations.localeOf(context).languageCode;
+    final theme = Theme.of(context);
 
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(12),
-          child: TextField(
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.search),
-              hintText: l.search,
-              isDense: true,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppTheme.cardColor(context),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppTheme.cardBorderColor(context)),
             ),
-            onChanged: (v) => setState(() => _query = v.trim().toLowerCase()),
+            child: TextField(
+              decoration: InputDecoration(
+                prefixIcon:
+                    Icon(Icons.search, color: theme.colorScheme.primary),
+                hintText: l.search,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              ),
+              onChanged: (v) => setState(() => _query = v.trim().toLowerCase()),
+            ),
           ),
         ),
         Expanded(
@@ -55,36 +69,47 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       e.action.toLowerCase().contains(_query))
                   .toList();
               if (filtered.isEmpty) return Center(child: Text(l.noData));
-              return ListView.separated(
+              return ListView.builder(
+                padding: const EdgeInsets.only(top: 4, bottom: 24),
                 itemCount: filtered.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
                 itemBuilder: (_, i) {
                   final ev = filtered[i];
                   final canUndo = user.isAdmin && _isUndoable(ev);
                   final isBusy = _busyEventIds.contains(ev.id);
-                  return ListTile(
-                    leading: CircleAvatar(
-                      child: Text(ev.actorName.isNotEmpty
-                          ? ev.actorName[0].toUpperCase()
-                          : '?'),
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                    decoration: AppTheme.cardDecoration(context),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor:
+                            theme.colorScheme.primary.withValues(alpha: 0.16),
+                        foregroundColor: theme.colorScheme.primary,
+                        child: Text(
+                          ev.actorName.isNotEmpty
+                              ? ev.actorName[0].toUpperCase()
+                              : '?',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      title: Text(ev.summary),
+                      subtitle: Text(
+                          '${ev.actorName} • ${ev.action} • ${DateFormatter.dateTime(ev.ts, locale: loc)}'),
+                      isThreeLine: true,
+                      trailing: isBusy
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : canUndo
+                              ? IconButton(
+                                  tooltip: l.t('undoEdit'),
+                                  icon: const Icon(Icons.undo),
+                                  onPressed: () => _undo(context, ref, user, ev),
+                                )
+                              : null,
                     ),
-                    title: Text(ev.summary),
-                    subtitle: Text(
-                        '${ev.actorName} • ${ev.action} • ${DateFormatter.dateTime(ev.ts, locale: loc)}'),
-                    isThreeLine: true,
-                    trailing: isBusy
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : canUndo
-                            ? IconButton(
-                                tooltip: l.t('undoEdit'),
-                                icon: const Icon(Icons.undo),
-                                onPressed: () => _undo(context, ref, user, ev),
-                              )
-                            : null,
                   );
                 },
               );

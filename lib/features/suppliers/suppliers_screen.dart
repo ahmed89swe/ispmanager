@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../app/theme/app_theme.dart';
 import '../../core/constants.dart';
 import '../../core/models/models.dart';
 import '../../core/utils/formatters.dart';
@@ -41,7 +42,6 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
     final canRequest = user.can(Permission.notifySupplierPayment);
     final list = ref.watch(suppliersStreamProvider(user.adminUid));
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: Column(
@@ -50,12 +50,10 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
             padding: const EdgeInsets.fromLTRB(14, 12, 14, 6),
             child: Container(
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest
-                    .withValues(alpha: 0.4),
+                color: AppTheme.cardColor(context),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color:
-                      theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+                  color: AppTheme.cardBorderColor(context),
                 ),
               ),
               child: TextField(
@@ -116,23 +114,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                       return Container(
                         margin: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 5),
-                        decoration: BoxDecoration(
-                          color:
-                              isDark ? theme.colorScheme.surface : Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: theme.colorScheme.outlineVariant
-                                .withValues(alpha: 0.4),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black
-                                  .withValues(alpha: isDark ? 0.2 : 0.04),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
+                        decoration: AppTheme.cardDecoration(context),
                         child: Material(
                           color: Colors.transparent,
                           borderRadius: BorderRadius.circular(16),

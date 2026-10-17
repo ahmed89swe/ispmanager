@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../app/theme/app_theme.dart';
 import '../../core/constants.dart';
 import '../../core/models/models.dart';
 import '../../core/widgets/app_avatar.dart';
@@ -29,7 +30,6 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
     final stream = ref.watch(employeesStreamProvider(user.adminUid));
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: stream.when(
@@ -45,22 +45,7 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
                 return Container(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: isDark ? theme.colorScheme.surface : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: theme.colorScheme.outlineVariant
-                          .withValues(alpha: 0.4),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black
-                            .withValues(alpha: isDark ? 0.2 : 0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+                  decoration: AppTheme.cardDecoration(context),
                   child: ListTile(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16)),

@@ -260,12 +260,15 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           expenses: expenses,
           supplierTransactions: supplierTransactions,
           debts: debts,
+          subscribers: subscribers,
           currency: currency,
         );
         return Column(
           children: [
             _kpi(l.totalRevenue, summary.revenue, currency, loc, Colors.green,
                 Icons.trending_up),
+            _kpi(l.totalDebts, summary.totalDebts, currency, loc,
+                Colors.amber.shade800, Icons.account_balance_wallet_rounded),
             _kpi(l.totalExpenses, summary.expenses, currency, loc, Colors.red,
                 Icons.receipt_long),
             _kpi(l.totalWithdrawals, summary.withdrawals, currency, loc,
@@ -363,6 +366,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             .fold<num>(0, (sum, s) => sum + s.balance);
         return Column(
           children: [
+            _kpi(l.totalDebts, totalDebt, currency, loc, Colors.redAccent,
+                Icons.account_balance_wallet_rounded),
             _previewListCard(
               title: 'ديون المشتركين',
               countLabel:
@@ -544,6 +549,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       locale: loc,
       kpis: [
         PdfKpi(l.totalRevenue, fmt(summary.revenue)),
+        PdfKpi(l.totalDebts, fmt(summary.totalDebts)),
         PdfKpi(l.totalExpenses, fmt(summary.expenses)),
         PdfKpi(l.totalWithdrawals, fmt(summary.withdrawals)),
         PdfKpi(l.totalSupplierPayments, fmt(summary.supplierPayments)),
@@ -737,11 +743,15 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     required List<Expense> expenses,
     required List<SupplierBalanceTransaction> supplierTransactions,
     required List<SubscriberDebt> debts,
+    required List<Subscriber> subscribers,
     required AppCurrency currency,
   }) {
     final revenue = payments
         .where((p) => p.currency == currency && _inRange(p.recordedAt))
         .fold<num>(0, (s, p) => s + p.amount);
+    final totalDebts = subscribers
+        .where((s) => s.currency == currency && s.balance > 0)
+        .fold<num>(0, (s, sub) => s + sub.balance);
     final expenseTotal = expenses
         .where((e) =>
             e.currency == currency &&
@@ -775,6 +785,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         .fold<num>(0, (s, d) => s + d.profit);
     return _ReportSummary(
       revenue: revenue,
+      totalDebts: totalDebts,
       expenses: expenseTotal,
       withdrawals: withdrawals,
       supplierPayments: supplierPayments,
@@ -821,7 +832,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         title: Text(label),
         trailing: Text(
           CurrencyFormatter.format(value, currency, locale: loc),
-          style: TextStyle(fontWeight: FontWeight.bold, color: color),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
         ),
       ),
     );
@@ -831,6 +846,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 class _ReportSummary {
   const _ReportSummary({
     required this.revenue,
+    required this.totalDebts,
     required this.expenses,
     required this.withdrawals,
     required this.supplierPayments,
@@ -840,6 +856,7 @@ class _ReportSummary {
   });
 
   final num revenue;
+  final num totalDebts;
   final num expenses;
   final num withdrawals;
   final num supplierPayments;

@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../app/theme/app_theme.dart';
 import '../../core/constants.dart';
 import '../../core/models/models.dart';
 import '../../core/services/pdf_report_service.dart';
@@ -28,6 +29,7 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
   final _searchController = TextEditingController();
   String _query = '';
   SubscriberFilterType _filterType = SubscriberFilterType.all;
+  String? _selectedSupplierId;
 
   @override
   void dispose() {
@@ -36,8 +38,24 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
   }
 
   Future<void> _exportDebtsReport(BuildContext context, AppUser user) async {
-    final subs =
+    final allSubs =
         ref.read(subscribersStreamProvider(user.adminUid)).valueOrNull ?? [];
+    final suppliers =
+        ref.read(suppliersStreamProvider(user.adminUid)).valueOrNull ?? [];
+    final selectedSupplierName = _selectedSupplierId == null
+        ? null
+        : suppliers
+            .where((sp) => sp.id == _selectedSupplierId)
+            .map((sp) => sp.name)
+            .firstOrNull;
+    final subs = _selectedSupplierId == null
+        ? allSubs
+        : allSubs
+            .where((s) =>
+                s.supplierId == _selectedSupplierId ||
+                (selectedSupplierName != null &&
+                    s.supplierName == selectedSupplierName))
+            .toList();
     if (subs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('لا يوجد مشتركين لتصدير التقرير')),
@@ -94,8 +112,21 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
     final user = ref.watch(currentAppUserProvider).valueOrNull;
     if (user == null) return const SizedBox.shrink();
     final subs = ref.watch(subscribersStreamProvider(user.adminUid));
+    final suppliers =
+        ref.watch(suppliersStreamProvider(user.adminUid)).valueOrNull ?? [];
     final canAdd = user.can(Permission.addSubscriber);
     final theme = Theme.of(context);
+
+    // Ensure _selectedSupplierId is still valid
+    final validSupplierId = suppliers.any((sp) => sp.id == _selectedSupplierId)
+        ? _selectedSupplierId
+        : null;
+    final selectedSupplierName = validSupplierId == null
+        ? null
+        : suppliers
+            .where((sp) => sp.id == validSupplierId)
+            .map((sp) => sp.name)
+            .firstOrNull;
 
     return Scaffold(
       body: Column(
@@ -108,12 +139,10 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest
-                          .withValues(alpha: 0.4),
+                      color: AppTheme.cardColor(context),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: theme.colorScheme.outlineVariant
-                            .withValues(alpha: 0.4),
+                        color: AppTheme.cardBorderColor(context),
                       ),
                     ),
                     child: TextField(
@@ -168,13 +197,102 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
             ),
           ),
 
+          // Supplier Filter Bar
+          if (suppliers.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 2, 14, 4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppTheme.cardColor(context),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: validSupplierId != null
+                        ? theme.colorScheme.primary
+                        : AppTheme.cardBorderColor(context),
+                    width: validSupplierId != null ? 1.5 : 1.0,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.hub_outlined,
+                      size: 20,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      '${l.t('filterBySupplier')}:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.5,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String?>(
+                          value: validSupplierId,
+                          isExpanded: true,
+                          isDense: false,
+                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                          items: [
+                            DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text(
+                                l.t('allSuppliers'),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            ...suppliers.map(
+                              (sp) => DropdownMenuItem<String?>(
+                                value: sp.id,
+                                child: Text(
+                                  sp.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                          onChanged: (val) =>
+                              setState(() => _selectedSupplierId = val),
+                        ),
+                      ),
+                    ),
+                    if (validSupplierId != null)
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        tooltip: l.all,
+                        icon: const Icon(Icons.close, size: 18),
+                        onPressed: () =>
+                            setState(() => _selectedSupplierId = null),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
           // Stream-driven content: Filter Chips & Modern Subscriber Cards
           Expanded(
             child: subs.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('$e')),
-              data: (list) {
-                _syncDueDebts(user, list);
+              data: (rawList) {
+                _syncDueDebts(user, rawList);
+
+                final list = validSupplierId == null
+                    ? rawList
+                    : rawList
+                        .where((s) =>
+                            s.supplierId == validSupplierId ||
+                            (selectedSupplierName != null &&
+                                s.supplierName == selectedSupplierName))
+                        .toList();
 
                 // Counters for chips
                 final totalCount = list.length;
@@ -552,7 +670,6 @@ class _ModernSubscriberCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
 
@@ -585,22 +702,11 @@ class _ModernSubscriberCard extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-      decoration: BoxDecoration(
-        color: isDark ? theme.colorScheme.surface : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: hasDebt
-              ? const Color(0xFFE53935).withValues(alpha: 0.25)
-              : theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+      decoration: AppTheme.cardDecoration(
+        context,
+        borderColor: hasDebt
+            ? const Color(0xFFE53935).withValues(alpha: 0.45)
+            : null,
       ),
       child: Material(
         color: Colors.transparent,
@@ -619,7 +725,7 @@ class _ModernSubscriberCard extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 22,
-                          backgroundColor: statusColor.withValues(alpha: 0.12),
+                          backgroundColor: statusColor.withValues(alpha: 0.16),
                           child: Text(
                             subscriber.name.isNotEmpty
                                 ? subscriber.name.substring(0, 1).toUpperCase()
@@ -641,9 +747,7 @@ class _ModernSubscriberCard extends StatelessWidget {
                               color: statusColor,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: isDark
-                                    ? theme.colorScheme.surface
-                                    : Colors.white,
+                                color: AppTheme.cardColor(context),
                                 width: 2,
                               ),
                             ),
@@ -1106,6 +1210,7 @@ class SubscriberDetailsDialog extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
     final size = MediaQuery.sizeOf(context);
+    final theme = Theme.of(context);
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
       child: DefaultTabController(
@@ -1116,59 +1221,96 @@ class SubscriberDetailsDialog extends ConsumerWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
-                child: Row(
+                padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: Text(
-                        subscriber.name,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            subscriber.name,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (by.can(Permission.recordSubscriberPayment))
+                          IconButton(
+                            tooltip: l.t('payAdvanceSubscription'),
+                            icon: const Icon(Icons.event_repeat_rounded,
+                                color: Color(0xFF1976D2)),
+                            onPressed: () => AdvanceSubscriptionSheet.show(
+                                context, subscriber),
+                          ),
+                        IconButton(
+                          tooltip: 'تصدير كشف حساب المشترك (PDF)',
+                          icon: const Icon(Icons.picture_as_pdf_rounded,
+                              color: Colors.redAccent),
+                          onPressed: () => _exportStatement(context, ref),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
                     ),
                     if (by.can(Permission.editSubscriber))
-                      Row(
-                        children: [
-                          Icon(subscriber.autoRenew
-                              ? Icons.autorenew
-                              : Icons.sync_disabled),
-                          const SizedBox(width: 4),
-                          Text(l.t('autoRenew')),
-                          Switch(
-                            value: subscriber.autoRenew,
-                            onChanged: (v) async {
-                              await ref
-                                  .read(subscribersRepositoryProvider)
-                                  .setAutoRenew(by, subscriber, v);
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(v
-                                      ? l.t('autoRenewEnabled')
-                                      : l.t('autoRenewDisabled')),
-                                ),
-                              );
-                            },
+                      Container(
+                        margin: const EdgeInsets.only(top: 4, left: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppTheme.cardColor(context),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppTheme.cardBorderColor(context),
                           ),
-                        ],
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              subscriber.autoRenew
+                                  ? Icons.autorenew
+                                  : Icons.sync_disabled,
+                              size: 18,
+                              color: subscriber.autoRenew
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.outline,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                l.t('autoRenew'),
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Switch(
+                              value: subscriber.autoRenew,
+                              onChanged: (v) async {
+                                await ref
+                                    .read(subscribersRepositoryProvider)
+                                    .setAutoRenew(by, subscriber, v);
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(v
+                                        ? l.t('autoRenewEnabled')
+                                        : l.t('autoRenewDisabled')),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    if (by.can(Permission.recordSubscriberPayment))
-                      IconButton(
-                        tooltip: l.t('payAdvanceSubscription'),
-                        icon: const Icon(Icons.event_repeat_rounded,
-                            color: Color(0xFF1976D2)),
-                        onPressed: () =>
-                            AdvanceSubscriptionSheet.show(context, subscriber),
-                      ),
-                    IconButton(
-                      tooltip: 'تصدير كشف حساب المشترك (PDF)',
-                      icon: const Icon(Icons.picture_as_pdf_rounded,
-                          color: Colors.redAccent),
-                      onPressed: () => _exportStatement(context, ref),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                    ),
                   ],
                 ),
               ),
@@ -1456,6 +1598,7 @@ class _SubscriberDebtsTab extends ConsumerWidget {
       body: debts.isEmpty
           ? Center(child: Text(l.noData))
           : ListView.separated(
+              padding: const EdgeInsets.only(top: 6, bottom: 88),
               itemCount: debts.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (_, i) {
@@ -1577,6 +1720,7 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
     final canManage = by.isAdmin || by.can(Permission.editSubscriber);
     if (debts.isEmpty) return Center(child: Text(l.noData));
     return ListView.separated(
+      padding: const EdgeInsets.only(top: 6, bottom: 88),
       itemCount: debts.length,
       separatorBuilder: (_, __) => const Divider(height: 1),
       itemBuilder: (_, i) {

@@ -322,4 +322,6 @@ const Map<String, String> arabicStrings = {
   'advancePaymentInfo': 'سيتم إيداع المبلغ في الصندوق فوراً، وعند حلول موعد التجديد التلقائي القادم سيُسجل الاشتراك كمسدد تلقائياً بدون إضافة دين.',
   'cyclesCount': 'عدد الدورات (الأشهر)',
   'upcomingPeriod': 'الفترة القادمة المستهدفة',
+  'allSuppliers': 'جميع المجهزين',
+  'filterBySupplier': 'فرز حسب المجهز',
 };

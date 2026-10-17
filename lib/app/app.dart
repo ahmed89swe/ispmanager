@@ -115,6 +115,19 @@ class _MainAppRouter extends ConsumerWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       routerConfig: router,
+      builder: (context, child) {
+        final media = MediaQuery.of(context);
+        final width = media.size.width;
+        final double scaleFactor = width >= 1200
+            ? 1.15
+            : (width >= 760 ? 1.10 : 1.02);
+        return MediaQuery(
+          data: media.copyWith(
+            textScaler: TextScaler.linear(scaleFactor),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

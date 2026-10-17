@@ -324,4 +324,6 @@ const Map<String, String> englishStrings = {
   'advancePaymentInfo': 'Payment will be registered in cashbox now. Upon next auto-renewal, the cycle will be marked as paid with zero debt added.',
   'cyclesCount': 'Cycles (Months)',
   'upcomingPeriod': 'Target Upcoming Period',
+  'allSuppliers': 'All Suppliers',
+  'filterBySupplier': 'Filter by supplier',
 };

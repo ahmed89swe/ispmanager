@@ -101,32 +101,41 @@ class PdfReportService {
       fontFallback: _fallbacks,
     );
 
+    final cellAlign =
+        isArabic ? pw.Alignment.centerRight : pw.Alignment.centerLeft;
+
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         theme: theme,
         margin: const pw.EdgeInsets.fromLTRB(28, 32, 28, 32),
         textDirection: textDirection,
+        crossAxisAlignment:
+            isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
         header: (ctx) => _buildHeader(data, isArabic),
         footer: (ctx) => _buildFooter(ctx, isArabic),
         build: (ctx) => [
           _buildMeta(data, isArabic),
           pw.SizedBox(height: 12),
           if (data.kpis.isNotEmpty) ...[
-            _buildKpiGrid(data),
+            _buildKpiGrid(data, isArabic),
             pw.SizedBox(height: 16),
           ],
           if (data.tableRows.isNotEmpty) ...[
-            pw.Text(
-              isArabic ? 'تفاصيل العمليات' : 'Detailed Records',
-              style: pw.TextStyle(
-                fontSize: 14,
-                fontWeight: pw.FontWeight.bold,
-                color: PdfColors.blueGrey800,
+            pw.Container(
+              width: double.infinity,
+              alignment: cellAlign,
+              child: pw.Text(
+                isArabic ? 'تفاصيل العمليات' : 'Detailed Records',
+                style: pw.TextStyle(
+                  fontSize: 14,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.blueGrey800,
+                ),
               ),
             ),
             pw.SizedBox(height: 8),
-            _buildTable(data),
+            _buildTable(data, isArabic),
           ] else ...[
             pw.Container(
               alignment: pw.Alignment.center,
@@ -146,14 +155,19 @@ class PdfReportService {
           if (data.notes != null && data.notes!.isNotEmpty) ...[
             pw.SizedBox(height: 16),
             pw.Container(
+              width: double.infinity,
+              alignment: cellAlign,
               padding: const pw.EdgeInsets.all(10),
               decoration: pw.BoxDecoration(
                 color: PdfColors.amber50,
                 border: pw.Border.all(color: PdfColors.amber200),
                 borderRadius: pw.BorderRadius.circular(6),
               ),
-              child:
-                  pw.Text(data.notes!, style: const pw.TextStyle(fontSize: 10)),
+              child: pw.Text(
+                data.notes!,
+                style: const pw.TextStyle(fontSize: 10),
+                textAlign: isArabic ? pw.TextAlign.right : pw.TextAlign.left,
+              ),
             ),
           ],
         ],
@@ -163,7 +177,52 @@ class PdfReportService {
     return doc.save();
   }
 
+  List<pw.Widget> _dirChildren(List<pw.Widget> children, bool isArabic) =>
+      isArabic ? children.reversed.toList() : children;
+
   pw.Widget _buildHeader(PdfReportData data, bool isArabic) {
+    final titleColumn = pw.Column(
+      crossAxisAlignment:
+          isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          isArabic ? 'تقرير' : 'Report',
+          style: const pw.TextStyle(fontSize: 10, color: PdfColors.blueGrey500),
+        ),
+        pw.SizedBox(height: 2),
+        pw.Text(
+          data.title,
+          style: pw.TextStyle(
+            fontSize: 18,
+            fontWeight: pw.FontWeight.bold,
+            color: PdfColors.blueGrey900,
+          ),
+        ),
+        if (data.subtitle != null)
+          pw.Text(
+            data.subtitle!,
+            style:
+                const pw.TextStyle(fontSize: 10, color: PdfColors.blueGrey600),
+          ),
+      ],
+    );
+
+    final badge = pw.Container(
+      padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: pw.BoxDecoration(
+        color: PdfColors.blue700,
+        borderRadius: pw.BorderRadius.circular(6),
+      ),
+      child: pw.Text(
+        'ISP Manager',
+        style: pw.TextStyle(
+          color: PdfColors.white,
+          fontSize: 11,
+          fontWeight: pw.FontWeight.bold,
+        ),
+      ),
+    );
+
     return pw.Container(
       padding: const pw.EdgeInsets.only(bottom: 8),
       decoration: const pw.BoxDecoration(
@@ -174,51 +233,22 @@ class PdfReportService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         crossAxisAlignment: pw.CrossAxisAlignment.center,
-        children: [
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                isArabic ? 'تقرير' : 'Report',
-                style: const pw.TextStyle(
-                    fontSize: 10, color: PdfColors.blueGrey500),
-              ),
-              pw.SizedBox(height: 2),
-              pw.Text(
-                data.title,
-                style: pw.TextStyle(
-                  fontSize: 18,
-                  fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.blueGrey900,
-                ),
-              ),
-              if (data.subtitle != null)
-                pw.Text(data.subtitle!,
-                    style: const pw.TextStyle(
-                        fontSize: 10, color: PdfColors.blueGrey600)),
-            ],
-          ),
-          pw.Container(
-            padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: pw.BoxDecoration(
-              color: PdfColors.blue700,
-              borderRadius: pw.BorderRadius.circular(6),
-            ),
-            child: pw.Text(
-              'ISP Manager',
-              style: pw.TextStyle(
-                color: PdfColors.white,
-                fontSize: 11,
-                fontWeight: pw.FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+        children: _dirChildren([titleColumn, badge], isArabic),
       ),
     );
   }
 
   pw.Widget _buildFooter(pw.Context ctx, bool isArabic) {
+    final dateWidget = pw.Text(
+      DateFormatter.dateTime(DateTime.now(), locale: isArabic ? 'ar' : 'en'),
+      style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
+    );
+    final pageWidget = pw.Text(
+      isArabic
+          ? 'صفحة ${ctx.pageNumber} من ${ctx.pagesCount}'
+          : 'Page ${ctx.pageNumber} of ${ctx.pagesCount}',
+      style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
+    );
     return pw.Container(
       padding: const pw.EdgeInsets.only(top: 8),
       decoration: const pw.BoxDecoration(
@@ -228,19 +258,7 @@ class PdfReportService {
       ),
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-        children: [
-          pw.Text(
-            DateFormatter.dateTime(DateTime.now(),
-                locale: isArabic ? 'ar' : 'en'),
-            style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
-          ),
-          pw.Text(
-            isArabic
-                ? 'صفحة ${ctx.pageNumber} من ${ctx.pagesCount}'
-                : 'Page ${ctx.pageNumber} of ${ctx.pagesCount}',
-            style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
-          ),
-        ],
+        children: _dirChildren([dateWidget, pageWidget], isArabic),
       ),
     );
   }
@@ -250,7 +268,9 @@ class PdfReportService {
     final rows = [
       [
         isArabic ? 'الفترة' : 'Period',
-        '${DateFormatter.date(data.from, locale: loc)}  →  ${DateFormatter.date(data.to, locale: loc)}',
+        isArabic
+            ? '${DateFormatter.date(data.from, locale: loc)}  ←  ${DateFormatter.date(data.to, locale: loc)}'
+            : '${DateFormatter.date(data.from, locale: loc)}  →  ${DateFormatter.date(data.to, locale: loc)}',
       ],
       [isArabic ? 'العملة' : 'Currency', data.currency.code],
       [isArabic ? 'أعد بواسطة' : 'Generated by', data.generatedBy],
@@ -259,7 +279,33 @@ class PdfReportService {
         DateFormatter.dateTime(DateTime.now(), locale: loc),
       ],
     ];
+    final items = rows
+        .map((r) => pw.RichText(
+              textDirection:
+                  isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+              text: pw.TextSpan(
+                children: [
+                  pw.TextSpan(
+                    text: '${r[0]}: ',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.blueGrey700,
+                    ),
+                  ),
+                  pw.TextSpan(
+                    text: r[1],
+                    style: const pw.TextStyle(
+                        fontSize: 10, color: PdfColors.blueGrey900),
+                  ),
+                ],
+              ),
+            ))
+        .toList();
+
     return pw.Container(
+      width: double.infinity,
+      alignment: isArabic ? pw.Alignment.centerRight : pw.Alignment.centerLeft,
       padding: const pw.EdgeInsets.all(10),
       decoration: pw.BoxDecoration(
         color: PdfColors.blueGrey50,
@@ -268,52 +314,35 @@ class PdfReportService {
       child: pw.Wrap(
         spacing: 24,
         runSpacing: 6,
-        children: rows
-            .map((r) => pw.RichText(
-                  text: pw.TextSpan(
-                    children: [
-                      pw.TextSpan(
-                        text: '${r[0]}: ',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColors.blueGrey700,
-                        ),
-                      ),
-                      pw.TextSpan(
-                        text: r[1],
-                        style: const pw.TextStyle(
-                            fontSize: 10, color: PdfColors.blueGrey900),
-                      ),
-                    ],
-                  ),
-                ))
-            .toList(),
+        alignment: isArabic ? pw.WrapAlignment.end : pw.WrapAlignment.start,
+        children: isArabic ? items.reversed.toList() : items,
       ),
     );
   }
 
-  pw.Widget _buildKpiGrid(PdfReportData data) {
+  pw.Widget _buildKpiGrid(PdfReportData data, bool isArabic) {
     const cols = 3;
     final rows = <pw.Widget>[];
     for (var i = 0; i < data.kpis.length; i += cols) {
       final slice = data.kpis.skip(i).take(cols).toList();
+      final rowChildren = <pw.Widget>[];
+      for (var idx = 0; idx < cols; idx++) {
+        if (idx > 0) rowChildren.add(pw.SizedBox(width: 6));
+        if (idx < slice.length) {
+          rowChildren.add(pw.Expanded(child: _kpiBox(slice[idx], isArabic)));
+        } else {
+          rowChildren.add(pw.Expanded(child: pw.SizedBox()));
+        }
+      }
       rows.add(pw.Row(
-        children: [
-          for (final k in slice) ...[
-            pw.Expanded(child: _kpiBox(k)),
-            pw.SizedBox(width: 6),
-          ],
-          for (var j = slice.length; j < cols; j++)
-            pw.Expanded(child: pw.SizedBox()),
-        ],
+        children: _dirChildren(rowChildren, isArabic),
       ));
       rows.add(pw.SizedBox(height: 6));
     }
     return pw.Column(children: rows);
   }
 
-  pw.Widget _kpiBox(PdfKpi k) {
+  pw.Widget _kpiBox(PdfKpi k, bool isArabic) {
     return pw.Container(
       padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: pw.BoxDecoration(
@@ -325,11 +354,13 @@ class PdfReportService {
         borderRadius: pw.BorderRadius.circular(6),
       ),
       child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        crossAxisAlignment:
+            isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
         children: [
           pw.Text(
             k.label,
             style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+            textAlign: isArabic ? pw.TextAlign.right : pw.TextAlign.left,
           ),
           pw.SizedBox(height: 3),
           pw.Text(
@@ -339,25 +370,36 @@ class PdfReportService {
               fontWeight: pw.FontWeight.bold,
               color: k.highlight ? PdfColors.blue800 : PdfColors.blueGrey900,
             ),
+            textAlign: isArabic ? pw.TextAlign.right : pw.TextAlign.left,
           ),
         ],
       ),
     );
   }
 
-  pw.Widget _buildTable(PdfReportData data) {
+  pw.Widget _buildTable(PdfReportData data, bool isArabic) {
+    final headers = isArabic
+        ? data.tableHeaders.reversed.toList()
+        : data.tableHeaders;
+    final rows = isArabic
+        ? data.tableRows.map((r) => r.reversed.toList()).toList()
+        : data.tableRows;
+    final align =
+        isArabic ? pw.Alignment.centerRight : pw.Alignment.centerLeft;
+
     return pw.TableHelper.fromTextArray(
-      headers: data.tableHeaders,
-      data: data.tableRows,
+      headers: headers,
+      data: rows,
       headerStyle: pw.TextStyle(
         fontSize: 10,
         fontWeight: pw.FontWeight.bold,
         color: PdfColors.white,
       ),
       headerDecoration: const pw.BoxDecoration(color: PdfColors.blue700),
+      headerAlignment: align,
       cellStyle: const pw.TextStyle(fontSize: 9),
       cellHeight: 22,
-      cellAlignment: pw.Alignment.centerLeft,
+      cellAlignment: align,
       oddRowDecoration: const pw.BoxDecoration(color: PdfColors.grey100),
       border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.4),
     );
@@ -386,14 +428,18 @@ class PdfReportService {
     required String locale,
   }) async {
     await _ensureFonts();
+    final isArabic = locale.startsWith('ar');
     final doc = pw.Document(
-      title: 'كشف حساب مشترك - ${subscriber.name}',
+      title: isArabic
+          ? 'كشف حساب مشترك - ${subscriber.name}'
+          : 'Subscriber Statement - ${subscriber.name}',
       author: generatedBy,
     );
 
-    final isArabic = locale.startsWith('ar');
     final textDirection =
         isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr;
+    final cellAlign =
+        isArabic ? pw.Alignment.centerRight : pw.Alignment.centerLeft;
     final theme = pw.ThemeData.withFont(
       base: _regular!,
       bold: _bold!,
@@ -409,153 +455,192 @@ class PdfReportService {
     final sortedPayments = List<Payment>.from(payments)
       ..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
 
+    final debtHeadersRaw = isArabic
+        ? [
+            'الباقة',
+            'بداية الاشتراك',
+            'نهاية الاشتراك',
+            'المبلغ',
+            'المدفوع',
+            'المتبقي',
+            'الحالة'
+          ]
+        : [
+            'Package',
+            'Start Date',
+            'End Date',
+            'Amount',
+            'Paid',
+            'Remaining',
+            'Status'
+          ];
+    final debtRowsRaw = sortedDebts.map((d) {
+      final statusStr = d.status == SubscriptionDebtStatus.paid
+          ? (isArabic ? 'مدفوع بالكامل' : 'Paid')
+          : d.status == SubscriptionDebtStatus.partiallyPaid
+              ? (isArabic ? 'مدفوع جزئياً' : 'Partially Paid')
+              : (isArabic ? 'غير مدفوع' : 'Unpaid');
+      final row = [
+        (d.packageName != null && d.packageName!.isNotEmpty)
+            ? d.packageName!
+            : (isArabic ? 'باقة المشترك' : 'Default Plan'),
+        DateFormatter.date(d.periodStart, locale: locale),
+        DateFormatter.date(d.periodEnd, locale: locale),
+        CurrencyFormatter.format(d.amount, d.currency, locale: locale),
+        CurrencyFormatter.format(d.paidAmount, d.currency, locale: locale),
+        CurrencyFormatter.format(d.remaining, d.currency, locale: locale),
+        statusStr,
+      ];
+      return isArabic ? row.reversed.toList() : row;
+    }).toList();
+
+    final paymentHeadersRaw = isArabic
+        ? ['#', 'تاريخ التسديد', 'المبلغ المسدد', 'العملة', 'طريقة الدفع', 'ملاحظات']
+        : ['#', 'Payment Date', 'Amount Paid', 'Currency', 'Destination', 'Notes'];
+    final paymentRowsRaw = sortedPayments.asMap().entries.map((entry) {
+      final idx = entry.key + 1;
+      final p = entry.value;
+      final destStr = p.receivedIn == MoneyStorage.personal
+          ? (isArabic ? 'جيب الموظف' : 'Employee Pocket')
+          : (isArabic ? 'الصندوق العام' : 'General Cashbox');
+      final row = [
+        '$idx',
+        DateFormatter.dateTime(p.recordedAt, locale: locale),
+        CurrencyFormatter.format(p.amount, p.currency, locale: locale),
+        p.currency.code,
+        destStr,
+        p.note != null && p.note!.isNotEmpty ? p.note! : '-',
+      ];
+      return isArabic ? row.reversed.toList() : row;
+    }).toList();
+
+    final kpiCards = [
+      _buildKpiCard(
+        isArabic ? 'إجمالي مبالغ التفعيلات' : 'Total Subscriptions',
+        CurrencyFormatter.format(totalDebtsAmount, subscriber.currency,
+            locale: locale),
+        PdfColors.blueGrey800,
+        PdfColors.blueGrey50,
+      ),
+      pw.SizedBox(width: 8),
+      _buildKpiCard(
+        isArabic ? 'إجمالي المبالغ المسددة' : 'Total Paid',
+        CurrencyFormatter.format(totalPaidAmount, subscriber.currency,
+            locale: locale),
+        PdfColors.green800,
+        PdfColors.green50,
+      ),
+      pw.SizedBox(width: 8),
+      _buildKpiCard(
+        isArabic ? 'صافي المتبقي بذمة المشترك' : 'Net Remaining Debt',
+        CurrencyFormatter.format(remainingBalance, subscriber.currency,
+            locale: locale),
+        remainingBalance > 0 ? PdfColors.red800 : PdfColors.blueGrey800,
+        remainingBalance > 0 ? PdfColors.red50 : PdfColors.blueGrey50,
+      ),
+    ];
+
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         theme: theme,
         margin: const pw.EdgeInsets.fromLTRB(28, 28, 28, 28),
         textDirection: textDirection,
+        crossAxisAlignment:
+            isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
         header: (ctx) => _buildCustomHeader(
-          title: 'كشف حساب مشترك - سجل التفعيلات والتسديدات',
-          subtitle: 'ISP Manager - نظام إدارة شبكات الإنترنت',
+          title: isArabic
+              ? 'كشف حساب مشترك - سجل التفعيلات والتسديدات'
+              : 'Subscriber Statement - Subscriptions & Payments',
+          subtitle: isArabic
+              ? 'ISP Manager - نظام إدارة شبكات الإنترنت'
+              : 'ISP Manager - Internet Network Management',
+          isArabic: isArabic,
         ),
         footer: (ctx) => _buildCustomFooter(ctx, isArabic, generatedBy),
         build: (ctx) => [
           pw.SizedBox(height: 10),
-          _buildSubscriberInfoCard(subscriber, locale),
+          _buildSubscriberInfoCard(subscriber, locale, isArabic),
           pw.SizedBox(height: 14),
           pw.Row(
-            children: [
-              _buildKpiCard(
-                'إجمالي مبالغ التفعيلات',
-                CurrencyFormatter.format(
-                    totalDebtsAmount, subscriber.currency,
-                    locale: locale),
-                PdfColors.blueGrey800,
-                PdfColors.blueGrey50,
-              ),
-              pw.SizedBox(width: 8),
-              _buildKpiCard(
-                'إجمالي المبالغ المسددة',
-                CurrencyFormatter.format(totalPaidAmount, subscriber.currency,
-                    locale: locale),
-                PdfColors.green800,
-                PdfColors.green50,
-              ),
-              pw.SizedBox(width: 8),
-              _buildKpiCard(
-                'صافي المتبقي بذمة المشترك',
-                CurrencyFormatter.format(
-                    remainingBalance, subscriber.currency,
-                    locale: locale),
-                remainingBalance > 0 ? PdfColors.red800 : PdfColors.blueGrey800,
-                remainingBalance > 0 ? PdfColors.red50 : PdfColors.blueGrey50,
-              ),
-            ],
+            children: _dirChildren(kpiCards, isArabic),
           ),
           pw.SizedBox(height: 16),
-          pw.Text(
-            'سجل الاشتراكات والتفعيلات (${debts.length})',
-            style: pw.TextStyle(
-              fontSize: 12.5,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.blueGrey800,
+          pw.Container(
+            width: double.infinity,
+            alignment: cellAlign,
+            child: pw.Text(
+              isArabic
+                  ? 'سجل الاشتراكات والتفعيلات (${debts.length})'
+                  : 'Subscriptions & Activations (${debts.length})',
+              style: pw.TextStyle(
+                fontSize: 12.5,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blueGrey800,
+              ),
             ),
           ),
           pw.SizedBox(height: 6),
           if (sortedDebts.isEmpty)
-            _buildEmptyBox('لا توجد اشتراكات أو تفعيلات مسجلة')
+            _buildEmptyBox(isArabic
+                ? 'لا توجد اشتراكات أو تفعيلات مسجلة'
+                : 'No subscriptions recorded')
           else
             pw.TableHelper.fromTextArray(
-              headers: [
-                'الباقة',
-                'بداية الاشتراك',
-                'نهاية الاشتراك',
-                'المبلغ',
-                'المدفوع',
-                'المتبقي',
-                'الحالة'
-              ],
-              data: sortedDebts.map((d) {
-                final statusStr = d.status == SubscriptionDebtStatus.paid
-                    ? 'مدفوع بالكامل'
-                    : d.status == SubscriptionDebtStatus.partiallyPaid
-                        ? 'مدفوع جزئياً'
-                        : 'غير مدفوع';
-                return [
-                  (d.packageName != null && d.packageName!.isNotEmpty)
-                      ? d.packageName!
-                      : 'باقة المشترك',
-                  DateFormatter.date(d.periodStart, locale: locale),
-                  DateFormatter.date(d.periodEnd, locale: locale),
-                  CurrencyFormatter.format(d.amount, d.currency,
-                      locale: locale),
-                  CurrencyFormatter.format(d.paidAmount, d.currency,
-                      locale: locale),
-                  CurrencyFormatter.format(d.remaining, d.currency,
-                      locale: locale),
-                  statusStr,
-                ];
-              }).toList(),
+              headers:
+                  isArabic ? debtHeadersRaw.reversed.toList() : debtHeadersRaw,
+              data: debtRowsRaw,
               headerStyle: pw.TextStyle(
                   fontSize: 8.5,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.white),
               headerDecoration:
                   const pw.BoxDecoration(color: PdfColors.blue700),
+              headerAlignment: cellAlign,
               cellStyle: const pw.TextStyle(fontSize: 8),
               cellHeight: 20,
+              cellAlignment: cellAlign,
               oddRowDecoration:
                   const pw.BoxDecoration(color: PdfColors.grey100),
               border:
                   pw.TableBorder.all(color: PdfColors.grey300, width: 0.4),
             ),
           pw.SizedBox(height: 16),
-          pw.Text(
-            'سجل الدفعات والتسديدات (${payments.length})',
-            style: pw.TextStyle(
-              fontSize: 12.5,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.blueGrey800,
+          pw.Container(
+            width: double.infinity,
+            alignment: cellAlign,
+            child: pw.Text(
+              isArabic
+                  ? 'سجل الدفعات والتسديدات (${payments.length})'
+                  : 'Payments History (${payments.length})',
+              style: pw.TextStyle(
+                fontSize: 12.5,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blueGrey800,
+              ),
             ),
           ),
           pw.SizedBox(height: 6),
           if (sortedPayments.isEmpty)
-            _buildEmptyBox('لا توجد دفعات أو تسديدات مسجلة')
+            _buildEmptyBox(isArabic
+                ? 'لا توجد دفعات أو تسديدات مسجلة'
+                : 'No payments recorded')
           else
             pw.TableHelper.fromTextArray(
-              headers: [
-                '#',
-                'تاريخ التسديد',
-                'المبلغ المسدد',
-                'العملة',
-                'طريقة الدفع',
-                'ملاحظات'
-              ],
-              data: sortedPayments.asMap().entries.map((entry) {
-                final idx = entry.key + 1;
-                final p = entry.value;
-                final destStr = p.receivedIn == MoneyStorage.personal
-                    ? 'جيب الموظف'
-                    : 'الصندوق العام';
-                return [
-                  '$idx',
-                  DateFormatter.dateTime(p.recordedAt, locale: locale),
-                  CurrencyFormatter.format(p.amount, p.currency,
-                      locale: locale),
-                  p.currency.code,
-                  destStr,
-                  p.note != null && p.note!.isNotEmpty ? p.note! : '-',
-                ];
-              }).toList(),
+              headers: isArabic
+                  ? paymentHeadersRaw.reversed.toList()
+                  : paymentHeadersRaw,
+              data: paymentRowsRaw,
               headerStyle: pw.TextStyle(
                   fontSize: 8.5,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.white),
               headerDecoration:
                   const pw.BoxDecoration(color: PdfColors.teal700),
+              headerAlignment: cellAlign,
               cellStyle: const pw.TextStyle(fontSize: 8),
               cellHeight: 20,
+              cellAlignment: cellAlign,
               oddRowDecoration:
                   const pw.BoxDecoration(color: PdfColors.grey100),
               border:
@@ -594,14 +679,18 @@ class PdfReportService {
     required String locale,
   }) async {
     await _ensureFonts();
+    final isArabic = locale.startsWith('ar');
     final doc = pw.Document(
-      title: 'تقرير ديون المشتركين الشامل',
+      title: isArabic
+          ? 'تقرير ديون المشتركين الشامل'
+          : 'Comprehensive Subscribers Debt Report',
       author: generatedBy,
     );
 
-    final isArabic = locale.startsWith('ar');
     final textDirection =
         isArabic ? pw.TextDirection.rtl : pw.TextDirection.ltr;
+    final cellAlign =
+        isArabic ? pw.Alignment.centerRight : pw.Alignment.centerLeft;
     final theme = pw.ThemeData.withFont(
       base: _regular!,
       bold: _bold!,
@@ -621,115 +710,152 @@ class PdfReportService {
       }
     }
 
+    final headersRaw = isArabic
+        ? [
+            '#',
+            'اسم المشترك',
+            'رقم الهاتف',
+            'المجهز',
+            'الباقة',
+            'مبلغ الدين',
+            'العملة',
+            'تاريخ الانتهاء',
+            'الحالة'
+          ]
+        : [
+            '#',
+            'Subscriber Name',
+            'Phone',
+            'Supplier',
+            'Package',
+            'Debt Amount',
+            'Currency',
+            'Expiry Date',
+            'Status'
+          ];
+
+    final rowsRaw = indebtedSubs.asMap().entries.map((entry) {
+      final idx = entry.key + 1;
+      final s = entry.value;
+      final expiryStr =
+          DateFormatter.date(s.subscriptionEndsAt, locale: locale);
+      final phoneStr =
+          (s.phone != null && s.phone!.isNotEmpty) ? s.phone! : '-';
+      final supplierStr =
+          (s.supplierName != null && s.supplierName!.isNotEmpty)
+              ? s.supplierName!
+              : '-';
+      final packageStr = (s.packageName != null && s.packageName!.isNotEmpty)
+          ? s.packageName!
+          : (s.planName != null && s.planName!.isNotEmpty ? s.planName! : '-');
+      final statusStr = s.status == SubscriberStatus.active
+          ? (isArabic ? 'نشط' : 'Active')
+          : (isArabic ? 'منتهي / معلق' : 'Expired / Inactive');
+      final row = [
+        '$idx',
+        s.name,
+        phoneStr,
+        supplierStr,
+        packageStr,
+        CurrencyFormatter.format(s.balance, s.currency, locale: locale),
+        s.currency.code,
+        expiryStr,
+        statusStr,
+      ];
+      return isArabic ? row.reversed.toList() : row;
+    }).toList();
+
+    final kpiCards = [
+      _buildKpiCard(
+        isArabic ? 'إجمالي الديون (بالدينار)' : 'Total Debts (IQD)',
+        CurrencyFormatter.format(totalDebtIqd, AppCurrency.iqd, locale: locale),
+        PdfColors.red800,
+        PdfColors.red50,
+      ),
+      pw.SizedBox(width: 8),
+      _buildKpiCard(
+        isArabic ? 'إجمالي الديون (بالدولار)' : 'Total Debts (USD)',
+        CurrencyFormatter.format(totalDebtUsd, AppCurrency.usd, locale: locale),
+        PdfColors.red800,
+        PdfColors.red50,
+      ),
+      pw.SizedBox(width: 8),
+      _buildKpiCard(
+        isArabic ? 'عدد المشتركين المدينين' : 'Indebted Subscribers',
+        isArabic
+            ? '${indebtedSubs.length} مشترك'
+            : '${indebtedSubs.length} subscribers',
+        PdfColors.blueGrey800,
+        PdfColors.blueGrey50,
+      ),
+      pw.SizedBox(width: 8),
+      _buildKpiCard(
+        isArabic ? 'إجمالي كافة المشتركين' : 'Total Subscribers',
+        isArabic
+            ? '${subscribers.length} مشترك'
+            : '${subscribers.length} subscribers',
+        PdfColors.blueGrey800,
+        PdfColors.blueGrey50,
+      ),
+    ];
+
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         theme: theme,
         margin: const pw.EdgeInsets.fromLTRB(28, 28, 28, 28),
         textDirection: textDirection,
+        crossAxisAlignment:
+            isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
         header: (ctx) => _buildCustomHeader(
-          title: 'تقرير ديون المشتركين الشامل',
-          subtitle: 'ISP Manager - كشف بالذمم المالية ومستحقات المشتركين',
+          title: isArabic
+              ? 'تقرير ديون المشتركين الشامل'
+              : 'Comprehensive Subscribers Debt Report',
+          subtitle: isArabic
+              ? 'ISP Manager - كشف بالذمم المالية ومستحقات المشتركين'
+              : 'ISP Manager - Financial Receivables & Subscriber Debts',
+          isArabic: isArabic,
         ),
         footer: (ctx) => _buildCustomFooter(ctx, isArabic, generatedBy),
         build: (ctx) => [
           pw.SizedBox(height: 10),
           pw.Row(
-            children: [
-              _buildKpiCard(
-                'إجمالي الديون (بالدينار)',
-                CurrencyFormatter.format(totalDebtIqd, AppCurrency.iqd,
-                    locale: locale),
-                PdfColors.red800,
-                PdfColors.red50,
-              ),
-              pw.SizedBox(width: 8),
-              _buildKpiCard(
-                'إجمالي الديون (بالدولار)',
-                CurrencyFormatter.format(totalDebtUsd, AppCurrency.usd,
-                    locale: locale),
-                PdfColors.red800,
-                PdfColors.red50,
-              ),
-              pw.SizedBox(width: 8),
-              _buildKpiCard(
-                'عدد المشتركين المدينين',
-                '${indebtedSubs.length} مشترك',
-                PdfColors.blueGrey800,
-                PdfColors.blueGrey50,
-              ),
-              pw.SizedBox(width: 8),
-              _buildKpiCard(
-                'إجمالي كافة المشتركين',
-                '${subscribers.length} مشترك',
-                PdfColors.blueGrey800,
-                PdfColors.blueGrey50,
-              ),
-            ],
+            children: _dirChildren(kpiCards, isArabic),
           ),
           pw.SizedBox(height: 16),
-          pw.Text(
-            'تفاصيل المشتركين المطلوبين للديون (${indebtedSubs.length})',
-            style: pw.TextStyle(
-              fontSize: 12.5,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.blueGrey800,
+          pw.Container(
+            width: double.infinity,
+            alignment: cellAlign,
+            child: pw.Text(
+              isArabic
+                  ? 'تفاصيل المشتركين المطلوبين للديون (${indebtedSubs.length})'
+                  : 'Indebted Subscribers Details (${indebtedSubs.length})',
+              style: pw.TextStyle(
+                fontSize: 12.5,
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.blueGrey800,
+              ),
             ),
           ),
           pw.SizedBox(height: 8),
           if (indebtedSubs.isEmpty)
-            _buildEmptyBox('لا توجد أي ديون على المشتركين، جميع الحسابات مسددة!')
+            _buildEmptyBox(isArabic
+                ? 'لا توجد أي ديون على المشتركين، جميع الحسابات مسددة!'
+                : 'No unpaid debts found. All subscriber accounts are settled!')
           else
             pw.TableHelper.fromTextArray(
-              headers: [
-                '#',
-                'اسم المشترك',
-                'رقم الهاتف',
-                'المجهز',
-                'الباقة',
-                'مبلغ الدين',
-                'العملة',
-                'تاريخ الانتهاء',
-                'الحالة'
-              ],
-              data: indebtedSubs.asMap().entries.map((entry) {
-                final idx = entry.key + 1;
-                final s = entry.value;
-                final expiryStr =
-                    DateFormatter.date(s.subscriptionEndsAt, locale: locale);
-                final phoneStr =
-                    (s.phone != null && s.phone!.isNotEmpty) ? s.phone! : '-';
-                final supplierStr = (s.supplierName != null &&
-                        s.supplierName!.isNotEmpty)
-                    ? s.supplierName!
-                    : '-';
-                final packageStr = (s.packageName != null &&
-                        s.packageName!.isNotEmpty)
-                    ? s.packageName!
-                    : (s.planName != null && s.planName!.isNotEmpty
-                        ? s.planName!
-                        : '-');
-                return [
-                  '$idx',
-                  s.name,
-                  phoneStr,
-                  supplierStr,
-                  packageStr,
-                  CurrencyFormatter.format(s.balance, s.currency,
-                      locale: locale),
-                  s.currency.code,
-                  expiryStr,
-                  s.status == SubscriberStatus.active ? 'نشط' : 'منتهي / معلق',
-                ];
-              }).toList(),
+              headers: isArabic ? headersRaw.reversed.toList() : headersRaw,
+              data: rowsRaw,
               headerStyle: pw.TextStyle(
                   fontSize: 8,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.white),
               headerDecoration:
                   const pw.BoxDecoration(color: PdfColors.red700),
+              headerAlignment: cellAlign,
               cellStyle: const pw.TextStyle(fontSize: 7.5),
               cellHeight: 20,
+              cellAlignment: cellAlign,
               oddRowDecoration:
                   const pw.BoxDecoration(color: PdfColors.grey100),
               border:
@@ -759,8 +885,47 @@ class PdfReportService {
     );
   }
 
-  pw.Widget _buildCustomHeader(
-      {required String title, required String subtitle}) {
+  pw.Widget _buildCustomHeader({
+    required String title,
+    required String subtitle,
+    required bool isArabic,
+  }) {
+    final titleColumn = pw.Column(
+      crossAxisAlignment:
+          isArabic ? pw.CrossAxisAlignment.end : pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          title,
+          style: pw.TextStyle(
+            fontSize: 15,
+            fontWeight: pw.FontWeight.bold,
+            color: PdfColors.blueGrey900,
+          ),
+        ),
+        pw.SizedBox(height: 2),
+        pw.Text(
+          subtitle,
+          style: const pw.TextStyle(fontSize: 9, color: PdfColors.blueGrey600),
+        ),
+      ],
+    );
+
+    final badge = pw.Container(
+      padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: pw.BoxDecoration(
+        color: PdfColors.blue700,
+        borderRadius: pw.BorderRadius.circular(6),
+      ),
+      child: pw.Text(
+        'ISP Manager',
+        style: pw.TextStyle(
+          color: PdfColors.white,
+          fontSize: 11,
+          fontWeight: pw.FontWeight.bold,
+        ),
+      ),
+    );
+
     return pw.Container(
       padding: const pw.EdgeInsets.only(bottom: 8),
       decoration: const pw.BoxDecoration(
@@ -771,48 +936,25 @@ class PdfReportService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         crossAxisAlignment: pw.CrossAxisAlignment.center,
-        children: [
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                title,
-                style: pw.TextStyle(
-                  fontSize: 15,
-                  fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.blueGrey900,
-                ),
-              ),
-              pw.SizedBox(height: 2),
-              pw.Text(
-                subtitle,
-                style: const pw.TextStyle(
-                    fontSize: 9, color: PdfColors.blueGrey600),
-              ),
-            ],
-          ),
-          pw.Container(
-            padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: pw.BoxDecoration(
-              color: PdfColors.blue700,
-              borderRadius: pw.BorderRadius.circular(6),
-            ),
-            child: pw.Text(
-              'ISP Manager',
-              style: pw.TextStyle(
-                color: PdfColors.white,
-                fontSize: 11,
-                fontWeight: pw.FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+        children: _dirChildren([titleColumn, badge], isArabic),
       ),
     );
   }
 
   pw.Widget _buildCustomFooter(
       pw.Context ctx, bool isArabic, String generatedBy) {
+    final generatedText = pw.Text(
+      isArabic
+          ? 'تم استخراج التقرير بواسطة: $generatedBy - ${DateFormatter.dateTime(DateTime.now(), locale: "ar")}'
+          : 'Generated by: $generatedBy - ${DateFormatter.dateTime(DateTime.now(), locale: "en")}',
+      style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+    );
+    final pageText = pw.Text(
+      isArabic
+          ? 'صفحة ${ctx.pageNumber} من ${ctx.pagesCount}'
+          : 'Page ${ctx.pageNumber} of ${ctx.pagesCount}',
+      style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
+    );
     return pw.Container(
       padding: const pw.EdgeInsets.only(top: 8),
       decoration: const pw.BoxDecoration(
@@ -822,25 +964,72 @@ class PdfReportService {
       ),
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-        children: [
-          pw.Text(
-            isArabic
-                ? 'تم استخراج التقرير بواسطة: $generatedBy - ${DateFormatter.dateTime(DateTime.now(), locale: "ar")}'
-                : 'Generated by: $generatedBy - ${DateTime.now()}',
-            style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
-          ),
-          pw.Text(
-            isArabic
-                ? 'صفحة ${ctx.pageNumber} من ${ctx.pagesCount}'
-                : 'Page ${ctx.pageNumber} of ${ctx.pagesCount}',
-            style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
-          ),
-        ],
+        children: _dirChildren([generatedText, pageText], isArabic),
       ),
     );
   }
 
-  pw.Widget _buildSubscriberInfoCard(Subscriber subscriber, String locale) {
+  pw.Widget _buildSubscriberInfoCard(
+      Subscriber subscriber, String locale, bool isArabic) {
+    final row1 = [
+      pw.Expanded(
+        child: _buildInfoItem(
+          isArabic ? 'اسم المشترك:' : 'Subscriber:',
+          subscriber.name,
+          isBold: true,
+          isArabic: isArabic,
+        ),
+      ),
+      pw.Expanded(
+        child: _buildInfoItem(
+          isArabic ? 'رقم الهاتف:' : 'Phone:',
+          (subscriber.phone != null && subscriber.phone!.isNotEmpty)
+              ? subscriber.phone!
+              : (isArabic ? 'غير متوفر' : 'N/A'),
+          isArabic: isArabic,
+        ),
+      ),
+      pw.Expanded(
+        child: _buildInfoItem(
+          isArabic ? 'المجهز:' : 'Supplier:',
+          (subscriber.supplierName != null &&
+                  subscriber.supplierName!.isNotEmpty)
+              ? subscriber.supplierName!
+              : (isArabic ? 'غير محدد' : 'N/A'),
+          isArabic: isArabic,
+        ),
+      ),
+    ];
+
+    final row2 = [
+      pw.Expanded(
+        child: _buildInfoItem(
+          isArabic ? 'حالة المشترك:' : 'Status:',
+          subscriber.status == SubscriberStatus.active
+              ? (isArabic ? 'نشط' : 'Active')
+              : (isArabic ? 'منتهي / معلق' : 'Expired / Inactive'),
+          isArabic: isArabic,
+        ),
+      ),
+      pw.Expanded(
+        child: _buildInfoItem(
+          isArabic ? 'الباقة الحالية:' : 'Plan:',
+          (subscriber.packageName != null && subscriber.packageName!.isNotEmpty)
+              ? subscriber.packageName!
+              : (subscriber.planName ??
+                  (isArabic ? 'باقة افتراضية' : 'Default Plan')),
+          isArabic: isArabic,
+        ),
+      ),
+      pw.Expanded(
+        child: _buildInfoItem(
+          isArabic ? 'تاريخ الانتهاء:' : 'Expires:',
+          DateFormatter.date(subscriber.subscriptionEndsAt, locale: locale),
+          isArabic: isArabic,
+        ),
+      ),
+    ];
+
     return pw.Container(
       padding: const pw.EdgeInsets.all(10),
       decoration: pw.BoxDecoration(
@@ -850,81 +1039,44 @@ class PdfReportService {
       ),
       child: pw.Column(
         children: [
-          pw.Row(
-            children: [
-              pw.Expanded(
-                child: _buildInfoItem('اسم المشترك:', subscriber.name,
-                    isBold: true),
-              ),
-              pw.Expanded(
-                child: _buildInfoItem(
-                    'رقم الهاتف:',
-                    (subscriber.phone != null && subscriber.phone!.isNotEmpty)
-                        ? subscriber.phone!
-                        : 'غير متوفر'),
-              ),
-              pw.Expanded(
-                child: _buildInfoItem(
-                    'المجهز:',
-                    (subscriber.supplierName != null &&
-                            subscriber.supplierName!.isNotEmpty)
-                        ? subscriber.supplierName!
-                        : 'غير محدد'),
-              ),
-            ],
-          ),
+          pw.Row(children: _dirChildren(row1, isArabic)),
           pw.SizedBox(height: 6),
-          pw.Row(
-            children: [
-              pw.Expanded(
-                child: _buildInfoItem(
-                    'حالة المشترك:',
-                    subscriber.status == SubscriberStatus.active
-                        ? 'نشط'
-                        : 'منتهي / معلق'),
-              ),
-              pw.Expanded(
-                child: _buildInfoItem(
-                    'الباقة الحالية:',
-                    (subscriber.packageName != null &&
-                            subscriber.packageName!.isNotEmpty)
-                        ? subscriber.packageName!
-                        : (subscriber.planName ?? 'باقة افتراضية')),
-              ),
-              pw.Expanded(
-                child: _buildInfoItem(
-                  'تاريخ الانتهاء:',
-                  DateFormatter.date(subscriber.subscriptionEndsAt,
-                      locale: locale),
-                ),
-              ),
-            ],
-          ),
+          pw.Row(children: _dirChildren(row2, isArabic)),
         ],
       ),
     );
   }
 
-  pw.Widget _buildInfoItem(String label, String value,
-      {bool isBold = false}) {
-    return pw.Row(
-      children: [
-        pw.Text(label,
-            style: const pw.TextStyle(
-                fontSize: 8.5, color: PdfColors.grey700)),
-        pw.SizedBox(width: 4),
-        pw.Expanded(
-          child: pw.Text(
-            value,
-            style: pw.TextStyle(
-              fontSize: 8.5,
-              fontWeight: isBold ? pw.FontWeight.bold : pw.FontWeight.normal,
-              color: PdfColors.blueGrey900,
-            ),
-            maxLines: 1,
-          ),
+  pw.Widget _buildInfoItem(
+    String label,
+    String value, {
+    bool isBold = false,
+    required bool isArabic,
+  }) {
+    final labelW = pw.Text(
+      label,
+      style: const pw.TextStyle(fontSize: 8.5, color: PdfColors.grey700),
+      textAlign: isArabic ? pw.TextAlign.right : pw.TextAlign.left,
+    );
+    final valueW = pw.Expanded(
+      child: pw.Text(
+        value,
+        style: pw.TextStyle(
+          fontSize: 8.5,
+          fontWeight: isBold ? pw.FontWeight.bold : pw.FontWeight.normal,
+          color: PdfColors.blueGrey900,
         ),
-      ],
+        textAlign: isArabic ? pw.TextAlign.right : pw.TextAlign.left,
+        maxLines: 1,
+      ),
+    );
+    return pw.Row(
+      mainAxisAlignment:
+          isArabic ? pw.MainAxisAlignment.end : pw.MainAxisAlignment.start,
+      children: _dirChildren(
+        [labelW, pw.SizedBox(width: 4), valueW],
+        isArabic,
+      ),
     );
   }
 
