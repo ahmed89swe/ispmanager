@@ -63,6 +63,8 @@ class Subscriber {
   final DateTime subscriptionEndsAt;
   final bool autoRenew;
   final int prepaidCycles;
+  final num? lastPaymentAmount;
+  final DateTime? lastPaymentAt;
 
   Subscriber({
     required this.id,
@@ -82,6 +84,8 @@ class Subscriber {
     DateTime? subscriptionEndsAt,
     this.autoRenew = true,
     this.prepaidCycles = 0,
+    this.lastPaymentAmount,
+    this.lastPaymentAt,
   }) : subscriptionEndsAt =
             subscriptionEndsAt ?? DateFormatter.addDays(joinedAt, 30);
 
@@ -109,6 +113,9 @@ class Subscriber {
           : tsToDate(d['subscriptionEndsAt']),
       autoRenew: (d['autoRenew'] ?? true) as bool,
       prepaidCycles: ((d['prepaidCycles'] as num?)?.toInt()) ?? 0,
+      lastPaymentAmount: d['lastPaymentAmount'] as num?,
+      lastPaymentAt:
+          d['lastPaymentAt'] == null ? null : tsToDate(d['lastPaymentAt']),
     );
   }
 
@@ -129,6 +136,9 @@ class Subscriber {
         'subscriptionEndsAt': Timestamp.fromDate(subscriptionEndsAt),
         'autoRenew': autoRenew,
         'prepaidCycles': prepaidCycles,
+        if (lastPaymentAmount != null) 'lastPaymentAmount': lastPaymentAmount,
+        if (lastPaymentAt != null)
+          'lastPaymentAt': Timestamp.fromDate(lastPaymentAt!),
       };
 
   Subscriber copyWith({
@@ -149,6 +159,8 @@ class Subscriber {
     DateTime? subscriptionEndsAt,
     bool? autoRenew,
     int? prepaidCycles,
+    num? lastPaymentAmount,
+    DateTime? lastPaymentAt,
   }) =>
       Subscriber(
         id: id ?? this.id,
@@ -168,6 +180,8 @@ class Subscriber {
         subscriptionEndsAt: subscriptionEndsAt ?? this.subscriptionEndsAt,
         autoRenew: autoRenew ?? this.autoRenew,
         prepaidCycles: prepaidCycles ?? this.prepaidCycles,
+        lastPaymentAmount: lastPaymentAmount ?? this.lastPaymentAmount,
+        lastPaymentAt: lastPaymentAt ?? this.lastPaymentAt,
       );
 }
 

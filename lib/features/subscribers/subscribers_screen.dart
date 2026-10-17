@@ -463,6 +463,9 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                                         ),
                                       );
                                     },
+                                    onShiftAutoRenew: () =>
+                                        ShiftAutoRenewalDialog.show(
+                                            context, user, subscriber),
                                     onEdit: () => _showForm(context, ref, user,
                                         existing: subscriber),
                                     onDelete: () async {
@@ -662,6 +665,7 @@ class _ModernSubscriberCard extends StatelessWidget {
     required this.onPay,
     required this.onPayAdvance,
     required this.onToggleAutoRenew,
+    required this.onShiftAutoRenew,
     required this.onEdit,
     required this.onDelete,
   });
@@ -673,6 +677,7 @@ class _ModernSubscriberCard extends StatelessWidget {
   final VoidCallback onPay;
   final VoidCallback onPayAdvance;
   final VoidCallback onToggleAutoRenew;
+  final VoidCallback onShiftAutoRenew;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
@@ -681,6 +686,7 @@ class _ModernSubscriberCard extends StatelessWidget {
     final theme = Theme.of(context);
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
+    final isAr = loc.startsWith('ar');
 
     final isOverdue = subscriber.status == SubscriberStatus.overdue ||
         subscriber.subscriptionEndsAt.isBefore(DateTime.now());
@@ -864,6 +870,7 @@ class _ModernSubscriberCard extends StatelessWidget {
                         if (val == 'payAdvance') onPayAdvance();
                         if (val == 'pdf') onExportPdf();
                         if (val == 'toggleAutoRenew') onToggleAutoRenew();
+                        if (val == 'shiftAutoRenew') onShiftAutoRenew();
                         if (val == 'edit') onEdit();
                         if (val == 'delete') onDelete();
                       },
@@ -903,7 +910,7 @@ class _ModernSubscriberCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        if (user.can(Permission.editSubscriber))
+                        if (user.can(Permission.editSubscriber)) ...[
                           PopupMenuItem(
                             value: 'toggleAutoRenew',
                             child: Row(
@@ -921,7 +928,19 @@ class _ModernSubscriberCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                        if (user.can(Permission.editSubscriber))
+                          PopupMenuItem(
+                            value: 'shiftAutoRenew',
+                            child: Row(
+                              children: [
+                                const Icon(Icons.edit_calendar_rounded,
+                                    size: 18, color: Colors.deepOrange),
+                                const SizedBox(width: 8),
+                                Text(isAr
+                                    ? 'إزاحة التجديد التلقائي'
+                                    : 'Shift Auto-Renewal'),
+                              ],
+                            ),
+                          ),
                           PopupMenuItem(
                             value: 'edit',
                             child: Row(
@@ -932,6 +951,7 @@ class _ModernSubscriberCard extends StatelessWidget {
                               ],
                             ),
                           ),
+                        ],
                         if (user.can(Permission.deleteSubscriber))
                           PopupMenuItem(
                             value: 'delete',
@@ -1172,6 +1192,45 @@ class _ModernSubscriberCard extends StatelessWidget {
                     ],
                   ],
                 ),
+                if (subscriber.lastPaymentAmount != null &&
+                    subscriber.lastPaymentAt != null) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.payments_outlined,
+                          size: 13,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            isAr
+                                ? 'آخر دفعة: ${CurrencyFormatter.format(subscriber.lastPaymentAmount!, subscriber.currency, locale: loc)} • بتاريخ ${DateFormatter.date(subscriber.lastPaymentAt!, locale: loc)}'
+                                : 'Last payment: ${CurrencyFormatter.format(subscriber.lastPaymentAmount!, subscriber.currency, locale: loc)} • ${DateFormatter.date(subscriber.lastPaymentAt!, locale: loc)}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: theme.colorScheme.primary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -1218,12 +1277,13 @@ class SubscriberDetailsDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
+    final isAr = loc.startsWith('ar');
     final size = MediaQuery.sizeOf(context);
     final theme = Theme.of(context);
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
       child: DefaultTabController(
-        length: 2,
+        length: 3,
         child: SizedBox(
           width: size.width * .94,
           height: size.height * .86,
@@ -1270,7 +1330,7 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                       Container(
                         margin: const EdgeInsets.only(top: 4, left: 8),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 2),
+                            horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppTheme.cardColor(context),
                           borderRadius: BorderRadius.circular(12),
@@ -1291,14 +1351,48 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                             ),
                             const SizedBox(width: 8),
                             Expanded(
-                              child: Text(
-                                l.t('autoRenew'),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    l.t('autoRenew'),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    isAr
+                                        ? 'ينتهي: ${DateFormatter.date(subscriber.subscriptionEndsAt, locale: loc)}'
+                                        : 'Ends: ${DateFormatter.date(subscriber.subscriptionEndsAt, locale: loc)}',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            TextButton.icon(
+                              style: TextButton.styleFrom(
+                                visualDensity: VisualDensity.compact,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                foregroundColor: Colors.deepOrange,
+                              ),
+                              onPressed: () => ShiftAutoRenewalDialog.show(
+                                  context, by, subscriber),
+                              icon: const Icon(Icons.edit_calendar_rounded,
+                                  size: 16),
+                              label: Text(
+                                isAr ? 'إزاحة التجديد' : 'Shift Date',
                                 style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w800,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Switch(
@@ -1316,6 +1410,40 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                                   ),
                                 );
                               },
+                            ),
+                          ],
+                        ),
+                      ),
+                    if (subscriber.lastPaymentAmount != null &&
+                        subscriber.lastPaymentAt != null)
+                      Container(
+                        margin: const EdgeInsets.only(top: 6, left: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00A86B).withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color:
+                                const Color(0xFF00A86B).withValues(alpha: 0.25),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.payments_outlined,
+                                size: 17, color: Color(0xFF00A86B)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                isAr
+                                    ? 'آخر دفعة مسددة: ${CurrencyFormatter.format(subscriber.lastPaymentAmount!, subscriber.currency, locale: loc)} • بتاريخ ${DateFormatter.date(subscriber.lastPaymentAt!, locale: loc)}'
+                                    : 'Last payment: ${CurrencyFormatter.format(subscriber.lastPaymentAmount!, subscriber.currency, locale: loc)} on ${DateFormatter.date(subscriber.lastPaymentAt!, locale: loc)}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF008756),
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -1423,6 +1551,7 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                         TabBar(tabs: [
                           Tab(text: l.t('unpaidDebts')),
                           Tab(text: l.t('paidSubscriptions')),
+                          Tab(text: isAr ? 'سجل الدفعات' : 'Payments'),
                         ]),
                         Expanded(
                           child: snap.connectionState == ConnectionState.waiting
@@ -1438,6 +1567,10 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                                       subscriber: subscriber,
                                       by: by,
                                       debts: paidDebts,
+                                    ),
+                                    _SubscriberPaymentsTab(
+                                      subscriber: subscriber,
+                                      by: by,
                                     ),
                                   ],
                                 ),
@@ -1476,6 +1609,8 @@ class _SubscriberDebtsTab extends ConsumerWidget {
     SubscriberDebt debt,
   ) async {
     var selectedDestination = MoneyStorage.cashbox;
+    var selectedPaidDate = DateTime.now();
+    final isAr = loc.startsWith('ar');
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => StatefulBuilder(
@@ -1489,7 +1624,47 @@ class _SubscriberDebtsTab extends ConsumerWidget {
                 '${l.amount}: ${CurrencyFormatter.format(debt.remaining, debt.currency, locale: loc)}',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: selectedPaidDate,
+                    firstDate: DateTime(2020),
+                    lastDate: DateTime(2100),
+                  );
+                  if (picked != null) {
+                    final now = DateTime.now();
+                    setState(() {
+                      selectedPaidDate = DateTime(
+                        picked.year,
+                        picked.month,
+                        picked.day,
+                        now.hour,
+                        now.minute,
+                        now.second,
+                      );
+                    });
+                  }
+                },
+                borderRadius: BorderRadius.circular(8),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: isAr ? 'تاريخ التسديد' : 'Payment Date',
+                    border: const OutlineInputBorder(),
+                    isDense: true,
+                    prefixIcon:
+                        const Icon(Icons.calendar_today_outlined, size: 18),
+                    suffixIcon:
+                        const Icon(Icons.edit_calendar_outlined, size: 18),
+                  ),
+                  child: Text(
+                    DateFormatter.date(selectedPaidDate, locale: loc),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
               DropdownButtonFormField<MoneyStorage>(
                 value: selectedDestination,
                 decoration: InputDecoration(
@@ -1533,6 +1708,7 @@ class _SubscriberDebtsTab extends ConsumerWidget {
             subscriber,
             debt,
             receivedIn: selectedDestination,
+            paidAt: selectedPaidDate,
           );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1624,7 +1800,7 @@ class _SubscriberDebtsTab extends ConsumerWidget {
                     '${DateFormatter.date(debt.periodStart, locale: loc)} - '
                     '${DateFormatter.date(debt.periodEnd, locale: loc)}\n'
                     '${debt.packageName ?? subscriber.packageName ?? '-'}'
-                    '${isPartial ? ' • ${l.paid}: ${CurrencyFormatter.format(debt.paidAmount, debt.currency, locale: loc)}' : ''}',
+                    '${isPartial ? ' • ${l.paid}: ${CurrencyFormatter.format(debt.paidAmount, debt.currency, locale: loc)}${debt.paidAt != null ? ' (${DateFormatter.date(debt.paidAt!, locale: loc)})' : ''}' : ''}',
                   ),
                   isThreeLine: true,
                   trailing: Row(
@@ -1737,7 +1913,9 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
           children: [
             const Icon(Icons.undo_rounded, color: Colors.orange),
             const SizedBox(width: 8),
-            Text(isAr ? 'التراجع عن تسديد الاشتراك' : 'Undo Subscription Payment'),
+            Text(isAr
+                ? 'التراجع عن تسديد الاشتراك'
+                : 'Undo Subscription Payment'),
           ],
         ),
         content: Text(
@@ -1751,7 +1929,8 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
             child: Text(l.cancel),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.orange.shade800),
+            style: FilledButton.styleFrom(
+                backgroundColor: Colors.orange.shade800),
             onPressed: () => Navigator.pop(dialogCtx, true),
             child: Text(isAr ? 'تأكيد التراجع' : 'Undo Payment'),
           ),
@@ -1802,7 +1981,7 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
           subtitle: Text(
             '${DateFormatter.date(debt.periodStart, locale: loc)} - '
             '${DateFormatter.date(debt.periodEnd, locale: loc)}\n'
-            '${l.paid}: ${debt.paidAt == null ? '-' : DateFormatter.dateTime(debt.paidAt!, locale: loc)}',
+            '${l.paid}: ${debt.paidAt == null ? '-' : DateFormatter.date(debt.paidAt!, locale: loc)}',
           ),
           isThreeLine: true,
           trailing: canManage
@@ -1879,6 +2058,374 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
   }
 }
 
+class _SubscriberPaymentsTab extends ConsumerWidget {
+  const _SubscriberPaymentsTab({
+    required this.subscriber,
+    required this.by,
+  });
+
+  final Subscriber subscriber;
+  final AppUser by;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final loc = Localizations.localeOf(context).languageCode;
+    final isAr = loc.startsWith('ar');
+    return StreamBuilder<List<Payment>>(
+      stream: ref
+          .watch(subscribersRepositoryProvider)
+          .watchPayments(by.adminUid, subscriber.id),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final payments = snap.data ?? [];
+        if (payments.isEmpty) {
+          return Center(child: Text(l.noData));
+        }
+        return ListView.separated(
+          padding: const EdgeInsets.only(top: 6, bottom: 88),
+          itemCount: payments.length,
+          separatorBuilder: (_, __) => const Divider(height: 1),
+          itemBuilder: (_, i) {
+            final p = payments[i];
+            final destLabel = p.receivedIn == MoneyStorage.cashbox
+                ? l.t('putInCashbox')
+                : l.t('keptByCollectorDebt');
+            return ListTile(
+              leading: CircleAvatar(
+                radius: 18,
+                backgroundColor: const Color(0xFF00A86B).withValues(alpha: 0.14),
+                child: const Icon(Icons.payments_rounded,
+                    size: 18, color: Color(0xFF00A86B)),
+              ),
+              title: Text(
+                CurrencyFormatter.format(p.amount, p.currency, locale: loc),
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              subtitle: Text(
+                '${isAr ? 'تاريخ الدفعة' : 'Payment Date'}: ${DateFormatter.date(p.recordedAt, locale: loc)} • $destLabel'
+                '${p.note != null && p.note!.isNotEmpty ? '\n${p.note}' : ''}',
+              ),
+              isThreeLine: p.note != null && p.note!.isNotEmpty,
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class ShiftAutoRenewalDialog extends ConsumerStatefulWidget {
+  const ShiftAutoRenewalDialog({
+    super.key,
+    required this.by,
+    required this.subscriber,
+  });
+
+  final AppUser by;
+  final Subscriber subscriber;
+
+  static Future<void> show(
+    BuildContext context,
+    AppUser by,
+    Subscriber subscriber,
+  ) {
+    return showDialog(
+      context: context,
+      builder: (_) => ShiftAutoRenewalDialog(by: by, subscriber: subscriber),
+    );
+  }
+
+  @override
+  ConsumerState<ShiftAutoRenewalDialog> createState() =>
+      _ShiftAutoRenewalDialogState();
+}
+
+class _ShiftAutoRenewalDialogState
+    extends ConsumerState<ShiftAutoRenewalDialog> {
+  SubscriberDebt? _latestDebt;
+  late DateTime _baseStart;
+  late DateTime _baseEnd;
+  late DateTime _newStart;
+  late DateTime _newEnd;
+  final TextEditingController _daysController =
+      TextEditingController(text: '1');
+  bool _shiftLatestDebt = true;
+  bool _loading = true;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _baseEnd = widget.subscriber.subscriptionEndsAt;
+    _baseStart = DateFormatter.addDays(_baseEnd, -30);
+    _newStart = DateFormatter.addDays(_baseStart, 1);
+    _newEnd = DateFormatter.addDays(_baseEnd, 1);
+    _loadLatestDebt();
+  }
+
+  @override
+  void dispose() {
+    _daysController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadLatestDebt() async {
+    try {
+      final debts = await ref
+          .read(subscribersRepositoryProvider)
+          .getDebts(widget.by.adminUid, widget.subscriber.id);
+      if (!mounted) return;
+      setState(() {
+        _latestDebt = debts.isNotEmpty ? debts.first : null;
+        if (_latestDebt != null) {
+          _baseStart = _latestDebt!.periodStart;
+          _baseEnd = _latestDebt!.periodEnd;
+        } else {
+          _baseEnd = widget.subscriber.subscriptionEndsAt;
+          _baseStart = DateFormatter.addDays(_baseEnd, -30);
+        }
+        _applyShiftDays(1);
+        _loading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  void _applyShiftDays(int days) {
+    setState(() {
+      _daysController.text = '$days';
+      _newStart = DateFormatter.addDays(_baseStart, days);
+      _newEnd = DateFormatter.addDays(_baseEnd, days);
+    });
+  }
+
+  void _activateFromDate(DateTime date) {
+    final normalized = DateTime(date.year, date.month, date.day);
+    final diffDays = DateFormatter.calendarDaysBetween(_baseStart, normalized);
+    setState(() {
+      _newStart = normalized;
+      _newEnd = DateFormatter.addDays(normalized, 30);
+      _daysController.text = '$diffDays';
+    });
+  }
+
+  Future<void> _pickNewStartDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _newStart,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      _activateFromDate(picked);
+    }
+  }
+
+  Future<void> _pickNewEndDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _newEnd,
+      firstDate: DateFormatter.addDays(_newStart, 1),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() => _newEnd = picked);
+    }
+  }
+
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    try {
+      await ref.read(subscribersRepositoryProvider).shiftAutoRenewal(
+            widget.by,
+            widget.subscriber,
+            newActivationDate: _newStart,
+            newSubscriptionEndsAt: _newEnd,
+            targetDebtId: _shiftLatestDebt ? _latestDebt?.id : null,
+          );
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تمت إزاحة تاريخ التجديد التلقائي بنجاح'),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = Localizations.localeOf(context).languageCode;
+    final isAr = loc.startsWith('ar');
+    final theme = Theme.of(context);
+
+    return AlertDialog(
+      title: Row(
+        children: [
+          const Icon(Icons.edit_calendar_rounded, color: Colors.deepOrange),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              isAr ? 'إزاحة التجديد التلقائي' : 'Shift Auto-Renewal',
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+            ),
+          ),
+        ],
+      ),
+      content: _loading
+          ? const SizedBox(
+              height: 100,
+              child: Center(child: CircularProgressIndicator()),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    isAr
+                        ? 'استخدم هذه الميزة إذا لم يتم تفعيل المشترك (${widget.subscriber.name}) في نفس يوم انتهاء الاشتراك.'
+                        : 'Use this if ${widget.subscriber.name} was not activated on the exact expiration day.',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.45),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isAr ? 'الفترة الحالية المسجلة:' : 'Current Period:',
+                          style: const TextStyle(
+                              fontSize: 11.5, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${DateFormatter.date(_baseStart, locale: loc)}  ⬅  ${DateFormatter.date(_baseEnd, locale: loc)}',
+                          style: const TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    isAr
+                        ? 'إزاحة سريعة (عدد أيام التأخير):'
+                        : 'Quick Shift (Days):',
+                    style: const TextStyle(
+                        fontSize: 12.5, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      for (final d in [1, 2, 3, 5, 7])
+                        ActionChip(
+                          label: Text(isAr ? '+$d يوم' : '+$d d'),
+                          onPressed: () => _applyShiftDays(d),
+                        ),
+                      ActionChip(
+                        avatar: const Icon(Icons.today, size: 16),
+                        label: Text(
+                            isAr ? 'تفعيل من اليوم' : 'Activate from Today'),
+                        onPressed: () => _activateFromDate(DateTime.now()),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _daysController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(signed: true),
+                    decoration: InputDecoration(
+                      labelText: isAr
+                          ? 'عدد أيام الإزاحة (مثال: 3)'
+                          : 'Shift Days (e.g. 3)',
+                      border: const OutlineInputBorder(),
+                      isDense: true,
+                      prefixIcon: const Icon(Icons.exposure_plus_1_rounded),
+                    ),
+                    onChanged: (v) {
+                      final parsed = int.tryParse(v.trim());
+                      if (parsed != null) {
+                        setState(() {
+                          _newStart = DateFormatter.addDays(_baseStart, parsed);
+                          _newEnd = DateFormatter.addDays(_baseEnd, parsed);
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: _pickNewStartDate,
+                    icon: const Icon(Icons.play_circle_outline, size: 18),
+                    label: Text(
+                      isAr
+                          ? 'تاريخ التفعيل الفعلي: ${DateFormatter.date(_newStart, locale: loc)}'
+                          : 'Activation Date: ${DateFormatter.date(_newStart, locale: loc)}',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: _pickNewEndDate,
+                    icon: const Icon(Icons.event_available_outlined, size: 18),
+                    label: Text(
+                      isAr
+                          ? 'تاريخ الانتهاء الجديد: ${DateFormatter.date(_newEnd, locale: loc)}'
+                          : 'New Expiry Date: ${DateFormatter.date(_newEnd, locale: loc)}',
+                    ),
+                  ),
+                  if (_latestDebt != null) ...[
+                    const SizedBox(height: 8),
+                    CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      value: _shiftLatestDebt,
+                      onChanged: (v) =>
+                          setState(() => _shiftLatestDebt = v ?? true),
+                      title: Text(
+                        isAr
+                            ? 'إزاحة فترة الاشتراك الحالية في سجل الديون أيضاً'
+                            : 'Also shift current subscription debt period',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.pop(context),
+          child: Text(isAr ? 'إلغاء' : 'Cancel'),
+        ),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(backgroundColor: Colors.deepOrange),
+          onPressed: _loading || _saving ? null : _save,
+          icon: const Icon(Icons.check, size: 18),
+          label: Text(isAr ? 'حفظ الإزاحة' : 'Save Shift'),
+        ),
+      ],
+    );
+  }
+}
+
 class AddSubscriberDebtSheet extends ConsumerStatefulWidget {
   const AddSubscriberDebtSheet({
     super.key,
@@ -1901,6 +2448,7 @@ class _AddSubscriberDebtSheetState
   late DateTime _from = widget.existingDebt?.periodStart ?? DateTime.now();
   late DateTime _to =
       widget.existingDebt?.periodEnd ?? DateFormatter.addDays(_from, 30);
+  late DateTime? _paidAt = widget.existingDebt?.paidAt;
   late final _amount = TextEditingController(
     text: widget.existingDebt != null
         ? widget.existingDebt!.amount.toString()
@@ -1947,7 +2495,7 @@ class _AddSubscriberDebtSheetState
         note: _note.text.trim().isEmpty ? null : _note.text.trim(),
         recordedBy: widget.existingDebt?.recordedBy ?? widget.by.uid,
         createdAt: widget.existingDebt?.createdAt ?? DateTime.now(),
-        paidAt: widget.existingDebt?.paidAt,
+        paidAt: _paidAt,
         paidBy: widget.existingDebt?.paidBy,
       );
       if (widget.existingDebt != null) {
@@ -1977,6 +2525,7 @@ class _AddSubscriberDebtSheetState
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
+    final isAr = loc.startsWith('ar');
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom +
@@ -2017,6 +2566,22 @@ class _AddSubscriberDebtSheetState
                 ),
               ],
             ),
+            if (widget.existingDebt != null &&
+                (widget.existingDebt!.isPaid ||
+                    widget.existingDebt!.paidAmount > 0)) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => _pickPaidAt(context),
+                  icon: const Icon(Icons.edit_calendar_outlined),
+                  label: Text(
+                    '${isAr ? 'تاريخ التسديد' : 'Payment Date'}: '
+                    '${DateFormatter.date(_paidAt ?? DateTime.now(), locale: loc)}',
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 8),
             TextField(
               controller: _amount,
@@ -2047,6 +2612,28 @@ class _AddSubscriberDebtSheetState
         ),
       ),
     );
+  }
+
+  Future<void> _pickPaidAt(BuildContext context) async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _paidAt ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+    if (date != null) {
+      final now = DateTime.now();
+      setState(() {
+        _paidAt = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          now.hour,
+          now.minute,
+          now.second,
+        );
+      });
+    }
   }
 
   Future<void> _pickFrom(BuildContext context) async {
@@ -2111,6 +2698,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
   // 'paid' = مدفوع نقداً, 'debt' = دين على المشترك, 'none' = بدون أثر مالي (إضافة فقط)
   String _initialPaymentMode = 'none';
   MoneyStorage _initialReceivedIn = MoneyStorage.cashbox;
+  DateTime _initialPaidDate = DateTime.now();
   bool _busy = false;
 
   @override
@@ -2181,6 +2769,8 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
         subscriptionEndsAt: _subscriptionEndsAt,
         autoRenew: _autoRenew,
         prepaidCycles: widget.existing?.prepaidCycles ?? 0,
+        lastPaymentAmount: widget.existing?.lastPaymentAmount,
+        lastPaymentAt: widget.existing?.lastPaymentAt,
       );
       if (widget.existing == null) {
         if (_initialPaymentMode == 'paid') {
@@ -2189,6 +2779,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
             subscriber,
             isPaid: true,
             receivedIn: _initialReceivedIn,
+            paidAt: _initialPaidDate,
           );
         } else if (_initialPaymentMode == 'debt') {
           await repo.addWithInitialSubscription(
@@ -2419,6 +3010,49 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                       activeColor: Colors.orange,
                     ),
                     if (_initialPaymentMode == 'paid') ...[
+                      const SizedBox(height: 10),
+                      InkWell(
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: _initialPaidDate,
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime(2100),
+                          );
+                          if (picked != null) {
+                            final now = DateTime.now();
+                            setState(() {
+                              _initialPaidDate = DateTime(
+                                picked.year,
+                                picked.month,
+                                picked.day,
+                                now.hour,
+                                now.minute,
+                                now.second,
+                              );
+                            });
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: loc.startsWith('ar')
+                                ? 'تاريخ التسديد'
+                                : 'Payment Date',
+                            isDense: true,
+                            prefixIcon: const Icon(
+                                Icons.calendar_today_outlined,
+                                size: 18),
+                            suffixIcon: const Icon(
+                                Icons.edit_calendar_outlined,
+                                size: 18),
+                          ),
+                          child: Text(
+                            DateFormatter.date(_initialPaidDate, locale: loc),
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 10),
                       DropdownButtonFormField<MoneyStorage>(
                         value: _initialReceivedIn,

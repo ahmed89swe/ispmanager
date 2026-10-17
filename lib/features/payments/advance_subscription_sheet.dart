@@ -33,6 +33,7 @@ class _AdvanceSubscriptionSheetState
   late final TextEditingController _amountController;
   late final TextEditingController _noteController;
   MoneyStorage _receivedIn = MoneyStorage.cashbox;
+  DateTime _paymentDate = DateTime.now();
   bool _busy = false;
 
   @override
@@ -63,6 +64,28 @@ class _AdvanceSubscriptionSheetState
     });
   }
 
+  Future<void> _pickPaymentDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _paymentDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      final now = DateTime.now();
+      setState(() {
+        _paymentDate = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          now.hour,
+          now.minute,
+          now.second,
+        );
+      });
+    }
+  }
+
   Future<void> _submit() async {
     final l = AppLocalizations.of(context);
     final amount = num.tryParse(_amountController.text.trim());
@@ -86,6 +109,7 @@ class _AdvanceSubscriptionSheetState
             amount: amount,
             receivedIn: _receivedIn,
             cycles: _cycles,
+            paidAt: _paymentDate,
             note: _noteController.text.trim().isEmpty
                 ? null
                 : _noteController.text.trim(),
@@ -306,6 +330,28 @@ class _AdvanceSubscriptionSheetState
                 prefixIcon: const Icon(Icons.attach_money_rounded),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Payment date field
+            InkWell(
+              onTap: _pickPaymentDate,
+              borderRadius: BorderRadius.circular(12),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText:
+                      loc.startsWith('ar') ? 'تاريخ التسديد' : 'Payment Date',
+                  prefixIcon: const Icon(Icons.calendar_today_outlined),
+                  suffixIcon: const Icon(Icons.edit_calendar_outlined),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  DateFormatter.date(_paymentDate, locale: loc),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
               ),
             ),

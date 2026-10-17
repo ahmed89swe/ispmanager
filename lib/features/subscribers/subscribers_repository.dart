@@ -62,6 +62,7 @@ class SubscribersRepository {
     Subscriber s, {
     required bool isPaid,
     MoneyStorage receivedIn = MoneyStorage.cashbox,
+    DateTime? paidAt,
   }) async {
     if (_db == null) return;
     final db = _db;
@@ -69,6 +70,7 @@ class SubscribersRepository {
     final subId = subRef.id;
 
     final now = DateTime.now();
+    final paymentDate = paidAt ?? now;
     final periodStart = s.joinedAt;
     final periodEnd = s.subscriptionEndsAt;
     final debtRef =
@@ -91,7 +93,7 @@ class SubscribersRepository {
       note: isPaid ? 'الاشتراك الأول (مسدد)' : 'الاشتراك الأول (دين)',
       recordedBy: by.uid,
       createdAt: now,
-      paidAt: isPaid ? now : null,
+      paidAt: isPaid ? paymentDate : null,
       paidBy: isPaid ? by.uid : null,
     );
 
@@ -99,6 +101,8 @@ class SubscribersRepository {
       id: subId,
       balance: isPaid ? 0 : s.monthlyFee,
       status: isPaid ? SubscriberStatus.active : SubscriberStatus.overdue,
+      lastPaymentAmount: (isPaid && s.monthlyFee > 0) ? s.monthlyFee : null,
+      lastPaymentAt: (isPaid && s.monthlyFee > 0) ? paymentDate : null,
     );
 
     final batch = db.batch();
@@ -116,7 +120,7 @@ class SubscribersRepository {
         method: 'subscription',
         note: 'سداد الاشتراك الأول عند الإضافة',
         recordedBy: by.uid,
-        recordedAt: now,
+        recordedAt: paymentDate,
       );
       batch.set(payRef, payment.toMap());
 
@@ -373,6 +377,8 @@ class SubscribersRepository {
         'periodStart': Timestamp.fromDate(newDebt.periodStart),
         'periodEnd': Timestamp.fromDate(newDebt.periodEnd),
         'note': newDebt.note,
+        if (newDebt.paidAt != null)
+          'paidAt': Timestamp.fromDate(newDebt.paidAt!),
       });
 
       tx.update(subRef, {
@@ -484,13 +490,15 @@ class SubscribersRepository {
 
   Future<void> markDebtPaid(
       AppUser by, Subscriber subscriber, SubscriberDebt debt,
-      {MoneyStorage receivedIn = MoneyStorage.cashbox}) async {
+      {MoneyStorage receivedIn = MoneyStorage.cashbox,
+      DateTime? paidAt}) async {
     if (_db == null || debt.isPaid) return;
     final db = _db;
     final subRef = _col(by.adminUid).doc(subscriber.id);
     final debtRef = _debtCol(by.adminUid, subscriber.id).doc(debt.id);
     final paymentRef = subRef.collection('payments').doc();
     final remainingDue = debt.amount - debt.paidAmount;
+    final paymentDate = paidAt ?? DateTime.now();
     final payment = Payment(
       id: paymentRef.id,
       subscriberId: subscriber.id,
@@ -500,14 +508,14 @@ class SubscribersRepository {
       method: 'subscription',
       note: debt.note,
       recordedBy: by.uid,
-      recordedAt: DateTime.now(),
+      recordedAt: paymentDate,
     );
     final batch = db.batch();
     batch.set(paymentRef, payment.toMap());
     batch.update(debtRef, {
       'status': SubscriptionDebtStatus.paid.name,
       'paidAmount': debt.amount,
-      'paidAt': Timestamp.fromDate(payment.recordedAt),
+      'paidAt': Timestamp.fromDate(paymentDate),
       'paidBy': by.uid,
     });
     final nextBalance = subscriber.balance - remainingDue;
@@ -516,6 +524,8 @@ class SubscribersRepository {
       'status': nextBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name,
+      'lastPaymentAmount': remainingDue,
+      'lastPaymentAt': Timestamp.fromDate(paymentDate),
     });
     CashboxService.registerSubscriptionPayment(
       batch: batch,
@@ -785,6 +795,64 @@ class SubscribersRepository {
     await syncDueDebts(by, subscriber.copyWith(autoRenew: true));
   }
 
+  /// Shifts the subscriber's auto-renewal / subscription dates when the subscriber
+  /// was not activated on the exact day of expiration.
+  /// Updates `subscriptionEndsAt` on the subscriber document, and if `targetDebtId`
+  /// is provided (the current/latest cycle debt), shifts its `periodStart` and `periodEnd`
+  /// accordingly.
+  Future<void> shiftAutoRenewal(
+    AppUser by,
+    Subscriber subscriber, {
+    required DateTime newActivationDate,
+    required DateTime newSubscriptionEndsAt,
+    String? targetDebtId,
+  }) async {
+    if (_db == null) return;
+    final db = _db;
+    final subRef = _col(by.adminUid).doc(subscriber.id);
+    final batch = db.batch();
+
+    batch.update(subRef, {
+      'subscriptionEndsAt': Timestamp.fromDate(newSubscriptionEndsAt),
+    });
+
+    Map<String, dynamic>? oldDebtData;
+    if (targetDebtId != null && targetDebtId.isNotEmpty) {
+      final debtRef = _debtCol(by.adminUid, subscriber.id).doc(targetDebtId);
+      final debtSnap = await debtRef.get();
+      if (debtSnap.exists) {
+        oldDebtData = debtSnap.data();
+        batch.update(debtRef, {
+          'periodStart': Timestamp.fromDate(newActivationDate),
+          'periodEnd': Timestamp.fromDate(newSubscriptionEndsAt),
+        });
+      }
+    }
+
+    await batch.commit();
+
+    await _logger.log(
+      actor: by,
+      action: 'subscriber.autoRenew.shift',
+      targetType: 'subscriber',
+      targetId: subscriber.id,
+      summary:
+          'إزاحة التجديد التلقائي للمشترك ${subscriber.name} إلى ${DateFormatter.date(newActivationDate)} - ${DateFormatter.date(newSubscriptionEndsAt)}',
+      before: {
+        ...subscriber.toMap(),
+        if (oldDebtData != null) 'shiftedDebtBefore': oldDebtData,
+      },
+      after: {
+        ...subscriber
+            .copyWith(subscriptionEndsAt: newSubscriptionEndsAt)
+            .toMap(),
+        'newActivationDate': Timestamp.fromDate(newActivationDate),
+        'newSubscriptionEndsAt': Timestamp.fromDate(newSubscriptionEndsAt),
+        if (targetDebtId != null) 'targetDebtId': targetDebtId,
+      },
+    );
+  }
+
   /// Records an advance subscription payment for upcoming cycle(s).
   /// Registers cash in cashbox immediately and increments `prepaidCycles`
   /// so that upon next auto-renewal, the period debt is automatically marked
@@ -796,12 +864,13 @@ class SubscribersRepository {
     required MoneyStorage receivedIn,
     int cycles = 1,
     String? note,
+    DateTime? paidAt,
   }) async {
     if (_db == null) return;
     final db = _db;
     final subRef = _col(by.adminUid).doc(subscriber.id);
     final payRef = subRef.collection('payments').doc();
-    final now = DateTime.now();
+    final paymentDate = paidAt ?? DateTime.now();
 
     final payment = Payment(
       id: payRef.id,
@@ -812,7 +881,7 @@ class SubscribersRepository {
       method: 'advance_subscription',
       note: note ?? 'تسديد اشتراك قادم مقدماً ($cycles دورة)',
       recordedBy: by.uid,
-      recordedAt: now,
+      recordedAt: paymentDate,
     );
 
     final batch = db.batch();
@@ -821,6 +890,8 @@ class SubscribersRepository {
     final nextPrepaid = subscriber.prepaidCycles + cycles;
     batch.update(subRef, {
       'prepaidCycles': nextPrepaid,
+      'lastPaymentAmount': amount,
+      'lastPaymentAt': Timestamp.fromDate(paymentDate),
     });
 
     CashboxService.registerSubscriptionPayment(
@@ -958,6 +1029,8 @@ class SubscribersRepository {
         batch.update(doc.reference, {
           'paidAmount': alreadyPaid + remaining,
           'status': SubscriptionDebtStatus.partiallyPaid.name,
+          'paidAt': Timestamp.fromDate(payment.recordedAt),
+          'paidBy': by.uid,
         });
         remaining = 0;
       }
@@ -969,6 +1042,8 @@ class SubscribersRepository {
       'status': newBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name,
+      'lastPaymentAmount': payment.amount,
+      'lastPaymentAt': Timestamp.fromDate(payment.recordedAt),
     });
 
     CashboxService.registerSubscriptionPayment(

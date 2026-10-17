@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants.dart';
 import '../../core/models/models.dart';
+import '../../core/utils/formatters.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_repository.dart';
 import '../subscribers/subscribers_repository.dart';
@@ -20,6 +21,7 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
   final _amount = TextEditingController();
   final _note = TextEditingController();
   MoneyStorage _receivedIn = MoneyStorage.cashbox;
+  DateTime _paymentDate = DateTime.now();
   bool _busy = false;
 
   @override
@@ -27,6 +29,28 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
     _amount.dispose();
     _note.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickPaymentDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _paymentDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      final now = DateTime.now();
+      setState(() {
+        _paymentDate = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          now.hour,
+          now.minute,
+          now.second,
+        );
+      });
+    }
   }
 
   Future<void> _save() async {
@@ -49,7 +73,7 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
         receivedIn: _receivedIn,
         note: _note.text.trim().isEmpty ? null : _note.text.trim(),
         recordedBy: user.uid,
-        recordedAt: DateTime.now(),
+        recordedAt: _paymentDate,
       );
       await ref
           .read(subscribersRepositoryProvider)
@@ -67,6 +91,8 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final loc = Localizations.localeOf(context).languageCode;
+    final isAr = loc.startsWith('ar');
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom +
@@ -76,89 +102,109 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
         right: 16,
         top: 16,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('${l.recordPayment} — ${widget.subscriber.name}',
-              style: Theme.of(context).textTheme.titleMedium),
-          if (widget.subscriber.balance <= 0)
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1976D2).withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: const Color(0xFF1976D2).withValues(alpha: 0.25),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('${l.recordPayment} — ${widget.subscriber.name}',
+                style: Theme.of(context).textTheme.titleMedium),
+            if (widget.subscriber.balance <= 0)
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1976D2).withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: const Color(0xFF1976D2).withValues(alpha: 0.25),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.info_outline,
+                        size: 18, color: Color(0xFF1976D2)),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'المشترك ليس عليه ديون حالية. لتسديد اشتراك قادم مقدماً:',
+                        style:
+                            TextStyle(fontSize: 12, color: Color(0xFF0D47A1)),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        AdvanceSubscriptionSheet.show(
+                            context, widget.subscriber);
+                      },
+                      child: const Text('تسديد مقدماً',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
                 ),
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.info_outline,
-                      size: 18, color: Color(0xFF1976D2)),
-                  const SizedBox(width: 8),
-                  const Expanded(
-                    child: Text(
-                      'المشترك ليس عليه ديون حالية. لتسديد اشتراك قادم مقدماً:',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF0D47A1)),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      AdvanceSubscriptionSheet.show(
-                          context, widget.subscriber);
-                    },
-                    child: const Text('تسديد مقدماً',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold)),
-                  ),
-                ],
+            const SizedBox(height: 12),
+            TextField(
+                controller: _amount,
+                decoration: InputDecoration(labelText: l.amount),
+                keyboardType: TextInputType.number),
+            const SizedBox(height: 8),
+            InkWell(
+              onTap: _pickPaymentDate,
+              borderRadius: BorderRadius.circular(10),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: isAr ? 'تاريخ التسديد' : 'Payment Date',
+                  prefixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
+                  suffixIcon: const Icon(Icons.edit_calendar_outlined, size: 18),
+                ),
+                child: Text(
+                  DateFormatter.date(_paymentDate, locale: loc),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
               ),
             ),
-          const SizedBox(height: 12),
-          TextField(
-              controller: _amount,
-              decoration: InputDecoration(labelText: l.amount),
-              keyboardType: TextInputType.number),
-          const SizedBox(height: 8),
-          TextFormField(
-            initialValue: widget.subscriber.currency.code,
-            decoration: InputDecoration(
-              labelText: l.currency,
-              suffixIcon: const Icon(Icons.lock_outline, size: 18),
+            const SizedBox(height: 8),
+            TextFormField(
+              initialValue: widget.subscriber.currency.code,
+              decoration: InputDecoration(
+                labelText: l.currency,
+                suffixIcon: const Icon(Icons.lock_outline, size: 18),
+              ),
+              readOnly: true,
             ),
-            readOnly: true,
-          ),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<MoneyStorage>(
-            value: _receivedIn,
-            decoration: InputDecoration(labelText: l.t('paymentDestination')),
-            items: [
-              DropdownMenuItem(
-                value: MoneyStorage.cashbox,
-                child: Text(l.t('putInCashbox')),
-              ),
-              DropdownMenuItem(
-                value: MoneyStorage.personal,
-                child: Text(l.t('keptByCollectorDebt')),
-              ),
-            ],
-            onChanged: (v) =>
-                setState(() => _receivedIn = v ?? MoneyStorage.cashbox),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-              controller: _note,
-              decoration: InputDecoration(labelText: l.note)),
-          const SizedBox(height: 16),
-          FilledButton(
-              onPressed: _busy ? null : _save,
-              style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48)),
-              child: Text(l.save)),
-          const SizedBox(height: 12),
-        ],
+            const SizedBox(height: 8),
+            DropdownButtonFormField<MoneyStorage>(
+              value: _receivedIn,
+              decoration: InputDecoration(labelText: l.t('paymentDestination')),
+              items: [
+                DropdownMenuItem(
+                  value: MoneyStorage.cashbox,
+                  child: Text(l.t('putInCashbox')),
+                ),
+                DropdownMenuItem(
+                  value: MoneyStorage.personal,
+                  child: Text(l.t('keptByCollectorDebt')),
+                ),
+              ],
+              onChanged: (v) =>
+                  setState(() => _receivedIn = v ?? MoneyStorage.cashbox),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+                controller: _note,
+                decoration: InputDecoration(labelText: l.note)),
+            const SizedBox(height: 16),
+            FilledButton(
+                onPressed: _busy ? null : _save,
+                style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(48)),
+                child: Text(l.save)),
+            const SizedBox(height: 12),
+          ],
+        ),
       ),
     );
   }

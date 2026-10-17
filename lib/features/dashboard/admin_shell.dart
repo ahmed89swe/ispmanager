@@ -105,8 +105,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
       icon: Icons.people_outline,
       builder: (_) => const SubscribersScreen(),
       customCheck: (u) =>
-          u.can(Permission.viewSubscribers) ||
-          u.can(Permission.addSubscriber),
+          u.can(Permission.viewSubscribers) || u.can(Permission.addSubscriber),
     ),
     _Tab(
       label: (l) => l.suppliers,
@@ -236,7 +235,8 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                   right: 24,
                   child: Align(
                     alignment: AlignmentDirectional.topEnd,
-                    child: _buildWebToastOverlay(context, user, _activeWebBanner!),
+                    child:
+                        _buildWebToastOverlay(context, user, _activeWebBanner!),
                   ),
                 ),
               ],
@@ -433,9 +433,8 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0B1120)
-          : const Color(0xFFF1F5F9),
+      backgroundColor:
+          isDark ? const Color(0xFF0B1120) : const Color(0xFFF1F5F9),
       body: Row(
         children: [
           // Side Navigation Drawer (RTL-aware: placed on right in Arabic, left in English)
