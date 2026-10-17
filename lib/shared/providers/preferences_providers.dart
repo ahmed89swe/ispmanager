@@ -11,6 +11,7 @@ class AppPreferences {
 
   static const _kThemeMode = 'themeMode';
   static const _kWebColorTheme = 'webColorTheme';
+  static const _kWebNotificationsEnabled = 'webNotificationsEnabled';
   static const _kLocale = 'locale';
   static const _kCurrency = 'currency';
 
@@ -31,6 +32,12 @@ class AppPreferences {
 
   Future<void> setWebColorTheme(AppColorTheme theme) =>
       _prefs.setString(_kWebColorTheme, theme.name);
+
+  bool get webNotificationsEnabled =>
+      _prefs.getBool(_kWebNotificationsEnabled) ?? true;
+
+  Future<void> setWebNotificationsEnabled(bool enabled) =>
+      _prefs.setBool(_kWebNotificationsEnabled, enabled);
 
   Locale get locale {
     final v = _prefs.getString(_kLocale) ?? 'ar';
@@ -75,6 +82,16 @@ class WebColorThemeNotifier extends StateNotifier<AppColorTheme> {
   }
 }
 
+class WebNotificationsEnabledNotifier extends StateNotifier<bool> {
+  WebNotificationsEnabledNotifier(this._prefs)
+      : super(_prefs.webNotificationsEnabled);
+  final AppPreferences _prefs;
+  Future<void> set(bool enabled) async {
+    state = enabled;
+    await _prefs.setWebNotificationsEnabled(enabled);
+  }
+}
+
 class LocaleNotifier extends StateNotifier<Locale> {
   LocaleNotifier(this._prefs) : super(_prefs.locale);
   final AppPreferences _prefs;
@@ -98,6 +115,9 @@ final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>(
 final webColorThemeProvider =
     StateNotifierProvider<WebColorThemeNotifier, AppColorTheme>(
         (ref) => WebColorThemeNotifier(ref.watch(appPreferencesProvider)));
+final webNotificationsEnabledProvider =
+    StateNotifierProvider<WebNotificationsEnabledNotifier, bool>((ref) =>
+        WebNotificationsEnabledNotifier(ref.watch(appPreferencesProvider)));
 final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>(
     (ref) => LocaleNotifier(ref.watch(appPreferencesProvider)));
 final currencyProvider = StateNotifierProvider<CurrencyNotifier, AppCurrency>(

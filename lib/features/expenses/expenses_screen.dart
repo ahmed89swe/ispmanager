@@ -1324,33 +1324,33 @@ class _ModernExpenseCard extends StatelessWidget {
 }
 
 const List<String> _arabicMonths = [
-  'كانون الثاني (1)',
-  'شباط (2)',
-  'آذار (3)',
-  'نيسان (4)',
-  'أيار (5)',
-  'حزيران (6)',
-  'تموز (7)',
-  'آب (8)',
-  'أيلول (9)',
-  'تشرين الأول (10)',
-  'تشرين الثاني (11)',
-  'كانون الأول (12)',
+  'الشهر 1',
+  'الشهر 2',
+  'الشهر 3',
+  'الشهر 4',
+  'الشهر 5',
+  'الشهر 6',
+  'الشهر 7',
+  'الشهر 8',
+  'الشهر 9',
+  'الشهر 10',
+  'الشهر 11',
+  'الشهر 12',
 ];
 
 const List<String> _englishMonths = [
-  'Jan (1)',
-  'Feb (2)',
-  'Mar (3)',
-  'Apr (4)',
-  'May (5)',
-  'Jun (6)',
-  'Jul (7)',
-  'Aug (8)',
-  'Sep (9)',
-  'Oct (10)',
-  'Nov (11)',
-  'Dec (12)',
+  'Month 1',
+  'Month 2',
+  'Month 3',
+  'Month 4',
+  'Month 5',
+  'Month 6',
+  'Month 7',
+  'Month 8',
+  'Month 9',
+  'Month 10',
+  'Month 11',
+  'Month 12',
 ];
 
 class _RecurringExpenseCard extends StatelessWidget {
@@ -1658,17 +1658,31 @@ class _RecurringExpenseCard extends StatelessWidget {
                         ),
                       ),
                       alignment: Alignment.center,
-                      child: Text(
-                        '$m',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          color: paid
-                              ? Colors.green.shade700
-                              : isCurrent
-                                  ? Colors.orange.shade800
-                                  : theme.colorScheme.onSurfaceVariant,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$m',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: paid
+                                  ? Colors.green.shade800
+                                  : isCurrent
+                                      ? Colors.orange.shade800
+                                      : theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          if (paid) ...[
+                            const SizedBox(width: 1),
+                            Icon(
+                              Icons.check_rounded,
+                              size: 11,
+                              color: Colors.green.shade800,
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                   );
@@ -2252,8 +2266,10 @@ class _RecurringExpenseMonthsDialogState
                     final isCurrentMonth =
                         _selectedYear == now.year && m == now.month;
                     final isBusy = _busyMonthKey == key;
-                    final monthLabel =
-                        widget.isAr ? _arabicMonths[idx] : _englishMonths[idx];
+                    final monthNumStr = m.toString().padLeft(2, '0');
+                    final monthLabel = widget.isAr
+                        ? '${_arabicMonths[idx]} ($monthNumStr/$_selectedYear)'
+                        : '${_englishMonths[idx]} ($monthNumStr/$_selectedYear)';
 
                     return Container(
                       padding: const EdgeInsets.symmetric(
@@ -2302,7 +2318,10 @@ class _RecurringExpenseMonthsDialogState
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
+                                Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 6,
+                                  runSpacing: 4,
                                   children: [
                                     Text(
                                       monthLabel,
@@ -2311,8 +2330,37 @@ class _RecurringExpenseMonthsDialogState
                                         fontWeight: FontWeight.w800,
                                       ),
                                     ),
-                                    if (isCurrentMonth) ...[
-                                      const SizedBox(width: 6),
+                                    if (isPaid)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 1.5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green
+                                              .withValues(alpha: 0.18),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.check_rounded,
+                                              size: 13,
+                                              color: Colors.green.shade800,
+                                            ),
+                                            const SizedBox(width: 2),
+                                            Text(
+                                              widget.isAr ? 'مسدد' : 'Paid',
+                                              style: TextStyle(
+                                                fontSize: 10.5,
+                                                fontWeight: FontWeight.w800,
+                                                color: Colors.green.shade800,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    if (isCurrentMonth)
                                       Container(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 6, vertical: 1.5),
@@ -2333,7 +2381,6 @@ class _RecurringExpenseMonthsDialogState
                                           ),
                                         ),
                                       ),
-                                    ],
                                   ],
                                 ),
                                 const SizedBox(height: 2),
@@ -2377,6 +2424,38 @@ class _RecurringExpenseMonthsDialogState
                               crossAxisAlignment: WrapCrossAlignment.center,
                               spacing: 4,
                               children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Colors.green.withValues(alpha: 0.16),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.green
+                                          .withValues(alpha: 0.45),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.check_circle_rounded,
+                                        size: 14,
+                                        color: Colors.green.shade800,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        widget.isAr ? 'مسدد ✓' : 'Paid ✓',
+                                        style: TextStyle(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.green.shade800,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 if (canPay || widget.user.isAdmin) ...[
                                   IconButton(
                                     visualDensity: VisualDensity.compact,
@@ -2436,24 +2515,7 @@ class _RecurringExpenseMonthsDialogState
                                       ),
                                     ),
                                   ),
-                                ] else
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Colors.green.withValues(alpha: 0.15),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      widget.isAr ? 'مسدد ✓' : 'Paid ✓',
-                                      style: TextStyle(
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.green.shade800,
-                                      ),
-                                    ),
-                                  ),
+                                ],
                               ],
                             )
                           else if (canPay)

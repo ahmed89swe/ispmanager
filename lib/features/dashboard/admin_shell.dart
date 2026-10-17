@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import '../../core/widgets/app_avatar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants.dart';
 import '../../core/models/models.dart';
+import '../../core/services/web_notification_helper.dart';
+import '../../core/utils/formatters.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/providers/preferences_providers.dart';
 import '../auth/auth_repository.dart';
 import '../employees/employees_screen.dart';
 import '../expenses/expenses_screen.dart';
@@ -48,6 +54,45 @@ class _AdminShellState extends ConsumerState<AdminShell> {
   static const _pageSwitchDuration = Duration(milliseconds: 260);
 
   int _index = 0;
+  final Set<String> _seenNotificationIds = {};
+  bool _initializedWebNotifs = false;
+  AppNotification? _activeWebBanner;
+  Timer? _webBannerTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (ref.read(webNotificationsEnabledProvider)) {
+          WebNotificationHelper.getPermission().then((perm) {
+            if (perm == 'default') {
+              WebNotificationHelper.requestPermission();
+            }
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _webBannerTimer?.cancel();
+    super.dispose();
+  }
+
+  void _showWebNotificationBanner(AppNotification n) {
+    _webBannerTimer?.cancel();
+    if (mounted) {
+      setState(() => _activeWebBanner = n);
+    }
+    _webBannerTimer = Timer(const Duration(seconds: 7), () {
+      if (mounted && _activeWebBanner?.id == n.id) {
+        setState(() => _activeWebBanner = null);
+      }
+    });
+  }
 
   static final _tabs = <_Tab>[
     _Tab(
@@ -131,6 +176,37 @@ class _AdminShellState extends ConsumerState<AdminShell> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final userAsync = ref.watch(currentAppUserProvider);
+
+    if (kIsWeb) {
+      ref.listen<AsyncValue<List<AppNotification>>>(
+        notificationsStreamProvider,
+        (prev, next) {
+          final list = next.valueOrNull;
+          if (list == null) return;
+          if (!_initializedWebNotifs) {
+            _initializedWebNotifs = true;
+            for (final item in list) {
+              _seenNotificationIds.add(item.id);
+            }
+            return;
+          }
+          final enabled = ref.read(webNotificationsEnabledProvider);
+          for (final item in list) {
+            if (!_seenNotificationIds.contains(item.id)) {
+              _seenNotificationIds.add(item.id);
+              if (!item.isRead && enabled) {
+                WebNotificationHelper.showNotification(
+                  title: item.title,
+                  body: item.body,
+                );
+                _showWebNotificationBanner(item);
+              }
+            }
+          }
+        },
+      );
+    }
+
     return userAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
@@ -147,13 +223,150 @@ class _AdminShellState extends ConsumerState<AdminShell> {
         return LayoutBuilder(
           builder: (context, constraints) {
             final isDesktop = constraints.maxWidth >= 900;
-            if (isDesktop) {
-              return _buildDesktopShell(context, l, user, tabs, idx);
-            }
-            return _buildMobileShell(context, l, user, tabs, idx);
+            final shell = isDesktop
+                ? _buildDesktopShell(context, l, user, tabs, idx)
+                : _buildMobileShell(context, l, user, tabs, idx);
+            if (!kIsWeb || _activeWebBanner == null) return shell;
+            return Stack(
+              children: [
+                shell,
+                Positioned(
+                  top: 16,
+                  left: 24,
+                  right: 24,
+                  child: Align(
+                    alignment: AlignmentDirectional.topEnd,
+                    child: _buildWebToastOverlay(context, user, _activeWebBanner!),
+                  ),
+                ),
+              ],
+            );
           },
         );
       },
+    );
+  }
+
+  Widget _buildWebToastOverlay(
+    BuildContext context,
+    AppUser user,
+    AppNotification n,
+  ) {
+    final theme = Theme.of(context);
+    final loc = Localizations.localeOf(context).languageCode;
+    final isAr = loc.startsWith('ar');
+    return Material(
+      elevation: 10,
+      borderRadius: BorderRadius.circular(16),
+      color: Colors.transparent,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 440),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: theme.colorScheme.primary.withValues(alpha: 0.55),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.18),
+                blurRadius: 18,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor:
+                    theme.colorScheme.primary.withValues(alpha: 0.15),
+                child: Icon(
+                  Icons.notifications_active_rounded,
+                  color: theme.colorScheme.primary,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            n.title,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          DateFormatter.dateTime(n.createdAt, locale: loc),
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            color: theme.colorScheme.outline,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      n.body,
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                          ),
+                          onPressed: () {
+                            ref
+                                .read(notificationsRepositoryProvider)
+                                .markAsRead(user.adminUid, n.id);
+                            setState(() => _activeWebBanner = null);
+                            NotificationsSheet.show(context);
+                          },
+                          child: Text(
+                            isAr ? 'عرض الإشعارات' : 'View Notifications',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: const Icon(Icons.close_rounded, size: 18),
+                          onPressed: () =>
+                              setState(() => _activeWebBanner = null),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

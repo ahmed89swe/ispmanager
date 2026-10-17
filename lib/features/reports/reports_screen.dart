@@ -26,6 +26,8 @@ class ReportsScreen extends ConsumerStatefulWidget {
 class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   late DateTime _from = DateTime.now().subtract(const Duration(days: 30));
   late DateTime _to = DateTime.now();
+  int _expectedMonth = DateTime.now().month;
+  int _expectedYear = DateTime.now().year;
   ReportType _type = ReportType.financial;
   Subscriber? _selectedSubscriber;
   AppCurrency? _selectedCurrency;
@@ -263,8 +265,22 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           subscribers: subscribers,
           currency: currency,
         );
+        final expectedMonthly = _computeExpectedMonthStats(
+          subscribers: subscribers,
+          debts: debts,
+          currency: currency,
+          year: _expectedYear,
+          month: _expectedMonth,
+        );
         return Column(
           children: [
+            _buildExpectedMonthProfitCard(
+              context: context,
+              loc: loc,
+              currency: currency,
+              stats: expectedMonthly,
+            ),
+            const SizedBox(height: 8),
             _kpi(l.totalRevenue, summary.revenue, currency, loc, Colors.green,
                 Icons.trending_up),
             _kpi(l.totalDebts, summary.totalDebts, currency, loc,
@@ -293,6 +309,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   currency: currency,
                   user: user,
                   summary: summary,
+                  expectedMonthly: expectedMonthly,
                   payments: payments,
                   expenses: expenses,
                   supplierTransactions: supplierTransactions,
@@ -504,6 +521,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     required AppCurrency currency,
     required AppUser user,
     required _ReportSummary summary,
+    required _ExpectedMonthStats expectedMonthly,
     required List<Payment> payments,
     required List<Expense> expenses,
     required List<SupplierBalanceTransaction> supplierTransactions,
@@ -511,6 +529,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     required List<Subscriber> subscribers,
   }) async {
     String fmt(num n) => CurrencyFormatter.format(n, currency, locale: loc);
+    final isAr = loc.startsWith('ar');
+    final monthStr = expectedMonthly.month.toString().padLeft(2, '0');
     final subName = {for (final s in subscribers) s.id: s.name};
     final rows = <List<String>>[];
     for (final p in payments
@@ -558,6 +578,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       currency: currency,
       locale: loc,
       kpis: [
+        PdfKpi(
+          isAr
+              ? 'الأرباح المتوقعة لاشتراكات ($monthStr/${expectedMonthly.year})'
+              : 'Expected Sub Profit ($monthStr/${expectedMonthly.year})',
+          fmt(expectedMonthly.expectedProfit),
+          highlight: true,
+        ),
         PdfKpi(l.totalRevenue, fmt(summary.revenue)),
         PdfKpi(l.totalDebts, fmt(summary.totalDebts)),
         PdfKpi(l.totalExpenses, fmt(summary.expenses)),
@@ -831,6 +858,388 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     if (d != null) setState(() => _to = d);
   }
 
+  void _shiftExpectedMonth(int delta) {
+    setState(() {
+      var m = _expectedMonth + delta;
+      var y = _expectedYear;
+      while (m < 1) {
+        m += 12;
+        y -= 1;
+      }
+      while (m > 12) {
+        m -= 12;
+        y += 1;
+      }
+      _expectedMonth = m;
+      _expectedYear = y;
+    });
+  }
+
+  _ExpectedMonthStats _computeExpectedMonthStats({
+    required List<Subscriber> subscribers,
+    required List<SubscriberDebt> debts,
+    required AppCurrency currency,
+    required int year,
+    required int month,
+  }) {
+    final endOfMonth = DateTime(year, month + 1, 0, 23, 59, 59);
+    final now = DateTime.now();
+    final isCurrentOrFutureMonth =
+        year > now.year || (year == now.year && month >= now.month);
+
+    final monthDebts = debts
+        .where((d) =>
+            d.currency == currency &&
+            d.periodStart.year == year &&
+            d.periodStart.month == month)
+        .toList();
+
+    final subscriberIdsWithMonthDebt = <String>{
+      for (final d in monthDebts) d.subscriberId,
+    };
+
+    num expectedRevenue = 0;
+    num expectedAgentCost = 0;
+    num collectedProfit = 0;
+    int subscriptionsCount = 0;
+
+    for (final d in monthDebts) {
+      expectedRevenue += d.amount;
+      expectedAgentCost += d.agentCost;
+      subscriptionsCount++;
+      if (d.isPaid) {
+        collectedProfit += d.profit;
+      } else if (d.paidAmount > 0 && d.amount > 0) {
+        final ratio = (d.paidAmount / d.amount).clamp(0.0, 1.0);
+        collectedProfit += d.profit * ratio;
+      }
+    }
+
+    for (final s in subscribers) {
+      if (s.currency != currency) continue;
+      if (s.status == SubscriberStatus.inactive) continue;
+      if (subscriberIdsWithMonthDebt.contains(s.id)) continue;
+      final joinedBeforeOrDuringMonth = !s.joinedAt.isAfter(endOfMonth);
+      final activeDuringMonth = isCurrentOrFutureMonth ||
+          !s.subscriptionEndsAt.isBefore(DateTime(year, month, 1));
+      if (joinedBeforeOrDuringMonth && activeDuringMonth) {
+        expectedRevenue += s.monthlyFee;
+        expectedAgentCost += s.packageAgentPrice;
+        subscriptionsCount++;
+      }
+    }
+
+    final expectedProfit = expectedRevenue - expectedAgentCost;
+    final uncollectedProfit = expectedProfit - collectedProfit;
+
+    return _ExpectedMonthStats(
+      year: year,
+      month: month,
+      subscriptionsCount: subscriptionsCount,
+      expectedRevenue: expectedRevenue,
+      expectedAgentCost: expectedAgentCost,
+      expectedProfit: expectedProfit,
+      collectedProfit: collectedProfit,
+      uncollectedProfit: uncollectedProfit,
+    );
+  }
+
+  Widget _buildExpectedMonthProfitCard({
+    required BuildContext context,
+    required String loc,
+    required AppCurrency currency,
+    required _ExpectedMonthStats stats,
+  }) {
+    final theme = Theme.of(context);
+    final isAr = loc.startsWith('ar');
+    final monthStr = stats.month.toString().padLeft(2, '0');
+    String fmt(num v) => CurrencyFormatter.format(v, currency, locale: loc);
+
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: Colors.teal.withValues(alpha: 0.45),
+          width: 1.3,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 19,
+                  backgroundColor: Colors.teal.withValues(alpha: 0.16),
+                  child: const Icon(
+                    Icons.insights_rounded,
+                    color: Colors.teal,
+                    size: 21,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isAr
+                            ? 'الأرباح المتوقعة من اشتراكات المشتركين فقط'
+                            : 'Expected Profits from Subscriptions Only',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        isAr
+                            ? 'لشهر $monthStr/${stats.year} (${stats.subscriptionsCount} اشتراك مشمول)'
+                            : 'For month $monthStr/${stats.year} (${stats.subscriptionsCount} subscriptions)',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest
+                    .withValues(alpha: 0.45),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => _shiftExpectedMonth(-1),
+                    icon: const Icon(Icons.chevron_left_rounded),
+                    tooltip: isAr ? 'الشهر السابق' : 'Previous Month',
+                  ),
+                  Expanded(
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      children: [
+                        Text(
+                          isAr ? 'الشهر المحدد:' : 'Month:',
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                            value: _expectedMonth,
+                            isDense: true,
+                            items: List.generate(12, (idx) {
+                              final m = idx + 1;
+                              final mLabel = m.toString().padLeft(2, '0');
+                              return DropdownMenuItem(
+                                value: m,
+                                child: Text(
+                                  isAr ? 'شهر $mLabel' : 'Month $mLabel',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              );
+                            }),
+                            onChanged: (v) {
+                              if (v != null) {
+                                setState(() => _expectedMonth = v);
+                              }
+                            },
+                          ),
+                        ),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                            value: _expectedYear,
+                            isDense: true,
+                            items: List.generate(11, (idx) {
+                              final y = DateTime.now().year - 5 + idx;
+                              return DropdownMenuItem(
+                                value: y,
+                                child: Text(
+                                  '$y',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              );
+                            }),
+                            onChanged: (v) {
+                              if (v != null) {
+                                setState(() => _expectedYear = v);
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => _shiftExpectedMonth(1),
+                    icon: const Icon(Icons.chevron_right_rounded),
+                    tooltip: isAr ? 'الشهر التالي' : 'Next Month',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.teal.withValues(alpha: 0.11),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.teal.withValues(alpha: 0.35),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      isAr
+                          ? 'صافي الأرباح المتوقعة لاشتراكات ($monthStr/${stats.year})'
+                          : 'Expected Subscription Profit ($monthStr/${stats.year})',
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    fmt(stats.expectedProfit),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: stats.expectedProfit >= 0
+                          ? Colors.teal.shade700
+                          : Colors.red.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _miniExpectedStat(
+                    context: context,
+                    label: isAr
+                        ? 'إجمالي قيمة الاشتراكات'
+                        : 'Subscriptions Value',
+                    value: fmt(stats.expectedRevenue),
+                    color: Colors.blue.shade700,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _miniExpectedStat(
+                    context: context,
+                    label: isAr ? 'تكلفة الباقات (الوكيل)' : 'Agent Cost',
+                    value: fmt(stats.expectedAgentCost),
+                    color: Colors.indigo.shade700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _miniExpectedStat(
+                    context: context,
+                    label: isAr
+                        ? 'الربح المحصل فعلياً للشهر'
+                        : 'Collected Profit',
+                    value: fmt(stats.collectedProfit),
+                    color: Colors.green.shade700,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _miniExpectedStat(
+                    context: context,
+                    label: isAr
+                        ? 'الربح المتبقي قيد التحصيل'
+                        : 'Uncollected Profit',
+                    value: fmt(stats.uncollectedProfit),
+                    color: Colors.orange.shade800,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _miniExpectedStat({
+    required BuildContext context,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: color.withValues(alpha: 0.25),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 3),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w800,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _kpi(String label, num value, AppCurrency currency, String loc,
       Color color, IconData icon) {
     return Card(
@@ -851,6 +1260,28 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       ),
     );
   }
+}
+
+class _ExpectedMonthStats {
+  const _ExpectedMonthStats({
+    required this.year,
+    required this.month,
+    required this.subscriptionsCount,
+    required this.expectedRevenue,
+    required this.expectedAgentCost,
+    required this.expectedProfit,
+    required this.collectedProfit,
+    required this.uncollectedProfit,
+  });
+
+  final int year;
+  final int month;
+  final int subscriptionsCount;
+  final num expectedRevenue;
+  final num expectedAgentCost;
+  final num expectedProfit;
+  final num collectedProfit;
+  final num uncollectedProfit;
 }
 
 class _ReportSummary {

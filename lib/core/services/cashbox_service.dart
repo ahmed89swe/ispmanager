@@ -114,6 +114,64 @@ class CashboxService {
     });
   }
 
+  static void reverseSubscriptionPayment({
+    required WriteBatch batch,
+    required FirebaseFirestore db,
+    required AppUser actor,
+    required String adminUid,
+    required num amount,
+    required AppCurrency currency,
+    required MoneyStorage receivedIn,
+    required String collectorUid,
+    required String subscriberId,
+    required String subscriberName,
+    String? paymentId,
+    String? note,
+  }) {
+    final boxRef = cashboxRef(db, adminUid);
+    final key = debtKey(collectorUid, currency);
+    final amt = amount.toDouble();
+    if (receivedIn == MoneyStorage.cashbox) {
+      batch.set(
+        boxRef,
+        {
+          'balances.${currency.code}': FieldValue.increment(-amt),
+          ..._updateMeta(actor),
+        },
+        SetOptions(merge: true),
+      );
+    } else {
+      batch.set(
+        boxRef,
+        {
+          'staffDebtToCashbox.$key': FieldValue.increment(-amt),
+          ..._updateMeta(actor),
+        },
+        SetOptions(merge: true),
+      );
+    }
+
+    final ledgerRef = ledgerCol(db, adminUid).doc();
+    batch.set(ledgerRef, {
+      'kind': 'subscriptionPaymentReversal',
+      'effect': receivedIn == MoneyStorage.cashbox
+          ? 'cashboxDecreaseReversal'
+          : 'staffDebtToCashboxDecreaseReversal',
+      'reverse': true,
+      'amount': amount,
+      'currency': currency.code,
+      'actorUid': actor.uid,
+      'actorName': actor.displayName,
+      'actorRole': actor.role.name,
+      'subscriberId': subscriberId,
+      'subscriberName': subscriberName,
+      'paymentId': paymentId,
+      'paidFrom': receivedIn.name,
+      'note': note ?? 'التراجع عن تسديد اشتراك مشترك',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   static void registerExpense({
     required WriteBatch batch,
     required FirebaseFirestore db,

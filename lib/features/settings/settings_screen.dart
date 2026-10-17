@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_theme.dart';
 import '../../core/constants.dart';
+import '../../core/services/web_notification_helper.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/providers/preferences_providers.dart';
 
@@ -15,6 +16,7 @@ class SettingsScreen extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final themeMode = ref.watch(themeModeProvider);
     final webColorTheme = ref.watch(webColorThemeProvider);
+    final webNotifsEnabled = ref.watch(webNotificationsEnabledProvider);
     final locale = ref.watch(localeProvider);
     final currency = ref.watch(currencyProvider);
     final isArabic = locale.languageCode.startsWith('ar');
@@ -87,6 +89,116 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ),
         if (kIsWeb) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: AppTheme.cardDecoration(context),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.notifications_active_outlined,
+                      color: uiTheme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isArabic
+                                ? 'إشعارات صفحة الويب'
+                                : 'Web Page Notifications',
+                            style: uiTheme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            isArabic
+                                ? 'تلقي إشعارات فورية وتنبيهات المتصفح عند وصول أي إشعار جديد على الويب'
+                                : 'Receive real-time alerts and browser notifications on Web',
+                            style: uiTheme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(
+                      value: webNotifsEnabled,
+                      onChanged: (v) async {
+                        await ref
+                            .read(webNotificationsEnabledProvider.notifier)
+                            .set(v);
+                        if (v) {
+                          await WebNotificationHelper.requestPermission();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 8,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        final status =
+                            await WebNotificationHelper.requestPermission();
+                        if (!context.mounted) return;
+                        final msg = status == 'granted'
+                            ? (isArabic
+                                ? 'تم تفعيل إشعارات المتصفح بنجاح ✓'
+                                : 'Browser notifications enabled ✓')
+                            : (isArabic
+                                ? 'حالة إذن إشعارات المتصفح: $status'
+                                : 'Browser notification permission: $status');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(msg)),
+                        );
+                      },
+                      icon: const Icon(Icons.browser_updated_rounded, size: 18),
+                      label: Text(
+                        isArabic
+                            ? 'تفعيل إشعارات المتصفح'
+                            : 'Allow Browser Notifications',
+                      ),
+                    ),
+                    FilledButton.tonalIcon(
+                      onPressed: () async {
+                        await WebNotificationHelper.requestPermission();
+                        WebNotificationHelper.showNotification(
+                          title: isArabic
+                              ? 'إشعار تجريبي — ISP Manager'
+                              : 'Test Notification — ISP Manager',
+                          body: isArabic
+                              ? 'ميزة تلقي الإشعارات على صفحة الويب تعمل بنجاح!'
+                              : 'Web page notifications are working properly!',
+                        );
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              isArabic
+                                  ? 'تم إرسال إشعار تجريبي على صفحة الويب ✓'
+                                  : 'Test notification sent on Web ✓',
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.notifications_none_rounded,
+                          size: 18),
+                      label: Text(
+                        isArabic ? 'تجربة إشعار' : 'Test Notification',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),

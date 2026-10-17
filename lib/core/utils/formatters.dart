@@ -16,13 +16,13 @@ class CurrencyFormatter {
 
 class DateFormatter {
   static String date(DateTime dt, {String locale = 'ar'}) =>
-      DateFormat.yMMMd(locale).format(dt);
+      '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
   static String dateTime(DateTime dt, {String locale = 'ar'}) =>
-      DateFormat.yMMMd(locale).add_jm().format(dt);
+      '${date(dt, locale: locale)} ${DateFormat.jm(locale).format(dt)}';
   static String time(DateTime dt, {String locale = 'ar'}) =>
       DateFormat.jm(locale).format(dt);
   static String monthLabel(DateTime dt, {String locale = 'ar'}) =>
-      DateFormat.yMMMM(locale).format(dt);
+      '${dt.month.toString().padLeft(2, '0')}/${dt.year}';
 
   /// Adds an exact number of calendar days (e.g. 30 days), taking into account
   /// months with 28, 29, 30, or 31 days and avoiding DST hour-shift bugs.

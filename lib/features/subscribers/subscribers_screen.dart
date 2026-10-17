@@ -679,7 +679,6 @@ class _ModernSubscriberCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
 
@@ -1721,11 +1720,73 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
   final AppUser by;
   final List<SubscriberDebt> debts;
 
+  static Future<void> _confirmAndUnpayDebt(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l,
+    String loc,
+    AppUser by,
+    Subscriber subscriber,
+    SubscriberDebt debt,
+  ) async {
+    final isAr = loc.startsWith('ar');
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.undo_rounded, color: Colors.orange),
+            const SizedBox(width: 8),
+            Text(isAr ? 'التراجع عن تسديد الاشتراك' : 'Undo Subscription Payment'),
+          ],
+        ),
+        content: Text(
+          isAr
+              ? 'هل تريد التراجع عن تسديد هذا الاشتراك بقيمة ${CurrencyFormatter.format(debt.amount, debt.currency, locale: loc)} للمشترك "${subscriber.name}"؟\n\nسيتم إرجاع الاشتراك إلى غير مسدد وعكس المبلغ من الصندوق.'
+              : 'Undo payment of ${CurrencyFormatter.format(debt.amount, debt.currency, locale: loc)} for "${subscriber.name}"?\n\nThe subscription will revert to unpaid and the amount will be reversed from cashbox.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx, false),
+            child: Text(l.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.orange.shade800),
+            onPressed: () => Navigator.pop(dialogCtx, true),
+            child: Text(isAr ? 'تأكيد التراجع' : 'Undo Payment'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      await ref.read(subscribersRepositoryProvider).unpayDebt(
+            by,
+            subscriber,
+            debt,
+          );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isAr
+                  ? 'تم التراجع عن تسديد الاشتراك بنجاح'
+                  : 'Subscription payment undone successfully',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
-    final canManage = by.isAdmin || by.can(Permission.editSubscriber);
+    final isAr = loc.startsWith('ar');
+    final canManage = by.isAdmin ||
+        by.can(Permission.editSubscriber) ||
+        by.can(Permission.recordSubscriberPayment);
     if (debts.isEmpty) return Center(child: Text(l.noData));
     return ListView.separated(
       padding: const EdgeInsets.only(top: 6, bottom: 88),
@@ -1749,7 +1810,10 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
                   tooltip: 'خيارات الاشتراك',
                   icon: const Icon(Icons.more_vert, size: 20),
                   onSelected: (action) {
-                    if (action == 'edit') {
+                    if (action == 'unpay') {
+                      _confirmAndUnpayDebt(
+                          context, ref, l, loc, by, subscriber, debt);
+                    } else if (action == 'edit') {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
@@ -1766,27 +1830,46 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
                   },
                   itemBuilder: (ctx) => [
                     PopupMenuItem(
-                      value: 'edit',
+                      value: 'unpay',
                       child: Row(
                         children: [
-                          const Icon(Icons.edit_outlined,
-                              size: 18, color: Colors.blue),
+                          Icon(Icons.undo_rounded,
+                              size: 18, color: Colors.orange.shade800),
                           const SizedBox(width: 8),
-                          Text(l.t('editDebt')),
+                          Text(
+                            isAr ? 'التراجع عن التسديد' : 'Undo Payment',
+                            style: TextStyle(
+                              color: Colors.orange.shade800,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          const Icon(Icons.delete_outline,
-                              size: 18, color: Colors.red),
-                          const SizedBox(width: 8),
-                          Text(l.t('deleteDebt')),
-                        ],
+                    if (by.isAdmin || by.can(Permission.editSubscriber)) ...[
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.edit_outlined,
+                                size: 18, color: Colors.blue),
+                            const SizedBox(width: 8),
+                            Text(l.t('editDebt')),
+                          ],
+                        ),
                       ),
-                    ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.delete_outline,
+                                size: 18, color: Colors.red),
+                            const SizedBox(width: 8),
+                            Text(l.t('deleteDebt')),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 )
               : null,

@@ -103,11 +103,30 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : canUndo
-                              ? IconButton(
-                                  tooltip: l.t('undoEdit'),
-                                  icon: const Icon(Icons.undo),
-                                  onPressed: () => _undo(context, ref, user, ev),
-                                )
+                              ? HistoryRepository.isSubscriptionPaymentAction(
+                                      ev.action)
+                                  ? TextButton.icon(
+                                      onPressed: () =>
+                                          _undo(context, ref, user, ev),
+                                      icon: const Icon(Icons.undo_rounded,
+                                          size: 18, color: Colors.orange),
+                                      label: Text(
+                                        l.locale.languageCode == 'ar'
+                                            ? 'تراجع عن التسديد'
+                                            : 'Undo Payment',
+                                        style: const TextStyle(
+                                          color: Colors.orange,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    )
+                                  : IconButton(
+                                      tooltip: l.t('undoEdit'),
+                                      icon: const Icon(Icons.undo),
+                                      onPressed: () =>
+                                          _undo(context, ref, user, ev),
+                                    )
                               : null,
                     ),
                   );
@@ -121,9 +140,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   bool _isUndoable(HistoryEvent event) {
-    if (event.targetId == null || event.action.startsWith('history.')) {
+    if (event.action.startsWith('history.')) {
       return false;
     }
+    if (HistoryRepository.isSubscriptionPaymentAction(event.action)) {
+      return event.after != null || event.before != null;
+    }
+    if (event.targetId == null) return false;
     if (!_isSupportedUndoTarget(event)) return false;
     if (_undoDeletesCurrent(event)) return event.after != null;
     return event.before != null;
@@ -135,6 +158,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   }
 
   bool _isSupportedUndoTarget(HistoryEvent event) {
+    if (HistoryRepository.isSubscriptionPaymentAction(event.action)) {
+      return true;
+    }
     switch (event.targetType) {
       case 'subscriber':
       case 'supplier':
@@ -161,17 +187,34 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   Future<void> _undo(BuildContext context, WidgetRef ref, AppUser user,
       HistoryEvent event) async {
     final l = AppLocalizations.of(context);
+    final isPaymentUndo =
+        HistoryRepository.isSubscriptionPaymentAction(event.action);
     final ok = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(l.t('undoEdit')),
-        content: Text(l.t('confirmUndoEdit')),
+        title: Text(
+          isPaymentUndo
+              ? (l.locale.languageCode == 'ar'
+                  ? 'التراجع عن تسديد الاشتراك'
+                  : 'Undo Subscription Payment')
+              : l.t('undoEdit'),
+        ),
+        content: Text(
+          isPaymentUndo
+              ? (l.locale.languageCode == 'ar'
+                  ? 'هل أنت متأكد من التراجع عن عملية التسديد هذه؟\nسيتم إرجاع الاشتراك كغير مسدد، وإعادة المبلغ إلى ذمة المشترك، وخصمه من الصندوق.'
+                  : 'Are you sure you want to undo this subscription payment?\nThe subscription will revert to unpaid, the amount will return to the subscriber balance, and it will be deducted from the cashbox.')
+              : l.t('confirmUndoEdit'),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: Text(l.cancel),
           ),
           FilledButton(
+            style: isPaymentUndo
+                ? FilledButton.styleFrom(backgroundColor: Colors.orange)
+                : null,
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(l.t('undo')),
           ),
