@@ -377,10 +377,12 @@ class _AdvanceSubscriptionSheetState
                   value: MoneyStorage.personal,
                   child: Text(l.t('keptByCollectorDebt')),
                 ),
-                DropdownMenuItem(
-                  value: MoneyStorage.none,
-                  child: Text(l.t('noCashboxSettlement')),
-                ),
+                if (ref.watch(currentAppUserProvider).valueOrNull?.isAdmin ==
+                    true)
+                  DropdownMenuItem(
+                    value: MoneyStorage.none,
+                    child: Text(l.t('noCashboxSettlement')),
+                  ),
               ],
               onChanged: (v) =>
                   setState(() => _receivedIn = v ?? MoneyStorage.cashbox),

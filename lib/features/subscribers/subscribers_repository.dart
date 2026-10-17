@@ -493,6 +493,9 @@ class SubscribersRepository {
       {MoneyStorage receivedIn = MoneyStorage.cashbox,
       DateTime? paidAt}) async {
     if (_db == null || debt.isPaid) return;
+    if (receivedIn == MoneyStorage.none && !by.isAdmin) {
+      throw StateError('تصفية الحسابات القديمة بدون صندوق متاحة للمدير فقط');
+    }
     final db = _db;
     final subRef = _col(by.adminUid).doc(subscriber.id);
     final debtRef = _debtCol(by.adminUid, subscriber.id).doc(debt.id);
@@ -521,7 +524,8 @@ class SubscribersRepository {
       'paidAt': Timestamp.fromDate(paymentDate),
       'paidBy': by.uid,
     });
-    final nextBalance = subscriber.balance - remainingDue;
+    final nextBalance =
+        (subscriber.balance - remainingDue).clamp(0, double.infinity);
     batch.update(subRef, {
       'balance': nextBalance,
       'status': nextBalance > 0
@@ -974,18 +978,32 @@ class SubscribersRepository {
   Future<void> recordPaymentAndDistribute(
       AppUser by, Subscriber subscriber, Payment payment) async {
     if (_db == null) return;
+    if (payment.receivedIn == MoneyStorage.none && !by.isAdmin) {
+      throw StateError('تصفية الحسابات القديمة بدون صندوق متاحة للمدير فقط');
+    }
     final db = _db;
     final subRef = _col(by.adminUid).doc(subscriber.id);
     final payRef = subRef.collection('payments').doc();
 
-    // Read open debts oldest first (outside the transaction; batched write).
-    final debtsSnap = await _debtCol(by.adminUid, subscriber.id)
-        .where('status', whereIn: [
-          SubscriptionDebtStatus.unpaid.name,
-          SubscriptionDebtStatus.partiallyPaid.name,
-        ])
-        .orderBy('periodStart')
-        .get();
+    // Read subscriber doc and all debts, then filter/sort open debts oldest first in memory
+    // so Firestore does not require a composite index on (status, periodStart).
+    final subSnap = await subRef.get();
+    final currentBalance =
+        (subSnap.data()?['balance'] ?? subscriber.balance) as num;
+
+    final debtsSnap = await _debtCol(by.adminUid, subscriber.id).get();
+    final openDebtDocs = debtsSnap.docs.where((doc) {
+      final d = doc.data();
+      final status = d['status'] as String?;
+      return status == null ||
+          status == SubscriptionDebtStatus.unpaid.name ||
+          status == SubscriptionDebtStatus.partiallyPaid.name;
+    }).toList()
+      ..sort((a, b) {
+        final aStart = _dateFromFirestore(a.data()['periodStart']);
+        final bStart = _dateFromFirestore(b.data()['periodStart']);
+        return aStart.compareTo(bStart);
+      });
 
     final paymentToWrite = Payment(
       id: payRef.id,
@@ -1005,7 +1023,7 @@ class SubscribersRepository {
     num remaining = payment.amount;
     final coveredDebtIds = <String>[];
     final affectedDebtsBefore = <Map<String, dynamic>>[];
-    for (final doc in debtsSnap.docs) {
+    for (final doc in openDebtDocs) {
       if (remaining <= 0) break;
       final d = doc.data();
       final amount = (d['amount'] ?? 0) as num;
@@ -1039,7 +1057,8 @@ class SubscribersRepository {
       }
     }
 
-    final newBalance = subscriber.balance - payment.amount;
+    final newBalance =
+        (currentBalance - payment.amount).clamp(0, double.infinity);
     batch.update(subRef, {
       'balance': newBalance,
       'status': newBalance > 0
@@ -1061,39 +1080,44 @@ class SubscribersRepository {
     );
 
     await batch.commit();
-    await _logger.log(
-      actor: by,
-      action: 'payment.record',
-      targetType: 'payment',
-      targetId: payRef.id,
-      summary:
-          'Recorded payment ${payment.amount} ${payment.currency.code} for ${subscriber.name}'
-          ' (covered ${coveredDebtIds.length} debt(s))',
-      before: {
-        'subscriberId': subscriber.id,
-        'subscriberName': subscriber.name,
-        'subscriberBalance': subscriber.balance,
-        'subscriberStatus': subscriber.status.name,
-        'debts': affectedDebtsBefore,
-      },
-      after: {
-        ...paymentToWrite.toMap(),
-        'paymentId': payRef.id,
-        'subscriberName': subscriber.name,
-      },
-    );
-
-    if (!by.isAdmin && _notificationsRepo != null) {
-      await _notificationsRepo.sendNotification(
-        adminUid: by.adminUid,
-        recipientUid: 'admin',
-        title: 'تسديد اشتراك مشترك',
-        body: 'قام الموظف ${by.displayName} بتسجيل دفعة بقيمة ${payment.amount} ${payment.currency.code} للمشترك: ${subscriber.name}',
-        type: 'subscriber_payment',
+    try {
+      await _logger.log(
         actor: by,
-        targetId: subscriber.id,
-        targetType: 'subscriber',
+        action: 'payment.record',
+        targetType: 'payment',
+        targetId: payRef.id,
+        summary:
+            'Recorded payment ${payment.amount} ${payment.currency.code} for ${subscriber.name}'
+            ' (covered ${coveredDebtIds.length} debt(s))',
+        before: {
+          'subscriberId': subscriber.id,
+          'subscriberName': subscriber.name,
+          'subscriberBalance': currentBalance,
+          'subscriberStatus': subscriber.status.name,
+          'debts': affectedDebtsBefore,
+        },
+        after: {
+          ...paymentToWrite.toMap(),
+          'paymentId': payRef.id,
+          'subscriberName': subscriber.name,
+        },
       );
+
+      if (!by.isAdmin && _notificationsRepo != null) {
+        await _notificationsRepo.sendNotification(
+          adminUid: by.adminUid,
+          recipientUid: 'admin',
+          title: 'تسديد اشتراك مشترك',
+          body:
+              'قام الموظف ${by.displayName} بتسجيل دفعة بقيمة ${payment.amount} ${payment.currency.code} للمشترك: ${subscriber.name}',
+          type: 'subscriber_payment',
+          actor: by,
+          targetId: subscriber.id,
+          targetType: 'subscriber',
+        );
+      }
+    } catch (e) {
+      debugPrint('Non-fatal error logging payment: $e');
     }
   }
 

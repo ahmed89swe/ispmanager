@@ -18,17 +18,34 @@ class RecordPaymentSheet extends ConsumerStatefulWidget {
 }
 
 class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
-  final _amount = TextEditingController();
+  late final TextEditingController _amount;
   final _note = TextEditingController();
   MoneyStorage _receivedIn = MoneyStorage.cashbox;
   DateTime _paymentDate = DateTime.now();
   bool _busy = false;
 
   @override
+  void initState() {
+    super.initState();
+    _amount = TextEditingController(
+      text: widget.subscriber.balance > 0 ? '${widget.subscriber.balance}' : '',
+    );
+  }
+
+  @override
   void dispose() {
     _amount.dispose();
     _note.dispose();
     super.dispose();
+  }
+
+  String _normalizeNumberInput(String input) {
+    const eastern = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    var result = input.trim().replaceAll(',', '');
+    for (var i = 0; i < eastern.length; i++) {
+      result = result.replaceAll(eastern[i], '$i');
+    }
+    return result;
   }
 
   Future<void> _pickPaymentDate() async {
@@ -55,7 +72,7 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
 
   Future<void> _save() async {
     final l = AppLocalizations.of(context);
-    final amount = num.tryParse(_amount.text);
+    final amount = num.tryParse(_normalizeNumberInput(_amount.text));
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l.invalidAmount)));
@@ -63,6 +80,10 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
     }
     final user = ref.read(currentAppUserProvider).valueOrNull;
     if (user == null) return;
+    final effectiveReceivedIn =
+        (!user.isAdmin && _receivedIn == MoneyStorage.none)
+            ? MoneyStorage.cashbox
+            : _receivedIn;
     setState(() => _busy = true);
     try {
       final p = Payment(
@@ -70,10 +91,10 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
         subscriberId: widget.subscriber.id,
         amount: amount,
         currency: widget.subscriber.currency,
-        receivedIn: _receivedIn,
+        receivedIn: effectiveReceivedIn,
         note: _note.text.trim().isNotEmpty
             ? _note.text.trim()
-            : (_receivedIn == MoneyStorage.none
+            : (effectiveReceivedIn == MoneyStorage.none
                 ? 'تصفية حساب قديم (بدون صندوق)'
                 : null),
         recordedBy: user.uid,
@@ -87,6 +108,12 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(l.saved)));
       }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l.errorOccurred}: $e')),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -97,6 +124,8 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
     final isAr = loc.startsWith('ar');
+    final user = ref.watch(currentAppUserProvider).valueOrNull;
+    final isAdmin = user?.isAdmin == true;
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom +
@@ -182,7 +211,9 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
             const SizedBox(height: 8),
             DropdownButtonFormField<MoneyStorage>(
               isExpanded: true,
-              value: _receivedIn,
+              value: (!isAdmin && _receivedIn == MoneyStorage.none)
+                  ? MoneyStorage.cashbox
+                  : _receivedIn,
               decoration: InputDecoration(labelText: l.t('paymentDestination')),
               items: [
                 DropdownMenuItem(
@@ -193,10 +224,11 @@ class _RecordPaymentSheetState extends ConsumerState<RecordPaymentSheet> {
                   value: MoneyStorage.personal,
                   child: Text(l.t('keptByCollectorDebt')),
                 ),
-                DropdownMenuItem(
-                  value: MoneyStorage.none,
-                  child: Text(l.t('noCashboxSettlement')),
-                ),
+                if (isAdmin)
+                  DropdownMenuItem(
+                    value: MoneyStorage.none,
+                    child: Text(l.t('noCashboxSettlement')),
+                  ),
               ],
               onChanged: (v) =>
                   setState(() => _receivedIn = v ?? MoneyStorage.cashbox),

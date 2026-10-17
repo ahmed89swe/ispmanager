@@ -1682,10 +1682,11 @@ class _SubscriberDebtsTab extends ConsumerWidget {
                     value: MoneyStorage.personal,
                     child: Text(l.t('keptByCollectorDebt')),
                   ),
-                  DropdownMenuItem(
-                    value: MoneyStorage.none,
-                    child: Text(l.t('noCashboxSettlement')),
-                  ),
+                  if (by.isAdmin)
+                    DropdownMenuItem(
+                      value: MoneyStorage.none,
+                      child: Text(l.t('noCashboxSettlement')),
+                    ),
                 ],
                 onChanged: (v) {
                   if (v != null) setState(() => selectedDestination = v);
@@ -3110,10 +3111,15 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                             value: MoneyStorage.personal,
                             child: Text(l.t('keptByCollectorDebt')),
                           ),
-                          DropdownMenuItem(
-                            value: MoneyStorage.none,
-                            child: Text(l.t('noCashboxSettlement')),
-                          ),
+                          if (ref
+                                  .watch(currentAppUserProvider)
+                                  .valueOrNull
+                                  ?.isAdmin ==
+                              true)
+                            DropdownMenuItem(
+                              value: MoneyStorage.none,
+                              child: Text(l.t('noCashboxSettlement')),
+                            ),
                         ],
                         onChanged: (v) => setState(() =>
                             _initialReceivedIn = v ?? MoneyStorage.cashbox),

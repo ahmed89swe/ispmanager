@@ -264,8 +264,8 @@
     "semantic_hash": ""
   },
   "lib/features/history/history_repository.dart": {
-    "mtime": 1792228027.5396812,
-    "seen": 1792228040.6241198,
+    "mtime": 1792228235.2815838,
+    "seen": 1792228811.211144,
     "ast_hash": "1527ac6558b529ef34ff7c3241ef488f",
     "semantic_hash": ""
   },
@@ -312,9 +312,9 @@
     "semantic_hash": ""
   },
   "lib/features/payments/record_payment_sheet.dart": {
-    "mtime": 1792227635.8381608,
-    "seen": 1792227876.9833055,
-    "ast_hash": "114b22da0ed1563662f50e7663873e0f",
+    "mtime": 1792228743.5883,
+    "seen": 1792228811.2111585,
+    "ast_hash": "7b9045f120cea21434124f129336a78f",
     "semantic_hash": ""
   },
   "lib/features/profile/profile_repository.dart": {
@@ -342,15 +342,15 @@
     "semantic_hash": ""
   },
   "lib/features/subscribers/subscribers_repository.dart": {
-    "mtime": 1792227636.0488842,
-    "seen": 1792227876.9833136,
-    "ast_hash": "2760ef5a79eb763781f4383ce7e360f4",
+    "mtime": 1792228690.0202732,
+    "seen": 1792228811.2111661,
+    "ast_hash": "37945b3abbf0645978847818e9747558",
     "semantic_hash": ""
   },
   "lib/features/subscribers/subscribers_screen.dart": {
-    "mtime": 1792227859.5291476,
-    "seen": 1792227876.983315,
-    "ast_hash": "f0e763674e2a014d22efb5658ad56c63",
+    "mtime": 1792228772.3452792,
+    "seen": 1792228811.2111678,
+    "ast_hash": "8fc0df80ce3b382ea0d866df74d63db3",
     "semantic_hash": ""
   },
   "lib/features/suppliers/suppliers_repository.dart": {
@@ -594,9 +594,9 @@
     "semantic_hash": ""
   },
   "web/index.html": {
-    "mtime": 1792168637.3794415,
-    "seen": 1792169497.6120303,
-    "ast_hash": "a5484f730d1219626a83a08454d3ac9a",
+    "mtime": 1792228797.0051806,
+    "seen": 1792228811.211244,
+    "ast_hash": "8b5c48d31a19dd39febb59885f796701",
     "semantic_hash": ""
   },
   "windows/CMakeLists.txt": {
@@ -798,39 +798,39 @@
     "semantic_hash": ""
   },
   "web/favicon.png": {
-    "mtime": 1748559746.9826293,
-    "seen": 1792169497.6120775,
-    "ast_hash": "5dcef449791fa27946b3d35ad8803796",
+    "mtime": 1792228786.3920517,
+    "seen": 1792228811.2112956,
+    "ast_hash": "9b7b27983c84f25cee61453d7ac5a010",
     "semantic_hash": ""
   },
   "web/icons/Icon-192.png": {
-    "mtime": 1748559746.9826293,
-    "seen": 1792169497.6120791,
-    "ast_hash": "ac9a721a12bbc803b44f645561ecb1e1",
+    "mtime": 1792228786.3980503,
+    "seen": 1792228811.211297,
+    "ast_hash": "e19c8c78c0316095738328f7c0e0a79d",
     "semantic_hash": ""
   },
   "web/icons/Icon-512.png": {
-    "mtime": 1748559746.9826293,
-    "seen": 1792169497.6120803,
-    "ast_hash": "96e752610906ba2a93c65f8abe1645f1",
+    "mtime": 1792228786.41705,
+    "seen": 1792228811.2112982,
+    "ast_hash": "05195bca83f6088423273d96e256c390",
     "semantic_hash": ""
   },
   "web/icons/Icon-maskable-192.png": {
-    "mtime": 1775869134.5987325,
-    "seen": 1792169497.612082,
-    "ast_hash": "c457ef57daa1d16f64b27b786ec2ea3c",
+    "mtime": 1792228786.4220486,
+    "seen": 1792228811.2112997,
+    "ast_hash": "e19c8c78c0316095738328f7c0e0a79d",
     "semantic_hash": ""
   },
   "web/icons/Icon-maskable-512.png": {
-    "mtime": 1775869134.5957322,
-    "seen": 1792169497.6120832,
-    "ast_hash": "301a7604d45b3e739efc881eb04896ea",
+    "mtime": 1792228786.4420474,
+    "seen": 1792228811.211301,
+    "ast_hash": "05195bca83f6088423273d96e256c390",
     "semantic_hash": ""
   },
   "lib/features/payments/advance_subscription_sheet.dart": {
-    "mtime": 1792227858.3763418,
-    "seen": 1792227876.9833024,
-    "ast_hash": "538ed9fbcd4cef04c537d356e08583e5",
+    "mtime": 1792228770.1216795,
+    "seen": 1792228811.2111554,
+    "ast_hash": "e5e11ce900aa19bb72116622fd354ad4",
     "semantic_hash": ""
   },
   "test/advance_subscription_test.dart": {
