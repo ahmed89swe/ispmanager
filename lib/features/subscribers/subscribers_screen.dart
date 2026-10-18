@@ -135,6 +135,9 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
             .map((sp) => sp.name)
             .firstOrNull;
 
+    final isAr =
+        Localizations.localeOf(context).languageCode.startsWith('ar');
+
     return Scaffold(
       body: Column(
         children: [
@@ -184,6 +187,36 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
                   icon: const Icon(Icons.picture_as_pdf_rounded,
                       color: Colors.redAccent),
                   onPressed: () => _exportDebtsReport(context, user),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filledTonal(
+                  tooltip: isAr
+                      ? 'مزامنة وتدقيق أرصدة المشتركين'
+                      : 'Sync Subscriber Balances',
+                  icon: const Icon(Icons.sync_rounded),
+                  onPressed: () async {
+                    final list = subs.valueOrNull ?? [];
+                    int fixed = 0;
+                    for (final s in list) {
+                      if (s.balance > 0) {
+                        await ref
+                            .read(subscribersRepositoryProvider)
+                            .syncSubscriberBalance(user.adminUid, s.id);
+                        fixed++;
+                      }
+                    }
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            isAr
+                                ? 'تم تدقيق ومزامنة حسابات $fixed مشترك بنجاح ✓'
+                                : 'Audited and synced $fixed subscriber accounts ✓',
+                          ),
+                        ),
+                      );
+                    }
+                  },
                 ),
                 if (canAdd) ...[
                   const SizedBox(width: 8),
@@ -542,7 +575,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
     }
     final due = subscribers.where((subscriber) {
       return !_syncedSubscribers.contains(subscriber.id) &&
-          !subscriber.subscriptionEndsAt.isAfter(DateTime.now());
+          (!subscriber.subscriptionEndsAt.isAfter(DateTime.now()) ||
+              subscriber.balance > 0);
     }).toList();
     if (due.isEmpty) return;
     for (final subscriber in due) {
@@ -1538,6 +1572,15 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                         .toList(growable: false);
                     final totalDebt = unpaidDebts.fold<num>(
                         0, (total, debt) => total + debt.remaining);
+
+                    // Reconcile and fix any balance discrepancy automatically
+                    if (snap.hasData && subscriber.balance != totalDebt) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ref
+                            .read(subscribersRepositoryProvider)
+                            .syncSubscriberBalance(by.adminUid, subscriber.id);
+                      });
+                    }
                     return Column(
                       children: [
                         ListTile(

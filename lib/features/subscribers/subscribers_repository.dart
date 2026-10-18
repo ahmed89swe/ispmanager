@@ -423,12 +423,10 @@ class SubscribersRepository {
     final subRef = _col(by.adminUid).doc(subscriber.id);
     final debtRef = _debtCol(by.adminUid, subscriber.id).doc(debt.id);
 
-    final unpaidPortion =
-        (debt.amount - debt.paidAmount).clamp(0, double.infinity);
-
-    // Read remaining debts to properly restore subscriptionEndsAt if this was the latest debt
+    // Read remaining debts to properly restore subscriptionEndsAt and exact remaining balance
     final allDebtsSnap = await _debtCol(by.adminUid, subscriber.id).get();
     DateTime? maxPeriodEnd;
+    num remainingBalance = 0;
     for (final doc in allDebtsSnap.docs) {
       if (doc.id == debt.id) continue;
       final d = doc.data();
@@ -439,20 +437,23 @@ class SubscribersRepository {
           maxPeriodEnd = dt;
         }
       }
+      final status = d['status'] as String?;
+      if (status != SubscriptionDebtStatus.paid.name) {
+        final amt = (d['amount'] ?? 0) as num;
+        final pd = (d['paidAmount'] ?? 0) as num;
+        remainingBalance += (amt - pd).clamp(0, double.infinity);
+      }
     }
 
     await _db.runTransaction((tx) async {
       final snap = await tx.get(subRef);
       if (!snap.exists) return;
-      final currentBalance = (snap.data()?['balance'] ?? 0) as num;
-      final nextBalance =
-          (currentBalance - unpaidPortion).clamp(0, double.infinity);
-      final nextStatus = nextBalance > 0
+      final nextStatus = remainingBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name;
 
       final updates = <String, dynamic>{
-        'balance': nextBalance,
+        'balance': remainingBalance,
         'status': nextStatus,
       };
       if (maxPeriodEnd != null) {
@@ -524,14 +525,24 @@ class SubscribersRepository {
       'paidAt': Timestamp.fromDate(paymentDate),
       'paidBy': by.uid,
     });
-    final subSnap = await subRef.get();
-    final currentBalance =
-        (subSnap.data()?['balance'] ?? subscriber.balance) as num;
-    final nextBalance =
-        (currentBalance - remainingDue).clamp(0, double.infinity);
+
+    // Query all debts for this subscriber to calculate the exact remaining open balance
+    final allDebtsSnap = await _debtCol(by.adminUid, subscriber.id).get();
+    num remainingBalance = 0;
+    for (final doc in allDebtsSnap.docs) {
+      if (doc.id == debt.id) continue; // This debt is now paid!
+      final d = doc.data();
+      final status = d['status'] as String?;
+      if (status != SubscriptionDebtStatus.paid.name) {
+        final amt = (d['amount'] ?? 0) as num;
+        final pd = (d['paidAmount'] ?? 0) as num;
+        remainingBalance += (amt - pd).clamp(0, double.infinity);
+      }
+    }
+
     batch.set(subRef, {
-      'balance': nextBalance,
-      'status': nextBalance > 0
+      'balance': remainingBalance,
+      'status': remainingBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name,
       'lastPaymentAmount': remainingDue,
@@ -559,7 +570,7 @@ class SubscribersRepository {
         before: {
           'subscriberId': subscriber.id,
           'subscriberName': subscriber.name,
-          'subscriberBalance': currentBalance,
+          'subscriberBalance': subscriber.balance,
           'subscriberStatus': subscriber.status.name,
           'debt': debt.toMap(),
         },
@@ -637,10 +648,21 @@ class SubscribersRepository {
       'paidAt': null,
       'paidBy': null,
     });
-    final nextBalance = subscriber.balance + refundAmount;
+    final allDebtsSnap = await _debtCol(by.adminUid, subscriber.id).get();
+    num remainingBalance = debt.amount;
+    for (final doc in allDebtsSnap.docs) {
+      if (doc.id == debt.id) continue;
+      final d = doc.data();
+      final status = d['status'] as String?;
+      if (status != SubscriptionDebtStatus.paid.name) {
+        final amt = (d['amount'] ?? 0) as num;
+        final pd = (d['paidAmount'] ?? 0) as num;
+        remainingBalance += (amt - pd).clamp(0, double.infinity);
+      }
+    }
     batch.update(subRef, {
-      'balance': nextBalance,
-      'status': nextBalance > 0
+      'balance': remainingBalance,
+      'status': remainingBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name,
     });
@@ -673,9 +695,15 @@ class SubscribersRepository {
 
   Future<void> syncDueDebts(AppUser by, Subscriber subscriber) async {
     if (_db == null || subscriber.id.isEmpty) return;
-    if (!subscriber.autoRenew) return;
     final now = DateTime.now();
-    if (subscriber.subscriptionEndsAt.isAfter(now)) return;
+
+    // If subscription is not expired, but subscriber still shows debt, self-heal balance
+    if (!subscriber.autoRenew || subscriber.subscriptionEndsAt.isAfter(now)) {
+      if (subscriber.balance > 0) {
+        await syncSubscriberBalance(by.adminUid, subscriber.id);
+      }
+      return;
+    }
 
     var periodStart = subscriber.subscriptionEndsAt;
     var periodEnd = DateFormatter.addDays(periodStart, 30);
@@ -723,16 +751,60 @@ class SubscribersRepository {
       periodEnd = DateFormatter.addDays(periodStart, 30);
     }
 
+    // Read all existing open debts in _debtCol to set the EXACT true balance
+    final allDebtsSnap = await _debtCol(by.adminUid, subscriber.id).get();
+    final realBalance = allDebtsSnap.docs
+        .map((d) => SubscriberDebt.fromDoc(d, subscriberId: subscriber.id))
+        .where((d) => !d.isPaid)
+        .fold<num>(0, (acc, d) => acc + d.remaining) + addedBalance;
+
     final updates = <String, dynamic>{
       'subscriptionEndsAt': Timestamp.fromDate(periodStart),
       'prepaidCycles': remainingPrepaid,
+      'balance': realBalance,
+      'status': realBalance > 0
+          ? SubscriberStatus.overdue.name
+          : SubscriberStatus.active.name,
     };
-    if (addedBalance > 0) {
-      updates['balance'] = FieldValue.increment(addedBalance);
-      updates['status'] = SubscriberStatus.overdue.name;
-    }
     batch.update(_col(by.adminUid).doc(subscriber.id), updates);
     await batch.commit();
+  }
+
+  /// Recalculates and updates the subscriber's balance and status based directly on
+  /// the source-of-truth unpaid debts in their debts subcollection.
+  /// Fixes any historical or race-condition discrepancies where balance > 0 while
+  /// all debts are already paid.
+  Future<num> syncSubscriberBalance(String adminUid, String subscriberId) async {
+    if (_db == null || subscriberId.isEmpty) return 0;
+    try {
+      final debtsSnap = await _debtCol(adminUid, subscriberId).get();
+      final realBalance = debtsSnap.docs
+          .map((d) => SubscriberDebt.fromDoc(d, subscriberId: subscriberId))
+          .where((d) => !d.isPaid)
+          .fold<num>(0, (acc, d) => acc + d.remaining);
+
+      final subRef = _col(adminUid).doc(subscriberId);
+      final subSnap = await subRef.get();
+      if (subSnap.exists) {
+        final data = subSnap.data() ?? {};
+        final currentBalance = (data['balance'] ?? 0) as num;
+        final currentStatus = data['status'] as String?;
+        final targetStatus = realBalance > 0
+            ? SubscriberStatus.overdue.name
+            : SubscriberStatus.active.name;
+
+        if (currentBalance != realBalance || currentStatus != targetStatus) {
+          await subRef.update({
+            'balance': realBalance,
+            'status': targetStatus,
+          });
+        }
+      }
+      return realBalance;
+    } catch (e) {
+      debugPrint('Error syncing subscriber balance: $e');
+      return 0;
+    }
   }
 
   /// Toggle auto-renew flag. When enabling, immediately add a 30-day debt
@@ -1031,6 +1103,8 @@ class SubscribersRepository {
     num remaining = payment.amount;
     final coveredDebtIds = <String>[];
     final affectedDebtsBefore = <Map<String, dynamic>>[];
+    final updatedPaidAmounts = <String, num>{};
+
     for (final doc in openDebtDocs) {
       if (remaining <= 0) break;
       final d = doc.data();
@@ -1052,24 +1126,43 @@ class SubscribersRepository {
           'paidAt': Timestamp.fromDate(payment.recordedAt),
           'paidBy': by.uid,
         });
+        updatedPaidAmounts[doc.id] = amount;
         remaining -= due;
         coveredDebtIds.add(doc.id);
       } else {
+        final newPaid = alreadyPaid + remaining;
         batch.update(doc.reference, {
-          'paidAmount': alreadyPaid + remaining,
+          'paidAmount': newPaid,
           'status': SubscriptionDebtStatus.partiallyPaid.name,
           'paidAt': Timestamp.fromDate(payment.recordedAt),
           'paidBy': by.uid,
         });
+        updatedPaidAmounts[doc.id] = newPaid;
         remaining = 0;
       }
     }
 
-    final newBalance =
-        (currentBalance - payment.amount).clamp(0, double.infinity);
+    // Calculate exact remaining balance across all debts in _debtCol
+    num finalRemainingBalance = 0;
+    for (final doc in debtsSnap.docs) {
+      final d = doc.data();
+      final amount = (d['amount'] ?? 0) as num;
+      final currentPaid =
+          updatedPaidAmounts[doc.id] ?? ((d['paidAmount'] ?? 0) as num);
+      final currentStatus = updatedPaidAmounts.containsKey(doc.id)
+          ? (updatedPaidAmounts[doc.id]! >= amount
+              ? SubscriptionDebtStatus.paid.name
+              : SubscriptionDebtStatus.partiallyPaid.name)
+          : (d['status'] as String?);
+      if (currentStatus != SubscriptionDebtStatus.paid.name) {
+        final rem = (amount - currentPaid).clamp(0, double.infinity);
+        finalRemainingBalance += rem;
+      }
+    }
+
     batch.set(subRef, {
-      'balance': newBalance,
-      'status': newBalance > 0
+      'balance': finalRemainingBalance,
+      'status': finalRemainingBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name,
       'lastPaymentAmount': payment.amount,

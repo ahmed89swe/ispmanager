@@ -37,9 +37,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     }
     final now = DateTime.now();
     final due = subscribers.where((subscriber) {
-      return subscriber.autoRenew &&
-          !_syncedSubscribers.contains(subscriber.id) &&
-          !subscriber.subscriptionEndsAt.isAfter(now);
+      return !_syncedSubscribers.contains(subscriber.id) &&
+          ((subscriber.autoRenew &&
+                  !subscriber.subscriptionEndsAt.isAfter(now)) ||
+              subscriber.balance > 0);
     }).toList();
     if (due.isEmpty) return;
     for (final subscriber in due) {
