@@ -33,6 +33,7 @@ class _EmployeesScreenState extends ConsumerState<EmployeesScreen> {
 
     return Scaffold(
       body: stream.when(
+        skipLoadingOnReload: true,
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('$e')),
         data: (list) {

@@ -184,6 +184,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen>
     final theme = Theme.of(context);
     final now = DateTime.now();
     return recurringStream.when(
+      skipLoadingOnReload: true,
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('$e')),
       data: (items) {
@@ -475,6 +476,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen>
     ThemeData theme,
   ) {
     return stream.when(
+      skipLoadingOnReload: true,
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('$e')),
       data: (rawList) {

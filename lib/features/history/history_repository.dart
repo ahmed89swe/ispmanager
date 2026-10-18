@@ -6,7 +6,6 @@ import '../../core/firebase_service.dart';
 import '../../core/models/models.dart';
 import '../../core/services/cashbox_service.dart';
 import '../../core/utils/firestore_helpers.dart';
-import '../auth/auth_repository.dart';
 
 /// Writes a single history event under /admins/{adminUid}/history.
 class HistoryLogger {
@@ -403,12 +402,11 @@ final historyRepositoryProvider = Provider<HistoryRepository>(
 final historyLoggerProvider = Provider<HistoryLogger>(
     (ref) => HistoryLogger(ref.watch(firestoreProvider)));
 
-final historyStreamProvider = StreamProvider.autoDispose
-    .family<List<HistoryEvent>, String>((ref, adminUid) {
-  final authUser = ref.watch(authStateProvider).valueOrNull;
-  if (authUser == null) return const Stream.empty();
+final historyStreamProvider =
+    StreamProvider.family<List<HistoryEvent>, String>((ref, adminUid) {
+  if (adminUid.trim().isEmpty) return Stream.value(const <HistoryEvent>[]);
   final db = ref.watch(firestoreProvider);
-  if (db == null) return const Stream.empty();
+  if (db == null) return Stream.value(const <HistoryEvent>[]);
   return db
       .collection('admins')
       .doc(adminUid)

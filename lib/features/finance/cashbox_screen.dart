@@ -61,6 +61,7 @@ class _CashboxScreenState extends ConsumerState<CashboxScreen> {
             ),
           ),
           body: cashboxAsync.when(
+            skipLoadingOnReload: true,
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => _buildErrorState(context, l, user, e),
             data: (cashbox) => TabBarView(
@@ -96,6 +97,7 @@ class _CashboxScreenState extends ConsumerState<CashboxScreen> {
         title: Text(l.t('myCashboxAccount')),
       ),
       body: cashboxAsync.when(
+        skipLoadingOnReload: true,
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => _buildErrorState(context, l, user, e),
         data: (cashbox) => _buildEmployeePersonalView(

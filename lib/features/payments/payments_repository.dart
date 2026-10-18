@@ -15,7 +15,9 @@ class PaymentsRepository {
 
   Stream<List<Payment>> watchForSubscriber(
       String adminUid, String subscriberId) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || subscriberId.trim().isEmpty) {
+      return Stream.value(const <Payment>[]);
+    }
     return _db
         .collection('admins')
         .doc(adminUid)
@@ -28,7 +30,9 @@ class PaymentsRepository {
   }
 
   Stream<List<Payment>> watchAll(String adminUid) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <Payment>[]);
+    }
     return _db
         .collectionGroup('payments')
         .orderBy('recordedAt', descending: true)

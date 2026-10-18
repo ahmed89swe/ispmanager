@@ -8,7 +8,6 @@ import '../../core/constants.dart';
 import '../../core/firebase_service.dart';
 import '../../core/models/models.dart';
 import '../../core/services/cashbox_service.dart';
-import '../auth/auth_repository.dart';
 import '../history/history_repository.dart';
 import '../notifications/notifications_repository.dart';
 
@@ -55,7 +54,9 @@ class ExpensesRepository {
           .collection('expenseDeleteRequests');
 
   Stream<List<Expense>> watchAll(String adminUid) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <Expense>[]);
+    }
     return _col(adminUid).orderBy('date', descending: true).snapshots().map(
           (s) => s.docs.map(Expense.fromDoc).toList(),
         );
@@ -107,7 +108,9 @@ class ExpensesRepository {
       _db!.collection('admins').doc(adminUid).collection('finance').doc('recurring_expenses');
 
   Stream<List<RecurringExpense>> watchRecurringExpenses(String adminUid) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <RecurringExpense>[]);
+    }
     return _recurringDoc(adminUid).snapshots().map((snap) {
       final data = snap.data();
       if (data == null) return <RecurringExpense>[];
@@ -459,7 +462,9 @@ class ExpensesRepository {
 
   Stream<List<ExpenseDeleteRequest>> watchDeleteRequests(String adminUid,
       {PaymentRequestStatus? status}) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <ExpenseDeleteRequest>[]);
+    }
     Query<Map<String, dynamic>> q =
         _deleteReqCol(adminUid).orderBy('createdAt', descending: true);
     if (status != null) q = q.where('status', isEqualTo: status.name);
@@ -611,15 +616,13 @@ final expensesRepositoryProvider = Provider<ExpensesRepository>(
 );
 
 final expensesStreamProvider =
-    StreamProvider.autoDispose.family<List<Expense>, String>((ref, adminUid) {
-  final authUser = ref.watch(authStateProvider).valueOrNull;
-  if (authUser == null) return const Stream.empty();
+    StreamProvider.family<List<Expense>, String>((ref, adminUid) {
+  if (adminUid.trim().isEmpty) return Stream.value(const <Expense>[]);
   return ref.watch(expensesRepositoryProvider).watchAll(adminUid);
 });
 
-final recurringExpensesStreamProvider = StreamProvider.autoDispose
-    .family<List<RecurringExpense>, String>((ref, adminUid) {
-  final authUser = ref.watch(authStateProvider).valueOrNull;
-  if (authUser == null) return const Stream.empty();
+final recurringExpensesStreamProvider =
+    StreamProvider.family<List<RecurringExpense>, String>((ref, adminUid) {
+  if (adminUid.trim().isEmpty) return Stream.value(const <RecurringExpense>[]);
   return ref.watch(expensesRepositoryProvider).watchRecurringExpenses(adminUid);
 });

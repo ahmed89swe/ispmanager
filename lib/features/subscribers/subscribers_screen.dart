@@ -321,6 +321,7 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
           // Stream-driven content: Filter Chips & Modern Subscriber Cards
           Expanded(
             child: subs.when(
+              skipLoadingOnReload: true,
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('$e')),
               data: (rawList) {

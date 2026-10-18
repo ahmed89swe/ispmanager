@@ -7,7 +7,6 @@ import '../../core/firebase_service.dart';
 import '../../core/models/models.dart';
 import '../../core/services/cashbox_service.dart';
 import '../../core/utils/formatters.dart';
-import '../auth/auth_repository.dart';
 import '../history/history_repository.dart';
 import '../notifications/notifications_repository.dart';
 
@@ -25,7 +24,9 @@ class SubscribersRepository {
       _col(adminUid).doc(subscriberId).collection('debts');
 
   Stream<List<Subscriber>> watchAll(String adminUid) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <Subscriber>[]);
+    }
     return _col(adminUid).orderBy('name').snapshots().map(
           (s) => s.docs.map(Subscriber.fromDoc).toList(),
         );
@@ -219,7 +220,9 @@ class SubscribersRepository {
 
   Stream<List<SubscriberDebt>> watchDebts(
       String adminUid, String subscriberId) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || subscriberId.trim().isEmpty) {
+      return Stream.value(const <SubscriberDebt>[]);
+    }
     return _debtCol(adminUid, subscriberId)
         .orderBy('periodEnd', descending: true)
         .snapshots()
@@ -240,7 +243,9 @@ class SubscribersRepository {
   }
 
   Stream<List<Payment>> watchPayments(String adminUid, String subscriberId) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || subscriberId.trim().isEmpty) {
+      return Stream.value(const <Payment>[]);
+    }
     return _col(adminUid)
         .doc(subscriberId)
         .collection('payments')
@@ -262,7 +267,9 @@ class SubscribersRepository {
 
   Stream<List<SubscriberDebt>> watchAllDebts(String adminUid) {
     final db = _db;
-    if (db == null) return const Stream.empty();
+    if (db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <SubscriberDebt>[]);
+    }
     return db
         .collectionGroup('debts')
         .limit(1000)
@@ -1244,9 +1251,8 @@ final subscribersRepositoryProvider = Provider<SubscribersRepository>(
   ),
 );
 
-final subscribersStreamProvider = StreamProvider.autoDispose
-    .family<List<Subscriber>, String>((ref, adminUid) {
-  final authUser = ref.watch(authStateProvider).valueOrNull;
-  if (authUser == null) return const Stream.empty();
+final subscribersStreamProvider =
+    StreamProvider.family<List<Subscriber>, String>((ref, adminUid) {
+  if (adminUid.trim().isEmpty) return Stream.value(const <Subscriber>[]);
   return ref.watch(subscribersRepositoryProvider).watchAll(adminUid);
 });

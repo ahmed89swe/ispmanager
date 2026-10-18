@@ -24,7 +24,9 @@ class ChatRepository {
       _chatDoc(adminUid, employeeUid).collection('messages');
 
   Stream<List<ChatMessage>> watchMessages(String adminUid, String employeeUid) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || employeeUid.trim().isEmpty) {
+      return Stream.value(const <ChatMessage>[]);
+    }
     return _messagesCol(adminUid, employeeUid)
         .orderBy('createdAt', descending: true)
         .limit(100)
@@ -33,13 +35,17 @@ class ChatRepository {
   }
 
   Stream<Map<String, dynamic>?> watchThread(String adminUid, String employeeUid) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || employeeUid.trim().isEmpty) {
+      return Stream.value(null);
+    }
     return _chatDoc(adminUid, employeeUid).snapshots().map((s) => s.data());
   }
 
   Stream<List<Map<String, dynamic>>> watchAllThreads(String adminUid) {
     final db = _db;
-    if (db == null) return const Stream.empty();
+    if (db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <Map<String, dynamic>>[]);
+    }
     return db
         .collection('admins')
         .doc(adminUid)
@@ -181,7 +187,9 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
 final chatMessagesStreamProvider = StreamProvider.autoDispose
     .family<List<ChatMessage>, String>((ref, employeeUid) {
   final user = ref.watch(currentAppUserProvider).valueOrNull;
-  if (user == null) return const Stream.empty();
+  if (user == null || employeeUid.trim().isEmpty) {
+    return Stream.value(const <ChatMessage>[]);
+  }
   return ref
       .watch(chatRepositoryProvider)
       .watchMessages(user.adminUid, employeeUid);
@@ -190,14 +198,16 @@ final chatMessagesStreamProvider = StreamProvider.autoDispose
 final chatThreadsStreamProvider =
     StreamProvider.autoDispose<List<Map<String, dynamic>>>((ref) {
   final user = ref.watch(currentAppUserProvider).valueOrNull;
-  if (user == null) return const Stream.empty();
+  if (user == null) return Stream.value(const <Map<String, dynamic>>[]);
   return ref.watch(chatRepositoryProvider).watchAllThreads(user.adminUid);
 });
 
 final chatThreadStreamProvider = StreamProvider.autoDispose
     .family<Map<String, dynamic>?, String>((ref, employeeUid) {
   final user = ref.watch(currentAppUserProvider).valueOrNull;
-  if (user == null) return const Stream.empty();
+  if (user == null || employeeUid.trim().isEmpty) {
+    return Stream.value(null);
+  }
   return ref
       .watch(chatRepositoryProvider)
       .watchThread(user.adminUid, employeeUid);

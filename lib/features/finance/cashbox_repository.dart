@@ -5,7 +5,6 @@ import '../../core/constants.dart';
 import '../../core/firebase_service.dart';
 import '../../core/models/models.dart';
 import '../../core/services/cashbox_service.dart';
-import '../auth/auth_repository.dart';
 import '../history/history_repository.dart';
 import '../notifications/notifications_repository.dart';
 
@@ -324,7 +323,9 @@ class CashboxRepository {
     String adminUid, {
     PaymentRequestStatus? status,
   }) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <StaffReimbursementRequest>[]);
+    }
     Query<Map<String, dynamic>> q =
         _reimbursementReqCol(adminUid).orderBy('createdAt', descending: true);
     if (status != null) q = q.where('status', isEqualTo: status.name);
@@ -501,15 +502,13 @@ final reimbursementRequestsStreamProvider = StreamProvider.autoDispose
 });
 
 final cashboxStreamProvider =
-    StreamProvider.autoDispose.family<CashboxSnapshot, String>((ref, adminUid) {
-  final authUser = ref.watch(authStateProvider).valueOrNull;
-  if (authUser == null) return Stream.value(CashboxSnapshot.empty());
+    StreamProvider.family<CashboxSnapshot, String>((ref, adminUid) {
+  if (adminUid.trim().isEmpty) return Stream.value(CashboxSnapshot.empty());
   return ref.watch(cashboxRepositoryProvider).watchCashbox(adminUid);
 });
 
-final cashboxLedgerStreamProvider = StreamProvider.autoDispose
-    .family<List<CashboxLedgerEntry>, String>((ref, adminUid) {
-  final authUser = ref.watch(authStateProvider).valueOrNull;
-  if (authUser == null) return Stream.value([]);
+final cashboxLedgerStreamProvider =
+    StreamProvider.family<List<CashboxLedgerEntry>, String>((ref, adminUid) {
+  if (adminUid.trim().isEmpty) return Stream.value(const <CashboxLedgerEntry>[]);
   return ref.watch(cashboxRepositoryProvider).watchLedger(adminUid);
 });

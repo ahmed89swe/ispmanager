@@ -58,6 +58,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         ),
         Expanded(
           child: stream.when(
+            skipLoadingOnReload: true,
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(child: Text('$e')),
             data: (events) {

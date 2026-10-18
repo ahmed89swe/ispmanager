@@ -51,9 +51,8 @@ class AdminShell extends ConsumerStatefulWidget {
 }
 
 class _AdminShellState extends ConsumerState<AdminShell> {
-  static const _pageSwitchDuration = Duration(milliseconds: 260);
-
   int _index = 0;
+  final Set<int> _loadedTabs = {0};
   final Set<String> _seenNotificationIds = {};
   bool _initializedWebNotifs = false;
   AppNotification? _activeWebBanner;
@@ -168,7 +167,10 @@ class _AdminShellState extends ConsumerState<AdminShell> {
 
   void _selectTab(int index) {
     if (index == _index) return;
-    setState(() => _index = index);
+    setState(() {
+      _index = index;
+      _loadedTabs.add(index);
+    });
   }
 
   @override
@@ -411,7 +413,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
           ),
         ],
       ),
-      body: _buildAnimatedTabBody(tabs, idx),
+      body: _buildTabBody(tabs, idx),
       bottomNavigationBar: _AdminBottomTabBar(
         tabs: tabs,
         selectedIndex: idx,
@@ -753,7 +755,7 @@ class _AdminShellState extends ConsumerState<AdminShell> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: _buildAnimatedTabBody(tabs, idx),
+                          child: _buildTabBody(tabs, idx),
                         ),
                       ),
                     ),
@@ -767,28 +769,19 @@ class _AdminShellState extends ConsumerState<AdminShell> {
     );
   }
 
-  Widget _buildAnimatedTabBody(List<_Tab> tabs, int idx) {
-    return AnimatedSwitcher(
-      duration: _pageSwitchDuration,
-      switchInCurve: Curves.easeOutCubic,
-      switchOutCurve: Curves.easeInCubic,
-      transitionBuilder: (child, animation) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(0.02, 0),
-          end: Offset.zero,
-        ).animate(animation);
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          ),
-        );
-      },
-      child: KeyedSubtree(
-        key: ValueKey<_Tab>(tabs[idx]),
-        child: tabs[idx].builder(context),
-      ),
+  Widget _buildTabBody(List<_Tab> tabs, int idx) {
+    _loadedTabs.add(idx);
+    return IndexedStack(
+      index: idx,
+      children: [
+        for (int i = 0; i < tabs.length; i++)
+          _loadedTabs.contains(i)
+              ? KeyedSubtree(
+                  key: ValueKey<_Tab>(tabs[i]),
+                  child: tabs[i].builder(context),
+                )
+              : const SizedBox.shrink(),
+      ],
     );
   }
 }

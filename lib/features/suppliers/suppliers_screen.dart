@@ -85,6 +85,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
           ),
           Expanded(
             child: list.when(
+              skipLoadingOnReload: true,
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('$e')),
               data: (data) {

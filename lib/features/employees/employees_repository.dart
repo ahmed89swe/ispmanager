@@ -11,7 +11,6 @@ import '../../core/constants.dart';
 import '../../core/firebase_service.dart';
 import '../../core/models/models.dart';
 import '../../core/utils/auth_utils.dart';
-import '../auth/auth_repository.dart';
 import '../history/history_repository.dart';
 import '../notifications/notifications_repository.dart';
 
@@ -31,7 +30,9 @@ class EmployeesRepository {
       _db!.collection('admins').doc(adminUid).collection('employees');
 
   Stream<List<Employee>> watchAll(String adminUid) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <Employee>[]);
+    }
     return _col(adminUid).orderBy('username').snapshots().map(
           (s) => s.docs.map(Employee.fromDoc).toList(),
         );
@@ -303,8 +304,7 @@ final employeesRepositoryProvider = Provider<EmployeesRepository>(
 );
 
 final employeesStreamProvider =
-    StreamProvider.autoDispose.family<List<Employee>, String>((ref, adminUid) {
-  final authUser = ref.watch(authStateProvider).valueOrNull;
-  if (authUser == null) return const Stream.empty();
+    StreamProvider.family<List<Employee>, String>((ref, adminUid) {
+  if (adminUid.trim().isEmpty) return Stream.value(const <Employee>[]);
   return ref.watch(employeesRepositoryProvider).watchAll(adminUid);
 });

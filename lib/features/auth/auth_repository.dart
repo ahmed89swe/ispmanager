@@ -15,7 +15,7 @@ class AuthRepository {
   final FirebaseFirestore? _db;
 
   Stream<User?> authStateChanges() =>
-      _auth?.authStateChanges() ?? const Stream.empty();
+      _auth?.authStateChanges() ?? Stream.value(null);
 
   Future<AppUser?> currentAppUser() async {
     final user = _auth?.currentUser;
@@ -389,7 +389,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 
 final authStateProvider = StreamProvider<User?>((ref) {
   final auth = ref.watch(firebaseAuthProvider);
-  if (auth == null) return const Stream.empty();
+  if (auth == null) return Stream.value(null);
   return auth.authStateChanges();
 });
 

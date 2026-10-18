@@ -8,7 +8,6 @@ import '../../core/constants.dart';
 import '../../core/firebase_service.dart';
 import '../../core/models/models.dart';
 import '../../core/services/cashbox_service.dart';
-import '../auth/auth_repository.dart';
 import '../history/history_repository.dart';
 import '../notifications/notifications_repository.dart';
 
@@ -49,7 +48,9 @@ class SuppliersRepository {
       _db!.collection('admins').doc(adminUid).collection('suppliers');
 
   Stream<List<Supplier>> watchAll(String adminUid) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <Supplier>[]);
+    }
     return _col(adminUid).orderBy('name').snapshots().map(
           (s) => s.docs.map(Supplier.fromDoc).toList(),
         );
@@ -102,7 +103,9 @@ class SuppliersRepository {
 
   Stream<List<SupplierPackageTemplate>> watchPackages(
       String adminUid, String supplierId) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || supplierId.trim().isEmpty) {
+      return Stream.value(const <SupplierPackageTemplate>[]);
+    }
     return _pkgCol(adminUid, supplierId).orderBy('name').snapshots().map((s) =>
         s.docs
             .map((d) => SupplierPackageTemplate.fromDoc(d, supplierId))
@@ -155,7 +158,9 @@ class SuppliersRepository {
 
   Stream<List<SupplierPurchase>> watchPurchases(String adminUid,
       {String? supplierId}) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <SupplierPurchase>[]);
+    }
     Query<Map<String, dynamic>> q =
         _purchaseCol(adminUid).orderBy('date', descending: true);
     if (supplierId != null) {
@@ -197,7 +202,9 @@ class SuppliersRepository {
   Stream<List<SupplierBalanceTransaction>> watchBalanceTransactions(
       String adminUid,
       {String? supplierId}) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <SupplierBalanceTransaction>[]);
+    }
     Query<Map<String, dynamic>> q =
         _balanceCol(adminUid).orderBy('date', descending: true);
     if (supplierId != null) {
@@ -274,7 +281,9 @@ class SuppliersRepository {
 
   Stream<List<SupplierPaymentRequest>> watchRequests(String adminUid,
       {PaymentRequestStatus? status}) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <SupplierPaymentRequest>[]);
+    }
     Query<Map<String, dynamic>> q =
         _reqCol(adminUid).orderBy('createdAt', descending: true);
     if (status != null) q = q.where('status', isEqualTo: status.name);
@@ -380,8 +389,7 @@ final suppliersRepositoryProvider = Provider<SuppliersRepository>(
 );
 
 final suppliersStreamProvider =
-    StreamProvider.autoDispose.family<List<Supplier>, String>((ref, adminUid) {
-  final authUser = ref.watch(authStateProvider).valueOrNull;
-  if (authUser == null) return const Stream.empty();
+    StreamProvider.family<List<Supplier>, String>((ref, adminUid) {
+  if (adminUid.trim().isEmpty) return Stream.value(const <Supplier>[]);
   return ref.watch(suppliersRepositoryProvider).watchAll(adminUid);
 });

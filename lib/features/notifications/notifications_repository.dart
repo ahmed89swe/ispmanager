@@ -18,7 +18,9 @@ class NotificationsRepository {
     bool isAdmin = false,
     int limit = 100,
   }) {
-    if (_db == null) return const Stream.empty();
+    if (_db == null || adminUid.trim().isEmpty) {
+      return Stream.value(const <AppNotification>[]);
+    }
     return _col(adminUid)
         .orderBy('createdAt', descending: true)
         .limit(limit)
@@ -115,7 +117,7 @@ final notificationsRepositoryProvider = Provider<NotificationsRepository>((ref) 
 final notificationsStreamProvider =
     StreamProvider.autoDispose<List<AppNotification>>((ref) {
   final user = ref.watch(currentAppUserProvider).valueOrNull;
-  if (user == null) return const Stream.empty();
+  if (user == null) return Stream.value(const <AppNotification>[]);
   return ref
       .watch(notificationsRepositoryProvider)
       .watchNotifications(user.adminUid, user.uid, isAdmin: user.isAdmin);
