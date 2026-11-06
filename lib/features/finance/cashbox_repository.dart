@@ -80,7 +80,11 @@ class CashboxSnapshot {
           final v = entry.value is num
               ? entry.value as num
               : num.tryParse('${entry.value}') ?? 0;
-          if (v != 0) result[k] = v;
+          if (v > 0.001) {
+            result[k] = v;
+          } else {
+            result.remove(k);
+          }
         }
       }
       final dotPrefix = '$prefix.';
@@ -90,8 +94,10 @@ class CashboxSnapshot {
           final v = entry.value is num
               ? entry.value as num
               : num.tryParse('${entry.value}') ?? 0;
-          if (v != 0) {
+          if (v > 0.001) {
             result[subKey] = v;
+          } else {
+            result.remove(subKey);
           }
         }
       }
@@ -138,7 +144,7 @@ class CashboxSnapshot {
     num total = 0;
     final suffix = '_${currency.code}';
     for (final entry in staffDebtToCashbox.entries) {
-      if (entry.key.endsWith(suffix)) {
+      if (entry.key.endsWith(suffix) && entry.value > 0.001) {
         total += entry.value;
       }
     }
@@ -149,7 +155,7 @@ class CashboxSnapshot {
     num total = 0;
     final suffix = '_${currency.code}';
     for (final entry in cashboxDebtToStaff.entries) {
-      if (entry.key.endsWith(suffix)) {
+      if (entry.key.endsWith(suffix) && entry.value > 0.001) {
         total += entry.value;
       }
     }
@@ -243,6 +249,11 @@ class CashboxRepository {
   }) async {
     final db = _db;
     if (db == null) return;
+    final snap = await CashboxService.cashboxRef(db, by.adminUid).get();
+    final cashbox = CashboxSnapshot.fromDoc(snap);
+    final currentStaffDebt = direction == StaffSettlementDirection.toCashbox
+        ? cashbox.staffDebtToCashboxForUid(staffUid, currency)
+        : cashbox.cashboxDebtToStaffForUid(staffUid, currency);
     final batch = db.batch();
     CashboxService.settleStaffDebt(
       batch: batch,
@@ -255,6 +266,7 @@ class CashboxRepository {
       currency: currency,
       direction: direction,
       note: note,
+      currentStaffDebt: currentStaffDebt,
     );
     batch.set(
       _logger.newEventRef(by),
@@ -310,6 +322,52 @@ class CashboxRepository {
         );
       }
     }
+  }
+
+  Future<void> clearStaffDebtWithoutCashbox(
+    AppUser by, {
+    required String staffUid,
+    required String staffName,
+    required num amount,
+    required AppCurrency currency,
+    required StaffSettlementDirection direction,
+    String? note,
+  }) async {
+    final db = _db;
+    if (db == null) return;
+    final batch = db.batch();
+    CashboxService.clearStaffDebtWithoutCashbox(
+      batch: batch,
+      db: db,
+      actor: by,
+      adminUid: by.adminUid,
+      staffUid: staffUid,
+      staffName: staffName,
+      amount: amount,
+      currency: currency,
+      direction: direction,
+      note: note,
+    );
+    batch.set(
+      _logger.newEventRef(by),
+      _logger.eventData(
+        actor: by,
+        action: 'cashbox.staffDebt.clearWithoutCashbox',
+        targetType: 'staffDebt',
+        targetId: staffUid,
+        summary:
+            'Cleared staff ${direction == StaffSettlementDirection.toCashbox ? 'custody debt' : 'pocket credit'} ($amount ${currency.code}) for $staffName without affecting cashbox',
+        after: {
+          'staffUid': staffUid,
+          'staffName': staffName,
+          'amount': amount,
+          'currency': currency.code,
+          'direction': direction.name,
+          'note': note ?? 'تصفير الذمة/العهدة بدون إضافة للصندوق',
+        },
+      ),
+    );
+    await batch.commit().timeout(HistoryLogger.operationTimeout);
   }
 
   CollectionReference<Map<String, dynamic>> _reimbursementReqCol(

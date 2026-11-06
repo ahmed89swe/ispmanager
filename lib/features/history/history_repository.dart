@@ -184,23 +184,38 @@ class HistoryRepository {
     String? paymentId = (after['paymentId'] ??
         (event.targetType == 'payment' ? event.targetId : null)) as String?;
 
+    final paymentsSnap = await subRef
+        .collection('payments')
+        .orderBy('recordedAt', descending: true)
+        .limit(30)
+        .get()
+        .timeout(HistoryLogger.operationTimeout);
+
     DocumentReference<Map<String, dynamic>>? matchedPayRef;
     if (paymentId != null && paymentId.isNotEmpty) {
-      matchedPayRef = subRef.collection('payments').doc(paymentId);
-      final paySnap =
-          await matchedPayRef.get().timeout(HistoryLogger.operationTimeout);
-      if (paySnap.exists) {
-        final p = Payment.fromDoc(paySnap);
-        receivedIn = p.receivedIn;
-        if (p.recordedBy.isNotEmpty) collectorUid = p.recordedBy;
+      for (final pDoc in paymentsSnap.docs) {
+        if (pDoc.id == paymentId) {
+          matchedPayRef = pDoc.reference;
+          final p = Payment.fromDoc(pDoc);
+          receivedIn = p.receivedIn;
+          if (p.recordedBy.isNotEmpty) collectorUid = p.recordedBy;
+          break;
+        }
+      }
+      if (matchedPayRef == null) {
+        final paySnap = await subRef
+            .collection('payments')
+            .doc(paymentId)
+            .get()
+            .timeout(HistoryLogger.operationTimeout);
+        if (paySnap.exists) {
+          matchedPayRef = paySnap.reference;
+          final p = Payment.fromDoc(paySnap);
+          receivedIn = p.receivedIn;
+          if (p.recordedBy.isNotEmpty) collectorUid = p.recordedBy;
+        }
       }
     } else {
-      final paymentsSnap = await subRef
-          .collection('payments')
-          .orderBy('recordedAt', descending: true)
-          .limit(25)
-          .get()
-          .timeout(HistoryLogger.operationTimeout);
       for (final pDoc in paymentsSnap.docs) {
         final p = Payment.fromDoc(pDoc);
         final diffSec = p.recordedAt.difference(event.ts).inSeconds.abs();
@@ -214,37 +229,109 @@ class HistoryRepository {
       }
     }
 
+    Payment? nextLatestPayment;
+    for (final pDoc in paymentsSnap.docs) {
+      if (paymentId != null && pDoc.id == paymentId) continue;
+      nextLatestPayment = Payment.fromDoc(pDoc);
+      break;
+    }
+
+    num? currentCollectorDebt;
+    try {
+      final boxSnap = await CashboxService.cashboxRef(db, by.adminUid)
+          .get()
+          .timeout(HistoryLogger.operationTimeout);
+      if (boxSnap.exists) {
+        final boxData = boxSnap.data() ?? const <String, dynamic>{};
+        final key = CashboxService.debtKey(collectorUid, currency);
+        final flatKey = 'staffDebtToCashbox.$key';
+        if (boxData.containsKey(flatKey)) {
+          final v = boxData[flatKey];
+          final parsed = v is num ? v : num.tryParse('$v') ?? 0;
+          currentCollectorDebt = parsed <= 0 ? 0 : parsed;
+        } else if (boxData['staffDebtToCashbox'] is Map) {
+          final m = boxData['staffDebtToCashbox'] as Map;
+          final v = m[key];
+          final parsed = v is num ? v : num.tryParse('$v') ?? 0;
+          currentCollectorDebt = parsed <= 0 ? 0 : parsed;
+        } else {
+          currentCollectorDebt = 0;
+        }
+      }
+    } catch (_) {}
+
+    final debtsSnap = await subRef
+        .collection('debts')
+        .get()
+        .timeout(HistoryLogger.operationTimeout);
+    final existingDebtMap = {
+      for (final d in debtsSnap.docs) d.id: d,
+    };
+
     final batch = db.batch();
     if (matchedPayRef != null) {
       batch.delete(matchedPayRef);
     }
 
+    final updatedPaidAmounts = <String, num>{};
+    final updatedStatuses = <String, String>{};
+
     if (event.action == 'subscriber.advance_payment') {
       final cycles = ((after['cycles'] as num?)?.toInt()) ?? 1;
       final currentPrepaid = ((subData['prepaidCycles'] as num?)?.toInt()) ?? 0;
       final nextPrepaid = (currentPrepaid - cycles).clamp(0, 999);
-      batch.update(subRef, {'prepaidCycles': nextPrepaid});
+      batch.update(subRef, {
+        'prepaidCycles': nextPrepaid,
+        'lastPaymentAmount': nextLatestPayment != null
+            ? nextLatestPayment.amount
+            : FieldValue.delete(),
+        'lastPaymentAt': nextLatestPayment != null
+            ? Timestamp.fromDate(nextLatestPayment.recordedAt)
+            : FieldValue.delete(),
+      });
     } else if (event.action == 'subscriber.debt.pay') {
       final debtId = (after['debtId'] ?? event.targetId) as String?;
-      if (debtId != null && debtId.isNotEmpty) {
+      if (debtId != null &&
+          debtId.isNotEmpty &&
+          existingDebtMap.containsKey(debtId)) {
         final debtRef = subRef.collection('debts').doc(debtId);
         final debtBefore = before['debt'] is Map
             ? Map<String, dynamic>.from(before['debt'] as Map)
             : null;
+        final newPaid = (debtBefore?['paidAmount'] ?? 0) as num;
+        final newStatus =
+            (debtBefore?['status'] as String?) ?? SubscriptionDebtStatus.unpaid.name;
+        updatedPaidAmounts[debtId] = newPaid;
+        updatedStatuses[debtId] = newStatus;
         batch.update(debtRef, {
-          'status': debtBefore?['status'] ?? SubscriptionDebtStatus.unpaid.name,
-          'paidAmount': debtBefore?['paidAmount'] ?? 0,
+          'status': newStatus,
+          'paidAmount': newPaid,
           'paidAt': debtBefore?['paidAt'],
           'paidBy': debtBefore?['paidBy'],
         });
       }
-      final currentBalance = (subData['balance'] ?? 0) as num;
-      final nextBalance = currentBalance + amount;
+      num nextBalance = 0;
+      for (final doc in debtsSnap.docs) {
+        final d = doc.data();
+        final amt = (d['amount'] ?? 0) as num;
+        final pd =
+            updatedPaidAmounts[doc.id] ?? ((d['paidAmount'] ?? 0) as num);
+        final st = updatedStatuses[doc.id] ?? (d['status'] as String?);
+        if (st != SubscriptionDebtStatus.paid.name) {
+          nextBalance += (amt - pd).clamp(0, double.infinity);
+        }
+      }
       batch.update(subRef, {
         'balance': nextBalance,
         'status': nextBalance > 0
             ? SubscriberStatus.overdue.name
             : SubscriberStatus.active.name,
+        'lastPaymentAmount': nextLatestPayment != null
+            ? nextLatestPayment.amount
+            : FieldValue.delete(),
+        'lastPaymentAt': nextLatestPayment != null
+            ? Timestamp.fromDate(nextLatestPayment.recordedAt)
+            : FieldValue.delete(),
       });
     } else if (event.action == 'payment.record') {
       if (before['debts'] is List && (before['debts'] as List).isNotEmpty) {
@@ -252,23 +339,35 @@ class HistoryRepository {
           if (item is! Map) continue;
           final m = Map<String, dynamic>.from(item);
           final dId = m['id'] as String?;
-          if (dId == null || dId.isEmpty) continue;
+          if (dId == null ||
+              dId.isEmpty ||
+              !existingDebtMap.containsKey(dId)) {
+            continue;
+          }
+          final newPaid = (m['paidAmount'] ?? 0) as num;
+          final newStatus =
+              (m['status'] as String?) ?? SubscriptionDebtStatus.unpaid.name;
+          updatedPaidAmounts[dId] = newPaid;
+          updatedStatuses[dId] = newStatus;
           batch.update(subRef.collection('debts').doc(dId), {
-            'paidAmount': m['paidAmount'] ?? 0,
-            'status': m['status'] ?? SubscriptionDebtStatus.unpaid.name,
+            'paidAmount': newPaid,
+            'status': newStatus,
             'paidAt': m['paidAt'],
             'paidBy': m['paidBy'],
           });
         }
       } else {
         // Fallback for older payment.record events: reverse paid amounts from newest to oldest
-        final debtsSnap = await subRef
-            .collection('debts')
-            .orderBy('periodStart', descending: true)
-            .get()
-            .timeout(HistoryLogger.operationTimeout);
+        final sortedDocs = List.of(debtsSnap.docs)
+          ..sort((a, b) {
+            final aRaw = a.data()['periodStart'];
+            final bRaw = b.data()['periodStart'];
+            final aDt = aRaw is Timestamp ? aRaw.toDate() : DateTime(2000);
+            final bDt = bRaw is Timestamp ? bRaw.toDate() : DateTime(2000);
+            return bDt.compareTo(aDt);
+          });
         num remainingToReverse = amount;
-        for (final doc in debtsSnap.docs) {
+        for (final doc in sortedDocs) {
           if (remainingToReverse <= 0) break;
           final d = doc.data();
           final paidAmt = (d['paidAmount'] ?? 0) as num;
@@ -276,24 +375,42 @@ class HistoryRepository {
           final deduct =
               remainingToReverse >= paidAmt ? paidAmt : remainingToReverse;
           final newPaid = paidAmt - deduct;
+          final newStatus = newPaid <= 0
+              ? SubscriptionDebtStatus.unpaid.name
+              : SubscriptionDebtStatus.partiallyPaid.name;
           remainingToReverse -= deduct;
+          updatedPaidAmounts[doc.id] = newPaid;
+          updatedStatuses[doc.id] = newStatus;
           batch.update(doc.reference, {
             'paidAmount': newPaid,
-            'status': newPaid <= 0
-                ? SubscriptionDebtStatus.unpaid.name
-                : SubscriptionDebtStatus.partiallyPaid.name,
+            'status': newStatus,
             if (newPaid <= 0) 'paidAt': null,
             if (newPaid <= 0) 'paidBy': null,
           });
         }
       }
-      final currentBalance = (subData['balance'] ?? 0) as num;
-      final nextBalance = currentBalance + amount;
+      num nextBalance = 0;
+      for (final doc in debtsSnap.docs) {
+        final d = doc.data();
+        final amt = (d['amount'] ?? 0) as num;
+        final pd =
+            updatedPaidAmounts[doc.id] ?? ((d['paidAmount'] ?? 0) as num);
+        final st = updatedStatuses[doc.id] ?? (d['status'] as String?);
+        if (st != SubscriptionDebtStatus.paid.name) {
+          nextBalance += (amt - pd).clamp(0, double.infinity);
+        }
+      }
       batch.update(subRef, {
         'balance': nextBalance,
         'status': nextBalance > 0
             ? SubscriberStatus.overdue.name
             : SubscriberStatus.active.name,
+        'lastPaymentAmount': nextLatestPayment != null
+            ? nextLatestPayment.amount
+            : FieldValue.delete(),
+        'lastPaymentAt': nextLatestPayment != null
+            ? Timestamp.fromDate(nextLatestPayment.recordedAt)
+            : FieldValue.delete(),
       });
     }
 
@@ -310,6 +427,7 @@ class HistoryRepository {
       subscriberName: subscriberName,
       paymentId: paymentId,
       note: 'التراجع عن تسديد اشتراك من السجل: ${event.summary}',
+      currentCollectorDebt: currentCollectorDebt,
     );
 
     if (event.id.isNotEmpty) {

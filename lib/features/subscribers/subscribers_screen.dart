@@ -1897,6 +1897,7 @@ class _SubscriberDebtsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
+    final isAr = loc.startsWith('ar');
     final canAddDebt = by.can(Permission.editSubscriber);
     final canPay = by.can(Permission.recordSubscriberPayment);
     return Scaffold(
@@ -1908,12 +1909,15 @@ class _SubscriberDebtsTab extends ConsumerWidget {
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (_, i) {
                 final debt = debts[i];
-                final isPartial =
+                final isPartial = debt.paidAmount > 0 ||
                     debt.status == SubscriptionDebtStatus.partiallyPaid;
                 return ListTile(
-                  leading: Icon(isPartial
-                      ? Icons.hourglass_bottom
-                      : Icons.pending_actions_outlined),
+                  leading: Icon(
+                    isPartial
+                        ? Icons.hourglass_bottom
+                        : Icons.pending_actions_outlined,
+                    color: isPartial ? Colors.orange.shade800 : null,
+                  ),
                   title: Text(
                     '${CurrencyFormatter.format(debt.remaining, debt.currency, locale: loc)}'
                     '${isPartial ? ' / ${CurrencyFormatter.format(debt.amount, debt.currency, locale: loc)}' : ''}',
@@ -1928,6 +1932,25 @@ class _SubscriberDebtsTab extends ConsumerWidget {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (isPartial && (canPay || canAddDebt || by.isAdmin))
+                        IconButton(
+                          tooltip: isAr
+                              ? 'التراجع عن التسديد الجزئي'
+                              : 'Undo Partial Payment',
+                          visualDensity: VisualDensity.compact,
+                          icon: Icon(Icons.undo_rounded,
+                              size: 20, color: Colors.orange.shade800),
+                          onPressed: () =>
+                              _PaidSubscriptionsTab._confirmAndUnpayDebt(
+                            context,
+                            ref,
+                            l,
+                            loc,
+                            by,
+                            subscriber,
+                            debt,
+                          ),
+                        ),
                       if (canPay)
                         FilledButton(
                           style: FilledButton.styleFrom(
@@ -1939,12 +1962,15 @@ class _SubscriberDebtsTab extends ConsumerWidget {
                               context, ref, l, loc, by, subscriber, debt),
                           child: Text(l.t('pay')),
                         ),
-                      if (canAddDebt)
+                      if (canAddDebt || (isPartial && canPay))
                         PopupMenuButton<String>(
                           tooltip: 'خيارات الدين',
                           icon: const Icon(Icons.more_vert, size: 20),
                           onSelected: (action) {
-                            if (action == 'edit') {
+                            if (action == 'unpay') {
+                              _PaidSubscriptionsTab._confirmAndUnpayDebt(
+                                  context, ref, l, loc, by, subscriber, debt);
+                            } else if (action == 'edit') {
                               showModalBottomSheet(
                                 context: context,
                                 isScrollControlled: true,
@@ -1960,28 +1986,51 @@ class _SubscriberDebtsTab extends ConsumerWidget {
                             }
                           },
                           itemBuilder: (ctx) => [
-                            PopupMenuItem(
-                              value: 'edit',
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.edit_outlined,
-                                      size: 18, color: Colors.blue),
-                                  const SizedBox(width: 8),
-                                  Text(l.t('editDebt')),
-                                ],
+                            if (isPartial)
+                              PopupMenuItem(
+                                value: 'unpay',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.undo_rounded,
+                                        size: 18,
+                                        color: Colors.orange.shade800),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      isAr
+                                          ? 'التراجع عن التسديد الجزئي'
+                                          : 'Undo Partial Payment',
+                                      style: TextStyle(
+                                        color: Colors.orange.shade800,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            PopupMenuItem(
-                              value: 'delete',
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.delete_outline,
-                                      size: 18, color: Colors.red),
-                                  const SizedBox(width: 8),
-                                  Text(l.t('deleteDebt')),
-                                ],
+                            if (canAddDebt) ...[
+                              PopupMenuItem(
+                                value: 'edit',
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.edit_outlined,
+                                        size: 18, color: Colors.blue),
+                                    const SizedBox(width: 8),
+                                    Text(l.t('editDebt')),
+                                  ],
+                                ),
                               ),
-                            ),
+                              PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.delete_outline,
+                                        size: 18, color: Colors.red),
+                                    const SizedBox(width: 8),
+                                    Text(l.t('deleteDebt')),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                     ],
@@ -2028,6 +2077,8 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
     SubscriberDebt debt,
   ) async {
     final isAr = loc.startsWith('ar');
+    final refundAmount = debt.paidAmount > 0 ? debt.paidAmount : debt.amount;
+    final isPartial = !debt.isPaid && debt.paidAmount > 0;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -2035,15 +2086,23 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
           children: [
             const Icon(Icons.undo_rounded, color: Colors.orange),
             const SizedBox(width: 8),
-            Text(isAr
-                ? 'التراجع عن تسديد الاشتراك'
-                : 'Undo Subscription Payment'),
+            Expanded(
+              child: Text(
+                isAr
+                    ? (isPartial
+                        ? 'التراجع عن التسديد الجزئي'
+                        : 'التراجع عن تسديد الاشتراك')
+                    : (isPartial
+                        ? 'Undo Partial Payment'
+                        : 'Undo Subscription Payment'),
+              ),
+            ),
           ],
         ),
         content: Text(
           isAr
-              ? 'هل تريد التراجع عن تسديد هذا الاشتراك بقيمة ${CurrencyFormatter.format(debt.amount, debt.currency, locale: loc)} للمشترك "${subscriber.name}"؟\n\nسيتم إرجاع الاشتراك إلى غير مسدد وعكس المبلغ من الصندوق.'
-              : 'Undo payment of ${CurrencyFormatter.format(debt.amount, debt.currency, locale: loc)} for "${subscriber.name}"?\n\nThe subscription will revert to unpaid and the amount will be reversed from cashbox.',
+              ? 'هل تريد التراجع عن تسديد مبلغ ${CurrencyFormatter.format(refundAmount, debt.currency, locale: loc)} للمشترك "${subscriber.name}"؟\n\nسيتم إرجاع الاشتراك إلى غير مسدد بالكامل وعكس المبلغ من الصندوق أو العهدة.'
+              : 'Undo payment of ${CurrencyFormatter.format(refundAmount, debt.currency, locale: loc)} for "${subscriber.name}"?\n\nThe subscription will revert to unpaid and the amount will be reversed from cashbox/custody.',
         ),
         actions: [
           TextButton(
@@ -2061,21 +2120,32 @@ class _PaidSubscriptionsTab extends ConsumerWidget {
     );
 
     if (confirmed == true && context.mounted) {
-      await ref.read(subscribersRepositoryProvider).unpayDebt(
-            by,
-            subscriber,
-            debt,
-          );
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              isAr
-                  ? 'تم التراجع عن تسديد الاشتراك بنجاح'
-                  : 'Subscription payment undone successfully',
+      try {
+        await ref.read(subscribersRepositoryProvider).unpayDebt(
+              by,
+              subscriber,
+              debt,
+            );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                isAr
+                    ? 'تم التراجع عن التسديد بنجاح'
+                    : 'Payment undone successfully',
+              ),
             ),
-          ),
-        );
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red.shade700,
+              content: Text('${l.errorOccurred}: $e'),
+            ),
+          );
+        }
       }
     }
   }
@@ -2189,11 +2259,88 @@ class _SubscriberPaymentsTab extends ConsumerWidget {
   final Subscriber subscriber;
   final AppUser by;
 
+  Future<void> _confirmAndUndoPayment(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l,
+    String loc,
+    Payment p,
+    String destLabel,
+  ) async {
+    final isAr = loc.startsWith('ar');
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.undo_rounded, color: Colors.orange),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                isAr ? 'التراجع عن الدفعة' : 'Undo Payment',
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          isAr
+              ? 'هل تريد التراجع عن هذه الدفعة بقيمة ${CurrencyFormatter.format(p.amount, p.currency, locale: loc)} ($destLabel) للمشترك "${subscriber.name}"؟\n\nسيتم إرجاع المبلغ إلى دين المشترك وعكس العملية من الصندوق أو العهدة وحذف الدفعة.'
+              : 'Undo payment of ${CurrencyFormatter.format(p.amount, p.currency, locale: loc)} ($destLabel) for "${subscriber.name}"?\n\nThe amount will be restored to subscriber debt and reversed from cashbox/custody.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx, false),
+            child: Text(l.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+                backgroundColor: Colors.orange.shade800),
+            onPressed: () => Navigator.pop(dialogCtx, true),
+            child: Text(isAr ? 'تأكيد التراجع' : 'Undo Payment'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(subscribersRepositoryProvider).undoPayment(
+              by,
+              subscriber,
+              p,
+            );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                isAr
+                    ? 'تم التراجع عن الدفعة بنجاح'
+                    : 'Payment undone successfully',
+              ),
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red.shade700,
+              content: Text('${l.errorOccurred}: $e'),
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final loc = Localizations.localeOf(context).languageCode;
     final isAr = loc.startsWith('ar');
+    final canUndo = by.isAdmin ||
+        by.can(Permission.recordSubscriberPayment) ||
+        by.can(Permission.editSubscriber);
     return StreamBuilder<List<Payment>>(
       stream: ref
           .watch(subscribersRepositoryProvider)
@@ -2233,6 +2380,30 @@ class _SubscriberPaymentsTab extends ConsumerWidget {
                 '${p.note != null && p.note!.isNotEmpty ? '\n${p.note}' : ''}',
               ),
               isThreeLine: p.note != null && p.note!.isNotEmpty,
+              trailing: canUndo
+                  ? TextButton.icon(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.orange.shade800,
+                        visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                      ),
+                      onPressed: () => _confirmAndUndoPayment(
+                        context,
+                        ref,
+                        l,
+                        loc,
+                        p,
+                        destLabel,
+                      ),
+                      icon: const Icon(Icons.undo_rounded, size: 17),
+                      label: Text(
+                        isAr ? 'تراجع' : 'Undo',
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w800),
+                      ),
+                    )
+                  : null,
             );
           },
         );

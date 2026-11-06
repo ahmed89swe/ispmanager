@@ -122,6 +122,8 @@ class SubscribersRepository {
         note: 'سداد الاشتراك الأول عند الإضافة',
         recordedBy: by.uid,
         recordedAt: paymentDate,
+        debtId: debtRef.id,
+        debtAllocations: {debtRef.id: s.monthlyFee},
       );
       batch.set(payRef, payment.toMap());
 
@@ -427,6 +429,11 @@ class SubscribersRepository {
     SubscriberDebt debt,
   ) async {
     if (_db == null) return;
+    // If the debt has any paid or partially paid amount, reverse the payment(s)
+    // first so Cashbox / Collector Custody and Payment records stay accurate.
+    if (debt.paidAmount > 0 || debt.isPaid) {
+      await unpayDebt(by, subscriber, debt);
+    }
     final subRef = _col(by.adminUid).doc(subscriber.id);
     final debtRef = _debtCol(by.adminUid, subscriber.id).doc(debt.id);
 
@@ -523,6 +530,8 @@ class SubscribersRepository {
               : null),
       recordedBy: by.uid,
       recordedAt: paymentDate,
+      debtId: debt.id,
+      debtAllocations: {debt.id: remainingDue},
     );
     final batch = db.batch();
     batch.set(paymentRef, payment.toMap());
@@ -607,54 +616,426 @@ class SubscribersRepository {
     }
   }
 
-  /// Reverses a paid subscription debt, restoring the debt to unpaid,
-  /// adding the amount back to the subscriber's balance, deleting the
-  /// corresponding payment record, and reversing the cashbox entry.
+  Future<num?> _readCurrentCollectorDebt(
+    FirebaseFirestore db,
+    String adminUid,
+    String collectorUid,
+    AppCurrency currency,
+  ) async {
+    try {
+      final snap = await CashboxService.cashboxRef(db, adminUid).get();
+      if (!snap.exists) return 0;
+      final data = snap.data() ?? const <String, dynamic>{};
+      final key = CashboxService.debtKey(collectorUid, currency);
+      final flatKey = 'staffDebtToCashbox.$key';
+      if (data.containsKey(flatKey)) {
+        final v = data[flatKey];
+        final parsed = v is num ? v : num.tryParse('$v') ?? 0;
+        return parsed <= 0 ? 0 : parsed;
+      }
+      if (data['staffDebtToCashbox'] is Map) {
+        final m = data['staffDebtToCashbox'] as Map;
+        final v = m[key];
+        final parsed = v is num ? v : num.tryParse('$v') ?? 0;
+        return parsed <= 0 ? 0 : parsed;
+      }
+      return 0;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Reverses a specific [Payment] (partial payment, full payment, multi-debt
+  /// FIFO payment, or advance payment), restoring affected debt(s), subscriber
+  /// balance & status, lastPayment fields, and Cashbox / Collector Custody.
+  Future<void> undoPayment(
+    AppUser by,
+    Subscriber subscriber,
+    Payment payment,
+  ) async {
+    if (_db == null) return;
+    final db = _db;
+    final subRef = _col(by.adminUid).doc(subscriber.id);
+    final payRef = subRef.collection('payments').doc(payment.id);
+
+    final subSnap = await subRef.get();
+    final subData = subSnap.data() ?? const <String, dynamic>{};
+    final currentPrepaid =
+        ((subData['prepaidCycles'] as num?)?.toInt()) ?? subscriber.prepaidCycles;
+
+    final debtsSnap = await _debtCol(by.adminUid, subscriber.id).get();
+    final paymentsSnap = await subRef
+        .collection('payments')
+        .orderBy('recordedAt', descending: true)
+        .limit(50)
+        .get();
+
+    Payment? nextLatestPayment;
+    for (final pDoc in paymentsSnap.docs) {
+      if (pDoc.id == payment.id) continue;
+      nextLatestPayment = Payment.fromDoc(pDoc);
+      break;
+    }
+
+    final collectorUid =
+        payment.recordedBy.isNotEmpty ? payment.recordedBy : by.uid;
+    final currentCollectorDebt = await _readCurrentCollectorDebt(
+      db,
+      by.adminUid,
+      collectorUid,
+      payment.currency,
+    );
+
+    final batch = db.batch();
+    batch.delete(payRef);
+
+    final isAdvance = payment.method == 'advance_subscription' ||
+        (payment.prepaidCycles != null && payment.prepaidCycles! > 0);
+
+    final updatedPaidAmounts = <String, num>{};
+    final updatedStatuses = <String, String>{};
+    final affectedDebtIds = <String>[];
+
+    if (isAdvance) {
+      final cyclesToReverse = payment.prepaidCycles ??
+          (subscriber.monthlyFee > 0
+              ? (payment.amount / subscriber.monthlyFee).round().clamp(1, 99)
+              : 1);
+      final newPrepaid = (currentPrepaid - cyclesToReverse).clamp(0, 999);
+      batch.update(subRef, {
+        'prepaidCycles': newPrepaid,
+        'lastPaymentAmount': nextLatestPayment != null
+            ? nextLatestPayment.amount
+            : FieldValue.delete(),
+        'lastPaymentAt': nextLatestPayment != null
+            ? Timestamp.fromDate(nextLatestPayment.recordedAt)
+            : FieldValue.delete(),
+      });
+    } else {
+      // Determine how much of this payment was applied to each debt
+      final allocationsToReverse = <String, num>{};
+      if (payment.debtAllocations != null &&
+          payment.debtAllocations!.isNotEmpty) {
+        allocationsToReverse.addAll(payment.debtAllocations!);
+      } else if (payment.debtId != null && payment.debtId!.isNotEmpty) {
+        allocationsToReverse[payment.debtId!] = payment.amount;
+      } else {
+        // Fallback for legacy payments without explicit debtAllocations
+        num remainingToReverse = payment.amount;
+        final paidDebtDocs = debtsSnap.docs.where((doc) {
+          final d = doc.data();
+          final pd = (d['paidAmount'] ?? 0) as num;
+          final st = d['status'] as String?;
+          return pd > 0 || st == SubscriptionDebtStatus.paid.name;
+        }).toList();
+
+        // 1. Prefer exact timestamp or paidAmount match first
+        for (final doc in paidDebtDocs) {
+          if (remainingToReverse <= 0) break;
+          final d = doc.data();
+          final amt = (d['amount'] ?? 0) as num;
+          final pd = (d['paidAmount'] ?? amt) as num;
+          final effectivePaid = pd > 0 ? pd : amt;
+          final paidAtRaw = d['paidAt'];
+          final paidAt =
+              paidAtRaw != null ? _dateFromFirestore(paidAtRaw) : null;
+          final timeDiff = paidAt != null
+              ? paidAt.difference(payment.recordedAt).inSeconds.abs()
+              : 999999;
+          if (timeDiff <= 60 || effectivePaid == payment.amount) {
+            final take = remainingToReverse <= effectivePaid
+                ? remainingToReverse
+                : effectivePaid;
+            allocationsToReverse[doc.id] = take;
+            remainingToReverse -= take;
+          }
+        }
+
+        // 2. If still remaining, reverse from latest paid/partiallyPaid debts first
+        if (remainingToReverse > 0) {
+          paidDebtDocs.sort((a, b) {
+            final aStart = _dateFromFirestore(a.data()['periodStart']);
+            final bStart = _dateFromFirestore(b.data()['periodStart']);
+            return bStart.compareTo(aStart);
+          });
+          for (final doc in paidDebtDocs) {
+            if (remainingToReverse <= 0) break;
+            final alreadyTaken = allocationsToReverse[doc.id] ?? 0;
+            final d = doc.data();
+            final amt = (d['amount'] ?? 0) as num;
+            final pd = (d['paidAmount'] ?? amt) as num;
+            final effectivePaid = (pd > 0 ? pd : amt) - alreadyTaken;
+            if (effectivePaid <= 0) continue;
+            final take = remainingToReverse <= effectivePaid
+                ? remainingToReverse
+                : effectivePaid;
+            allocationsToReverse[doc.id] = alreadyTaken + take;
+            remainingToReverse -= take;
+          }
+        }
+      }
+
+      for (final doc in debtsSnap.docs) {
+        final revAmt = allocationsToReverse[doc.id];
+        if (revAmt == null || revAmt <= 0) continue;
+        final d = doc.data();
+        final amount = (d['amount'] ?? 0) as num;
+        final rawPaid = (d['paidAmount'] ?? 0) as num;
+        final st = d['status'] as String?;
+        final currentPaid =
+            (rawPaid == 0 && st == SubscriptionDebtStatus.paid.name)
+                ? amount
+                : rawPaid;
+        final newPaid = (currentPaid - revAmt).clamp(0, amount);
+        final newStatus = newPaid <= 0.001
+            ? SubscriptionDebtStatus.unpaid.name
+            : (newPaid >= amount - 0.001
+                ? SubscriptionDebtStatus.paid.name
+                : SubscriptionDebtStatus.partiallyPaid.name);
+        final cleanPaid = newPaid <= 0.001 ? 0 : newPaid;
+
+        updatedPaidAmounts[doc.id] = cleanPaid;
+        updatedStatuses[doc.id] = newStatus;
+        affectedDebtIds.add(doc.id);
+
+        batch.update(doc.reference, {
+          'paidAmount': cleanPaid,
+          'status': newStatus,
+          if (cleanPaid == 0) 'paidAt': null,
+          if (cleanPaid == 0) 'paidBy': null,
+        });
+      }
+
+      num finalRemainingBalance = 0;
+      for (final doc in debtsSnap.docs) {
+        final d = doc.data();
+        final amount = (d['amount'] ?? 0) as num;
+        final pd =
+            updatedPaidAmounts[doc.id] ?? ((d['paidAmount'] ?? 0) as num);
+        final st = updatedStatuses[doc.id] ?? (d['status'] as String?);
+        if (st != SubscriptionDebtStatus.paid.name) {
+          finalRemainingBalance += (amount - pd).clamp(0, double.infinity);
+        }
+      }
+
+      batch.update(subRef, {
+        'balance': finalRemainingBalance,
+        'status': finalRemainingBalance > 0
+            ? SubscriberStatus.overdue.name
+            : SubscriberStatus.active.name,
+        'lastPaymentAmount': nextLatestPayment != null
+            ? nextLatestPayment.amount
+            : FieldValue.delete(),
+        'lastPaymentAt': nextLatestPayment != null
+            ? Timestamp.fromDate(nextLatestPayment.recordedAt)
+            : FieldValue.delete(),
+      });
+    }
+
+    CashboxService.reverseSubscriptionPayment(
+      batch: batch,
+      db: db,
+      actor: by,
+      adminUid: by.adminUid,
+      amount: payment.amount,
+      currency: payment.currency,
+      receivedIn: payment.receivedIn,
+      collectorUid: collectorUid,
+      subscriberId: subscriber.id,
+      subscriberName: subscriber.name,
+      paymentId: payment.id,
+      note: 'التراجع عن دفعة اشتراك للمشترك ${subscriber.name}',
+      currentCollectorDebt: currentCollectorDebt,
+    );
+
+    await batch.commit();
+
+    await _logger.log(
+      actor: by,
+      action: 'payment.undo',
+      targetType: 'payment',
+      targetId: payment.id,
+      summary:
+          'التراجع عن دفعة بقيمة ${payment.amount} ${payment.currency.code} للمشترك ${subscriber.name}',
+      before: payment.toMap(),
+      after: {
+        'subscriberId': subscriber.id,
+        'subscriberName': subscriber.name,
+        'affectedDebtIds': affectedDebtIds,
+      },
+    );
+  }
+
+  /// Reverses a paid or partially-paid subscription debt, restoring the debt to
+  /// unpaid, adding the amount back to the subscriber's balance, deleting/updating
+  /// the corresponding payment record(s), and reversing the cashbox/custody entry.
   Future<void> unpayDebt(
     AppUser by,
     Subscriber subscriber,
     SubscriberDebt debt,
   ) async {
-    if (_db == null || !debt.isPaid) return;
+    if (_db == null || (!debt.isPaid && debt.paidAmount <= 0)) return;
     final db = _db;
     final subRef = _col(by.adminUid).doc(subscriber.id);
     final debtRef = _debtCol(by.adminUid, subscriber.id).doc(debt.id);
     final refundAmount = debt.paidAmount > 0 ? debt.paidAmount : debt.amount;
 
-    // Try to find the matching payment document to determine receivedIn & collector
-    MoneyStorage receivedIn = MoneyStorage.cashbox;
-    String collectorUid = debt.paidBy ?? by.uid;
-    DocumentReference<Map<String, dynamic>>? matchedPayRef;
-
     final paymentsSnap = await subRef
         .collection('payments')
         .orderBy('recordedAt', descending: true)
-        .limit(25)
+        .limit(50)
         .get();
+
+    // Find all payment records that contributed to this debt
+    final matchedPayments = <({
+      DocumentReference<Map<String, dynamic>> ref,
+      Payment payment,
+      num allocatedAmount,
+      bool deleteEntirely,
+    })>[];
+
+    num remainingToMatch = refundAmount;
+
+    // Pass 1: Explicit link via debtAllocations or debtId
     for (final pDoc in paymentsSnap.docs) {
+      if (remainingToMatch <= 0) break;
       final p = Payment.fromDoc(pDoc);
-      final timeDiff = debt.paidAt != null
-          ? p.recordedAt.difference(debt.paidAt!).inSeconds.abs()
-          : 999999;
-      if ((p.amount == refundAmount || timeDiff <= 15) &&
-          p.currency == debt.currency) {
-        receivedIn = p.receivedIn;
-        if (p.recordedBy.isNotEmpty) collectorUid = p.recordedBy;
-        matchedPayRef = pDoc.reference;
-        break;
+      if (p.currency != debt.currency) continue;
+      if (p.debtAllocations != null && p.debtAllocations!.containsKey(debt.id)) {
+        final alloc = p.debtAllocations![debt.id] ?? 0;
+        if (alloc > 0) {
+          final deleteAll =
+              p.debtAllocations!.length == 1 && (p.amount - alloc).abs() <= 0.01;
+          matchedPayments.add((
+            ref: pDoc.reference,
+            payment: p,
+            allocatedAmount: alloc,
+            deleteEntirely: deleteAll,
+          ));
+          remainingToMatch -= alloc;
+        }
+      } else if (p.debtId == debt.id) {
+        final take =
+            p.amount <= remainingToMatch ? p.amount : remainingToMatch;
+        matchedPayments.add((
+          ref: pDoc.reference,
+          payment: p,
+          allocatedAmount: take,
+          deleteEntirely: (p.amount - take).abs() <= 0.01,
+        ));
+        remainingToMatch -= take;
       }
     }
 
-    final batch = db.batch();
-    if (matchedPayRef != null) {
-      batch.delete(matchedPayRef);
+    // Pass 2: Fallback heuristic matching for legacy payments (including partial payments)
+    if (remainingToMatch > 0) {
+      for (final pDoc in paymentsSnap.docs) {
+        if (remainingToMatch <= 0) break;
+        if (matchedPayments.any((m) => m.ref.id == pDoc.id)) continue;
+        final p = Payment.fromDoc(pDoc);
+        if (p.currency != debt.currency || p.method == 'advance_subscription') {
+          continue;
+        }
+        if (p.debtId != null && p.debtId != debt.id) continue;
+        if (p.debtAllocations != null &&
+            p.debtAllocations!.isNotEmpty &&
+            !p.debtAllocations!.containsKey(debt.id)) {
+          continue;
+        }
+        final timeDiff = debt.paidAt != null
+            ? p.recordedAt.difference(debt.paidAt!).inSeconds.abs()
+            : 999999;
+        if (p.amount == remainingToMatch ||
+            p.amount == refundAmount ||
+            timeDiff <= 60) {
+          final take =
+              p.amount <= remainingToMatch ? p.amount : remainingToMatch;
+          matchedPayments.add((
+            ref: pDoc.reference,
+            payment: p,
+            allocatedAmount: take,
+            deleteEntirely: (p.amount - take).abs() <= 0.01,
+          ));
+          remainingToMatch -= take;
+        }
+      }
     }
+
+    // Pass 3: If still unmatched (e.g. multiple partial payments on different dates),
+    // match most recent subscription payments up to remainingToMatch
+    if (remainingToMatch > 0) {
+      for (final pDoc in paymentsSnap.docs) {
+        if (remainingToMatch <= 0) break;
+        if (matchedPayments.any((m) => m.ref.id == pDoc.id)) continue;
+        final p = Payment.fromDoc(pDoc);
+        if (p.currency != debt.currency || p.method == 'advance_subscription') {
+          continue;
+        }
+        if (p.debtId != null && p.debtId != debt.id) continue;
+        final take =
+            p.amount <= remainingToMatch ? p.amount : remainingToMatch;
+        matchedPayments.add((
+          ref: pDoc.reference,
+          payment: p,
+          allocatedAmount: take,
+          deleteEntirely: (p.amount - take).abs() <= 0.01,
+        ));
+        remainingToMatch -= take;
+      }
+    }
+
+    final deletedPayIds = matchedPayments
+        .where((m) => m.deleteEntirely)
+        .map((m) => m.ref.id)
+        .toSet();
+
+    Payment? nextLatestPayment;
+    for (final pDoc in paymentsSnap.docs) {
+      if (deletedPayIds.contains(pDoc.id)) continue;
+      final p = Payment.fromDoc(pDoc);
+      final matchIdx =
+          matchedPayments.indexWhere((m) => m.ref.id == pDoc.id && !m.deleteEntirely);
+      if (matchIdx != -1) {
+        final m = matchedPayments[matchIdx];
+        nextLatestPayment = Payment(
+          id: p.id,
+          subscriberId: p.subscriberId,
+          amount: p.amount - m.allocatedAmount,
+          currency: p.currency,
+          receivedIn: p.receivedIn,
+          method: p.method,
+          note: p.note,
+          recordedBy: p.recordedBy,
+          recordedAt: p.recordedAt,
+        );
+      } else {
+        nextLatestPayment = p;
+      }
+      break;
+    }
+
+    final batch = db.batch();
+
+    for (final m in matchedPayments) {
+      if (m.deleteEntirely) {
+        batch.delete(m.ref);
+      } else {
+        final newAlloc = Map<String, num>.from(m.payment.debtAllocations ?? {});
+        newAlloc.remove(debt.id);
+        batch.update(m.ref, {
+          'amount': m.payment.amount - m.allocatedAmount,
+          if (newAlloc.isNotEmpty) 'debtAllocations': newAlloc,
+        });
+      }
+    }
+
     batch.update(debtRef, {
       'status': SubscriptionDebtStatus.unpaid.name,
       'paidAmount': 0,
       'paidAt': null,
       'paidBy': null,
     });
+
     final allDebtsSnap = await _debtCol(by.adminUid, subscriber.id).get();
     num remainingBalance = debt.amount;
     for (final doc in allDebtsSnap.docs) {
@@ -667,26 +1048,81 @@ class SubscribersRepository {
         remainingBalance += (amt - pd).clamp(0, double.infinity);
       }
     }
+
     batch.update(subRef, {
       'balance': remainingBalance,
       'status': remainingBalance > 0
           ? SubscriberStatus.overdue.name
           : SubscriberStatus.active.name,
+      'lastPaymentAmount': nextLatestPayment != null
+          ? nextLatestPayment.amount
+          : FieldValue.delete(),
+      'lastPaymentAt': nextLatestPayment != null
+          ? Timestamp.fromDate(nextLatestPayment.recordedAt)
+          : FieldValue.delete(),
     });
-    CashboxService.reverseSubscriptionPayment(
-      batch: batch,
-      db: db,
-      actor: by,
-      adminUid: by.adminUid,
-      amount: refundAmount,
-      currency: debt.currency,
-      receivedIn: receivedIn,
-      collectorUid: collectorUid,
-      subscriberId: subscriber.id,
-      subscriberName: subscriber.name,
-      paymentId: matchedPayRef?.id,
-      note: 'التراجع عن تسديد اشتراك المشترك ${subscriber.name}',
-    );
+
+    // Track collector debt per collectorUid so multiple reversals in same batch clamp accurately
+    final collectorDebtCache = <String, num?>{};
+    Future<num?> getCollectorDebt(String cUid) async {
+      if (collectorDebtCache.containsKey(cUid)) {
+        return collectorDebtCache[cUid];
+      }
+      final val = await _readCurrentCollectorDebt(
+        db,
+        by.adminUid,
+        cUid,
+        debt.currency,
+      );
+      collectorDebtCache[cUid] = val;
+      return val;
+    }
+
+    if (matchedPayments.isNotEmpty) {
+      for (final m in matchedPayments) {
+        final cUid = m.payment.recordedBy.isNotEmpty
+            ? m.payment.recordedBy
+            : (debt.paidBy ?? by.uid);
+        final curDebt = await getCollectorDebt(cUid);
+        CashboxService.reverseSubscriptionPayment(
+          batch: batch,
+          db: db,
+          actor: by,
+          adminUid: by.adminUid,
+          amount: m.allocatedAmount,
+          currency: debt.currency,
+          receivedIn: m.payment.receivedIn,
+          collectorUid: cUid,
+          subscriberId: subscriber.id,
+          subscriberName: subscriber.name,
+          paymentId: m.ref.id,
+          note: 'التراجع عن تسديد اشتراك المشترك ${subscriber.name}',
+          currentCollectorDebt: curDebt,
+        );
+        if (curDebt != null && m.payment.receivedIn == MoneyStorage.personal) {
+          collectorDebtCache[cUid] =
+              (curDebt - m.allocatedAmount).clamp(0.0, double.infinity);
+        }
+      }
+    } else {
+      final fallbackCollector = debt.paidBy ?? by.uid;
+      final curDebt = await getCollectorDebt(fallbackCollector);
+      CashboxService.reverseSubscriptionPayment(
+        batch: batch,
+        db: db,
+        actor: by,
+        adminUid: by.adminUid,
+        amount: refundAmount,
+        currency: debt.currency,
+        receivedIn: MoneyStorage.cashbox,
+        collectorUid: fallbackCollector,
+        subscriberId: subscriber.id,
+        subscriberName: subscriber.name,
+        note: 'التراجع عن تسديد اشتراك المشترك ${subscriber.name}',
+        currentCollectorDebt: curDebt,
+      );
+    }
+
     await batch.commit();
 
     await _logger.log(
@@ -976,6 +1412,7 @@ class SubscribersRepository {
       note: note ?? 'تسديد اشتراك قادم مقدماً ($cycles دورة)',
       recordedBy: by.uid,
       recordedAt: paymentDate,
+      prepaidCycles: cycles,
     );
 
     final batch = db.batch();
@@ -1038,7 +1475,8 @@ class SubscribersRepository {
     }
   }
 
-  /// Cancels a prepaid cycle if entered by mistake.
+  /// Cancels a prepaid cycle if entered by mistake, and reverses its advance payment
+  /// from Cashbox / Collector Custody if a corresponding advance payment exists.
   Future<void> cancelAdvancePayment(
     AppUser by,
     Subscriber subscriber, {
@@ -1046,6 +1484,19 @@ class SubscribersRepository {
   }) async {
     if (_db == null || subscriber.prepaidCycles <= 0) return;
     final subRef = _col(by.adminUid).doc(subscriber.id);
+    final paymentsSnap = await subRef
+        .collection('payments')
+        .orderBy('recordedAt', descending: true)
+        .limit(20)
+        .get();
+    for (final pDoc in paymentsSnap.docs) {
+      final p = Payment.fromDoc(pDoc);
+      if (p.method == 'advance_subscription' ||
+          (p.prepaidCycles != null && p.prepaidCycles! > 0)) {
+        await undoPayment(by, subscriber, p);
+        return;
+      }
+    }
     final newCount = (subscriber.prepaidCycles - cyclesToCancel).clamp(0, 999);
     await subRef.update({'prepaidCycles': newCount});
     await _logger.log(
@@ -1092,25 +1543,13 @@ class SubscribersRepository {
         return aStart.compareTo(bStart);
       });
 
-    final paymentToWrite = Payment(
-      id: payRef.id,
-      subscriberId: subscriber.id,
-      amount: payment.amount,
-      currency: payment.currency,
-      receivedIn: payment.receivedIn,
-      method: payment.method,
-      note: payment.note,
-      recordedBy: payment.recordedBy,
-      recordedAt: payment.recordedAt,
-    );
-
     final batch = db.batch();
-    batch.set(payRef, paymentToWrite.toMap());
 
     num remaining = payment.amount;
     final coveredDebtIds = <String>[];
     final affectedDebtsBefore = <Map<String, dynamic>>[];
     final updatedPaidAmounts = <String, num>{};
+    final debtAllocations = <String, num>{};
 
     for (final doc in openDebtDocs) {
       if (remaining <= 0) break;
@@ -1134,6 +1573,7 @@ class SubscribersRepository {
           'paidBy': by.uid,
         });
         updatedPaidAmounts[doc.id] = amount;
+        debtAllocations[doc.id] = due;
         remaining -= due;
         coveredDebtIds.add(doc.id);
       } else {
@@ -1145,9 +1585,25 @@ class SubscribersRepository {
           'paidBy': by.uid,
         });
         updatedPaidAmounts[doc.id] = newPaid;
+        debtAllocations[doc.id] = remaining;
         remaining = 0;
       }
     }
+
+    final paymentToWrite = Payment(
+      id: payRef.id,
+      subscriberId: subscriber.id,
+      amount: payment.amount,
+      currency: payment.currency,
+      receivedIn: payment.receivedIn,
+      method: payment.method,
+      note: payment.note,
+      recordedBy: payment.recordedBy,
+      recordedAt: payment.recordedAt,
+      debtId: debtAllocations.length == 1 ? debtAllocations.keys.first : null,
+      debtAllocations: debtAllocations.isNotEmpty ? debtAllocations : null,
+    );
+    batch.set(payRef, paymentToWrite.toMap());
 
     // Calculate exact remaining balance across all debts in _debtCol
     num finalRemainingBalance = 0;

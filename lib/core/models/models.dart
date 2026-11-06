@@ -296,6 +296,9 @@ class Payment {
   final String? note;
   final String recordedBy;
   final DateTime recordedAt;
+  final String? debtId;
+  final Map<String, num>? debtAllocations;
+  final int? prepaidCycles;
 
   Payment({
     required this.id,
@@ -307,10 +310,26 @@ class Payment {
     this.note,
     required this.recordedBy,
     required this.recordedAt,
+    this.debtId,
+    this.debtAllocations,
+    this.prepaidCycles,
   });
 
   factory Payment.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final d = doc.data() ?? {};
+    Map<String, num>? parsedAllocations;
+    if (d['debtAllocations'] is Map) {
+      parsedAllocations = <String, num>{};
+      for (final entry in (d['debtAllocations'] as Map).entries) {
+        final k = '${entry.key}';
+        final v = entry.value is num
+            ? entry.value as num
+            : num.tryParse('${entry.value}') ?? 0;
+        if (k.isNotEmpty && v > 0) {
+          parsedAllocations[k] = v;
+        }
+      }
+    }
     return Payment(
       id: doc.id,
       subscriberId: (d['subscriberId'] ?? '') as String,
@@ -323,6 +342,9 @@ class Payment {
       note: d['note'] as String?,
       recordedBy: (d['recordedBy'] ?? '') as String,
       recordedAt: tsToDate(d['recordedAt']),
+      debtId: d['debtId'] as String?,
+      debtAllocations: parsedAllocations,
+      prepaidCycles: (d['prepaidCycles'] as num?)?.toInt(),
     );
   }
 
@@ -335,6 +357,10 @@ class Payment {
         'note': note,
         'recordedBy': recordedBy,
         'recordedAt': Timestamp.fromDate(recordedAt),
+        if (debtId != null) 'debtId': debtId,
+        if (debtAllocations != null && debtAllocations!.isNotEmpty)
+          'debtAllocations': debtAllocations,
+        if (prepaidCycles != null) 'prepaidCycles': prepaidCycles,
       };
 }
 
@@ -1073,11 +1099,16 @@ class CashboxLedgerEntry {
   MoneyStorage? get paidFromStorage =>
       paidFrom == null ? null : enumFromName(MoneyStorage.values, paidFrom);
   bool get isPaidFromPersonal =>
-      paidFrom == 'personal' || isCashboxDebtToStaff;
+      (kind != 'subscriptionPayment' &&
+          kind != 'subscriptionPaymentReversal' &&
+          paidFrom == 'personal') ||
+      isCashboxDebtToStaff;
   bool get isPaidFromCashbox =>
       paidFrom == 'cashbox' || isDirectCashDecrease;
   bool get isCustodyPayment =>
-      (kind == 'subscriptionPayment' && paidFrom == 'personal') ||
+      ((kind == 'subscriptionPayment' ||
+              kind == 'subscriptionPaymentReversal') &&
+          paidFrom == 'personal') ||
       isStaffDebtToCashbox;
 
   factory CashboxLedgerEntry.fromDoc(

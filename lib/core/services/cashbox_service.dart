@@ -130,12 +130,15 @@ class CashboxService {
     required String subscriberName,
     String? paymentId,
     String? note,
+    num? currentCollectorDebt,
   }) {
     if (receivedIn == MoneyStorage.none) {
       return;
     }
     final boxRef = cashboxRef(db, adminUid);
-    final key = debtKey(collectorUid, currency);
+    final effectiveCollectorUid =
+        collectorUid.isNotEmpty ? collectorUid : actor.uid;
+    final key = debtKey(effectiveCollectorUid, currency);
     final amt = amount.toDouble();
     if (receivedIn == MoneyStorage.cashbox) {
       batch.set(
@@ -147,10 +150,13 @@ class CashboxService {
         SetOptions(merge: true),
       );
     } else {
+      final debtValue = currentCollectorDebt != null
+          ? (currentCollectorDebt.toDouble() - amt).clamp(0.0, double.infinity)
+          : FieldValue.increment(-amt);
       batch.set(
         boxRef,
         {
-          'staffDebtToCashbox.$key': FieldValue.increment(-amt),
+          'staffDebtToCashbox.$key': debtValue,
           ..._updateMeta(actor),
         },
         SetOptions(merge: true),
@@ -166,7 +172,7 @@ class CashboxService {
       'reverse': true,
       'amount': amount,
       'currency': currency.code,
-      'actorUid': actor.uid,
+      'actorUid': effectiveCollectorUid,
       'actorName': actor.displayName,
       'actorRole': actor.role.name,
       'subscriberId': subscriberId,
@@ -305,27 +311,34 @@ class CashboxService {
     required AppCurrency currency,
     required StaffSettlementDirection direction,
     String? note,
+    num? currentStaffDebt,
   }) {
     final boxRef = cashboxRef(db, adminUid);
     final key = debtKey(staffUid, currency);
     final amt = amount.toDouble();
 
     if (direction == StaffSettlementDirection.toCashbox) {
+      final Object debtUpdate = currentStaffDebt != null
+          ? (currentStaffDebt.toDouble() - amt).clamp(0.0, double.infinity)
+          : FieldValue.increment(-amt);
       batch.set(
         boxRef,
         {
           'balances.${currency.code}': FieldValue.increment(amt),
-          'staffDebtToCashbox.$key': FieldValue.increment(-amt),
+          'staffDebtToCashbox.$key': debtUpdate,
           ..._updateMeta(actor),
         },
         SetOptions(merge: true),
       );
     } else {
+      final Object debtUpdate = currentStaffDebt != null
+          ? (currentStaffDebt.toDouble() - amt).clamp(0.0, double.infinity)
+          : FieldValue.increment(-amt);
       batch.set(
         boxRef,
         {
           'balances.${currency.code}': FieldValue.increment(-amt),
-          'cashboxDebtToStaff.$key': FieldValue.increment(-amt),
+          'cashboxDebtToStaff.$key': debtUpdate,
           ..._updateMeta(actor),
         },
         SetOptions(merge: true),
@@ -348,6 +361,62 @@ class CashboxService {
       'subscriberId': staffUid,
       'subscriberName': staffName,
       'note': note,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// Clears / zeros out staff custody debt (`staffDebtToCashbox`) or pocket credit
+  /// (`cashboxDebtToStaff`) WITHOUT changing the Cashbox balance.
+  static void clearStaffDebtWithoutCashbox({
+    required WriteBatch batch,
+    required FirebaseFirestore db,
+    required AppUser actor,
+    required String adminUid,
+    required String staffUid,
+    required String staffName,
+    required num amount,
+    required AppCurrency currency,
+    required StaffSettlementDirection direction,
+    String? note,
+  }) {
+    final boxRef = cashboxRef(db, adminUid);
+    final key = debtKey(staffUid, currency);
+
+    if (direction == StaffSettlementDirection.toCashbox) {
+      batch.set(
+        boxRef,
+        {
+          'staffDebtToCashbox.$key': 0.0,
+          ..._updateMeta(actor),
+        },
+        SetOptions(merge: true),
+      );
+    } else {
+      batch.set(
+        boxRef,
+        {
+          'cashboxDebtToStaff.$key': 0.0,
+          ..._updateMeta(actor),
+        },
+        SetOptions(merge: true),
+      );
+    }
+
+    final ledgerRef = ledgerCol(db, adminUid).doc();
+    batch.set(ledgerRef, {
+      'kind': 'staffDebtClearedWithoutCashbox',
+      'effect': direction == StaffSettlementDirection.toCashbox
+          ? 'staffDebtToCashboxReset'
+          : 'cashboxDebtToStaffReset',
+      'amount': amount,
+      'currency': currency.code,
+      'actorUid': actor.uid,
+      'actorName': actor.displayName,
+      'actorRole': actor.role.name,
+      'subscriberId': staffUid,
+      'subscriberName': staffName,
+      'note': note ?? 'تصفير الذمة/العهدة بدون إضافة للصندوق',
+      'reverse': true,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }

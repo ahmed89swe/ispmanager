@@ -85,7 +85,9 @@ service cloud.firestore {
           allow create: if isAdmin(adminUid)
                          || (hasPerm(adminUid, 'recordSubscriberPayment')
                              && request.resource.data.recordedBy == uid());
-          allow update, delete: if isAdmin(adminUid);
+          allow update, delete: if isAdmin(adminUid)
+                                 || hasPerm(adminUid, 'recordSubscriberPayment')
+                                 || hasPerm(adminUid, 'editSubscriber');
         }
 
         match /debts/{debtId} {
@@ -96,7 +98,8 @@ service cloud.firestore {
           allow update: if isAdmin(adminUid)
                          || hasPerm(adminUid, 'editSubscriber')
                          || hasPerm(adminUid, 'recordSubscriberPayment');
-          allow delete: if isAdmin(adminUid);
+          allow delete: if isAdmin(adminUid)
+                         || hasPerm(adminUid, 'editSubscriber');
         }
       }
 
@@ -188,12 +191,12 @@ service cloud.firestore {
         allow update, delete: if isAdmin(adminUid);
       }
 
-      // History (append-only audit log)
+      // History (append-only for employees; admin can undo/delete)
       match /history/{evId} {
         allow read: if isAdmin(adminUid) || hasPerm(adminUid, 'viewHistory');
         allow create: if isAdmin(adminUid)
                        || (isMember(adminUid) && request.resource.data.actor.uid == uid());
-        allow update, delete: if false;
+        allow update, delete: if isAdmin(adminUid);
       }
 
       // Notifications (admin and employee inboxes)

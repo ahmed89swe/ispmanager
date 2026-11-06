@@ -12,6 +12,18 @@ import 'cashbox_repository.dart';
 
 enum _LedgerFilterType { all, income, expense, settlement }
 
+Employee _adminAsEmployee(AppUser adminUser) => Employee(
+      id: adminUser.uid,
+      uid: adminUser.uid,
+      email: adminUser.email ?? '',
+      username: 'حساب عهدة المدير العام',
+      displayName:
+          '${adminUser.displayName.isNotEmpty ? adminUser.displayName : "المدير"} (المدير)',
+      permissions: Permission.values.toSet(),
+      active: true,
+      createdAt: DateTime(2024),
+    );
+
 class CashboxScreen extends ConsumerStatefulWidget {
   const CashboxScreen({
     super.key,
@@ -173,6 +185,18 @@ class _CashboxScreenState extends ConsumerState<CashboxScreen> {
     final usdStaffDebt = cashbox.totalStaffDebtToCashbox(AppCurrency.usd);
     final iqdBoxDebt = cashbox.totalCashboxDebtToStaff(AppCurrency.iqd);
     final usdBoxDebt = cashbox.totalCashboxDebtToStaff(AppCurrency.usd);
+    final adminIqdCustody =
+        cashbox.staffDebtToCashboxForUid(user.uid, AppCurrency.iqd);
+    final adminUsdCustody =
+        cashbox.staffDebtToCashboxForUid(user.uid, AppCurrency.usd);
+    final adminIqdCredit =
+        cashbox.cashboxDebtToStaffForUid(user.uid, AppCurrency.iqd);
+    final adminUsdCredit =
+        cashbox.cashboxDebtToStaffForUid(user.uid, AppCurrency.usd);
+    final hasAdminCustodyOrCredit = adminIqdCustody > 0 ||
+        adminUsdCustody > 0 ||
+        adminIqdCredit > 0 ||
+        adminUsdCredit > 0;
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -193,6 +217,21 @@ class _CashboxScreenState extends ConsumerState<CashboxScreen> {
             iqdBoxDebt,
             usdBoxDebt,
           ),
+          if (hasAdminCustodyOrCredit) ...[
+            const SizedBox(height: 12),
+            _buildAdminPersonalCustodyBanner(
+              context,
+              l,
+              loc,
+              user,
+              cashbox,
+              defaultCurrency,
+              adminIqdCustody,
+              adminUsdCustody,
+              adminIqdCredit,
+              adminUsdCredit,
+            ),
+          ],
           const SizedBox(height: 16),
           _buildActionButtons(context, l, user, cashbox, defaultCurrency),
           const SizedBox(height: 24),
@@ -307,24 +346,22 @@ class _CashboxScreenState extends ConsumerState<CashboxScreen> {
             ),
             error: (err, _) => Center(child: Text('$err')),
             data: (employees) {
-              if (employees.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Center(child: Text(l.noData)),
-                );
-              }
+              final allStaff = <Employee>[
+                _adminAsEmployee(user),
+                ...employees.where((e) => e.uid != user.uid),
+              ];
               final ledger = ledgerAsync.valueOrNull ?? [];
               return ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: employees.length,
+                itemCount: allStaff.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (ctx, idx) => _buildEmployeeDebtCard(
                   ctx,
                   l,
                   loc,
                   user,
-                  employees[idx],
+                  allStaff[idx],
                   cashbox,
                   defaultCurrency,
                   ledger,
@@ -499,18 +536,21 @@ class _CashboxScreenState extends ConsumerState<CashboxScreen> {
     num custodyCollectedUsd = 0;
 
     for (final e in empEntries) {
+      final delta = e.reverse ? -e.amount : e.amount;
       if (e.isPaidFromPersonal) {
         if (e.currency == AppCurrency.iqd) {
-          pocketSpentIqd += e.amount;
+          pocketSpentIqd = (pocketSpentIqd + delta).clamp(0, double.infinity);
         } else {
-          pocketSpentUsd += e.amount;
+          pocketSpentUsd = (pocketSpentUsd + delta).clamp(0, double.infinity);
         }
       }
       if (e.isCustodyPayment) {
         if (e.currency == AppCurrency.iqd) {
-          custodyCollectedIqd += e.amount;
+          custodyCollectedIqd =
+              (custodyCollectedIqd + delta).clamp(0, double.infinity);
         } else {
-          custodyCollectedUsd += e.amount;
+          custodyCollectedUsd =
+              (custodyCollectedUsd + delta).clamp(0, double.infinity);
         }
       }
     }
@@ -927,12 +967,284 @@ class _CashboxScreenState extends ConsumerState<CashboxScreen> {
                           horizontal: 12, vertical: 6),
                     ),
                   ),
+                if (adminUser.isAdmin && (hasDebtToBox || hasCreditByBox))
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      final dir = hasDebtToBox
+                          ? StaffSettlementDirection.toCashbox
+                          : StaffSettlementDirection.fromCashbox;
+                      final curr = hasDebtToBox
+                          ? (iqdOwedToBox > 0 ? AppCurrency.iqd : AppCurrency.usd)
+                          : (iqdOwedByBox > 0 ? AppCurrency.iqd : AppCurrency.usd);
+                      final amt = hasDebtToBox
+                          ? (iqdOwedToBox > 0 ? iqdOwedToBox : usdOwedToBox)
+                          : (iqdOwedByBox > 0 ? iqdOwedByBox : usdOwedByBox);
+                      _confirmAndClearStaffDebtWithoutCashbox(
+                        context,
+                        l,
+                        loc,
+                        adminUser,
+                        employee.uid,
+                        employee.displayName,
+                        amt,
+                        curr,
+                        dir,
+                      );
+                    },
+                    icon: Icon(Icons.cleaning_services_outlined,
+                        size: 15, color: Colors.deepOrange.shade700),
+                    label: Text(
+                      'تصفير العهدة (بدون صندوق)',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.deepOrange.shade700,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                          color: Colors.deepOrange.shade300.withAlpha(140)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                    ),
+                  ),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildAdminPersonalCustodyBanner(
+    BuildContext context,
+    AppLocalizations l,
+    String loc,
+    AppUser user,
+    CashboxSnapshot cashbox,
+    AppCurrency defaultCurrency,
+    num adminIqdCustody,
+    num adminUsdCustody,
+    num adminIqdCredit,
+    num adminUsdCredit,
+  ) {
+    final hasCustody = adminIqdCustody > 0 || adminUsdCustody > 0;
+    final adminName =
+        '${user.displayName.isNotEmpty ? user.displayName : "المدير"} (المدير)';
+    final primaryCurr = hasCustody
+        ? (adminIqdCustody > 0 ? AppCurrency.iqd : AppCurrency.usd)
+        : (adminIqdCredit > 0 ? AppCurrency.iqd : AppCurrency.usd);
+    final primaryAmt = hasCustody
+        ? (adminIqdCustody > 0 ? adminIqdCustody : adminUsdCustody)
+        : (adminIqdCredit > 0 ? adminIqdCredit : adminUsdCredit);
+    final primaryDir = hasCustody
+        ? StaffSettlementDirection.toCashbox
+        : StaffSettlementDirection.fromCashbox;
+
+    return Card(
+      elevation: 1.5,
+      color: Colors.orange.withAlpha(22),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.orange.shade400.withAlpha(140), width: 1.4),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.orange.withAlpha(45),
+                  foregroundColor: Colors.orange.shade900,
+                  child: const Icon(Icons.admin_panel_settings_outlined, size: 20),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        hasCustody
+                            ? 'ما بعهدة المدير حالياً (خارج الصندوق)'
+                            : 'مستحقات المدير بذمة الصندوق',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13.5,
+                          color: Colors.orange.shade900,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        hasCustody
+                            ? [
+                                if (adminIqdCustody > 0)
+                                  CurrencyFormatter.format(
+                                      adminIqdCustody, AppCurrency.iqd,
+                                      locale: loc),
+                                if (adminUsdCustody > 0)
+                                  CurrencyFormatter.format(
+                                      adminUsdCustody, AppCurrency.usd,
+                                      locale: loc),
+                              ].join('  •  ')
+                            : [
+                                if (adminIqdCredit > 0)
+                                  CurrencyFormatter.format(
+                                      adminIqdCredit, AppCurrency.iqd,
+                                      locale: loc),
+                                if (adminUsdCredit > 0)
+                                  CurrencyFormatter.format(
+                                      adminUsdCredit, AppCurrency.usd,
+                                      locale: loc),
+                              ].join('  •  '),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 15,
+                          color: Colors.orange.shade900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton.icon(
+                  onPressed: () {
+                    _showSettleDebtDialog(
+                      context,
+                      l,
+                      user,
+                      cashbox,
+                      defaultCurrency,
+                      initialEmployeeUid: user.uid,
+                      initialEmployeeName: adminName,
+                      initialDirection: primaryDir,
+                      initialAmount: primaryAmt,
+                      initialCurrency: primaryCurr,
+                      lockEmployee: true,
+                    );
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.teal.shade700,
+                    foregroundColor: Colors.white,
+                    visualDensity: VisualDensity.compact,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  icon: const Icon(Icons.input_rounded, size: 16),
+                  label: Text(
+                    hasCustody
+                        ? 'سداد عهدة المدير إلى الصندوق'
+                        : 'صرف مستحقات المدير من الصندوق',
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    _confirmAndClearStaffDebtWithoutCashbox(
+                      context,
+                      l,
+                      loc,
+                      user,
+                      user.uid,
+                      adminName,
+                      primaryAmt,
+                      primaryCurr,
+                      primaryDir,
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.deepOrange.shade800,
+                    side: BorderSide(color: Colors.deepOrange.shade400),
+                    visualDensity: VisualDensity.compact,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  ),
+                  icon: const Icon(Icons.cleaning_services_outlined, size: 15),
+                  label: const Text(
+                    'تصفير العهدة (بدون صندوق)',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmAndClearStaffDebtWithoutCashbox(
+    BuildContext context,
+    AppLocalizations l,
+    String loc,
+    AppUser by,
+    String staffUid,
+    String staffName,
+    num amount,
+    AppCurrency currency,
+    StaffSettlementDirection direction,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.cleaning_services_rounded,
+                color: Colors.deepOrange.shade700),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Text('تصفير العهدة / الذمة بدون صندوق'),
+            ),
+          ],
+        ),
+        content: Text(
+          'هل تريد تصفير وإلغاء المبلغ الموجود في ذمة "$staffName" بقيمة '
+          '${CurrencyFormatter.format(amount, currency, locale: loc)} '
+          'دون إضافته أو خصمه من رصيد الصندوق العام؟\n\n'
+          'استخدم هذا الخيار لمعالجة أو إلغاء عهدة سابقة معلّقة لا ترغب بإيداعها في الصندوق.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx, false),
+            child: Text(l.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+                backgroundColor: Colors.deepOrange.shade700),
+            onPressed: () => Navigator.pop(dialogCtx, true),
+            child: const Text('تأكيد التصفير'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      await ref.read(cashboxRepositoryProvider).clearStaffDebtWithoutCashbox(
+            by,
+            staffUid: staffUid,
+            staffName: staffName,
+            amount: amount,
+            currency: currency,
+            direction: direction,
+          );
+      ref.invalidate(cashboxStreamProvider(by.adminUid));
+      ref.invalidate(cashboxLedgerStreamProvider(by.adminUid));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم تصفير العهدة/الذمة بنجاح دون التأثير على الصندوق'),
+          ),
+        );
+      }
+    }
   }
 
   // Employee View: My Cashbox Account & Personal History
@@ -1769,6 +2081,8 @@ class _CashboxScreenState extends ConsumerState<CashboxScreen> {
         return '${l.t('staffSettlement')}: ${entry.subscriberName ?? '-'}';
       case 'staffReimbursement':
         return '${l.t('staffReimbursement')}: ${entry.subscriberName ?? '-'}';
+      case 'staffDebtClearedWithoutCashbox':
+        return 'تصفير عهدة/ذمة بدون صندوق: ${entry.subscriberName ?? '-'}';
       case 'manualDeposit':
         return '${l.t('manualDeposit')}: ${entry.reason ?? '-'}';
       case 'manualWithdrawal':
@@ -2514,9 +2828,15 @@ class _SettleStaffDebtSheetState extends ConsumerState<_SettleStaffDebtSheet> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final employees =
+    final rawEmployees =
         ref.watch(employeesStreamProvider(widget.user.adminUid)).valueOrNull ??
             [];
+    final employees = widget.user.isAdmin
+        ? <Employee>[
+            _adminAsEmployee(widget.user),
+            ...rawEmployees.where((e) => e.uid != widget.user.uid),
+          ]
+        : rawEmployees;
 
     if (_selectedEmployee == null && widget.initialEmployeeUid != null) {
       for (final e in employees) {
@@ -2589,7 +2909,19 @@ class _SettleStaffDebtSheetState extends ConsumerState<_SettleStaffDebtSheet> {
                           child: Text(e.displayName),
                         ))
                     .toList(),
-                onChanged: (v) => setState(() => _selectedEmployee = v),
+                onChanged: (v) {
+                  setState(() {
+                    _selectedEmployee = v;
+                    if (v != null) {
+                      final due = _direction == StaffSettlementDirection.toCashbox
+                          ? widget.cashbox.staffDebtToCashboxForUid(v.uid, _currency)
+                          : widget.cashbox.cashboxDebtToStaffForUid(v.uid, _currency);
+                      if (due > 0) {
+                        _amount.text = due.toString();
+                      }
+                    }
+                  });
+                },
               ),
             const SizedBox(height: 10),
             if (widget.user.isAdmin)
@@ -2771,18 +3103,21 @@ class _EmployeeAccountStatementSheetState
     num reimbursedFromBoxUsd = 0;
 
     for (final e in widget.entries) {
+      final delta = e.reverse ? -e.amount : e.amount;
       if (e.isPaidFromPersonal) {
         if (e.currency == AppCurrency.iqd) {
-          pocketSpentIqd += e.amount;
+          pocketSpentIqd = (pocketSpentIqd + delta).clamp(0, double.infinity);
         } else {
-          pocketSpentUsd += e.amount;
+          pocketSpentUsd = (pocketSpentUsd + delta).clamp(0, double.infinity);
         }
       }
       if (e.isCustodyPayment) {
         if (e.currency == AppCurrency.iqd) {
-          custodyCollectedIqd += e.amount;
+          custodyCollectedIqd =
+              (custodyCollectedIqd + delta).clamp(0, double.infinity);
         } else {
-          custodyCollectedUsd += e.amount;
+          custodyCollectedUsd =
+              (custodyCollectedUsd + delta).clamp(0, double.infinity);
         }
       }
       if (e.kind == 'staffSettlement') {
