@@ -570,19 +570,32 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> {
     );
   }
 
+  String _subscriberSyncSignature(Subscriber s) {
+    return '${s.id}_${s.subscriptionEndsAt.millisecondsSinceEpoch}_${s.autoRenew}_${s.autoRenewMode.name}_${s.autoRenewIntervalDays}_${s.autoRenewDayOfMonth}';
+  }
+
   void _syncDueDebts(AppUser user, List<Subscriber> subscribers) {
     if (!user.can(Permission.recordSubscriberPayment) &&
         !user.can(Permission.editSubscriber)) {
       return;
     }
+    final now = DateTime.now();
     final due = subscribers.where((subscriber) {
-      return !_syncedSubscribers.contains(subscriber.id) &&
-          (!subscriber.subscriptionEndsAt.isAfter(DateTime.now()) ||
-              subscriber.balance > 0);
+      final sig = _subscriberSyncSignature(subscriber);
+      if (_syncedSubscribers.contains(sig)) return false;
+      final needsMonthlyDayAlignment = subscriber.autoRenew &&
+          subscriber.autoRenewMode == AutoRenewMode.fixedMonthlyDay &&
+          !DateFormatter.matchesMonthlyDay(
+            subscriber.subscriptionEndsAt,
+            subscriber.autoRenewDayOfMonth ?? subscriber.subscriptionEndsAt.day,
+          );
+      return DateFormatter.isDueOrToday(subscriber.subscriptionEndsAt, now) ||
+          subscriber.balance > 0 ||
+          needsMonthlyDayAlignment;
     }).toList();
     if (due.isEmpty) return;
     for (final subscriber in due) {
-      _syncedSubscribers.add(subscriber.id);
+      _syncedSubscribers.add(_subscriberSyncSignature(subscriber));
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final repo = ref.read(subscribersRepositoryProvider);
@@ -2507,8 +2520,16 @@ class _ShiftAutoRenewalDialogState
 
   void _recomputeNewEndFromMode() {
     if (_autoRenewMode == AutoRenewMode.fixedMonthlyDay) {
-      _newEnd =
-          DateFormatter.nextUpcomingMonthlyDay(_newStart, _autoRenewDayOfMonth);
+      final now = DateTime.now();
+      final maxD = DateFormatter.daysInMonth(now.year, now.month);
+      _newEnd = DateTime(
+        now.year,
+        now.month,
+        _autoRenewDayOfMonth.clamp(1, maxD),
+      );
+      if (!_newEnd.isAfter(_newStart)) {
+        _newStart = DateFormatter.addDays(_newEnd, -30);
+      }
     } else {
       _newEnd = DateFormatter.addDays(_newStart, _autoRenewIntervalDays);
     }
@@ -3194,13 +3215,27 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
   }
 
   void _recomputeEndDateFromAutoRenewConfig() {
-    final baseStart = widget.existing?.joinedAt ?? DateTime.now();
+    final now = DateTime.now();
     if (_autoRenewMode == AutoRenewMode.fixedMonthlyDay) {
-      _subscriptionEndsAt = DateFormatter.nextUpcomingMonthlyDay(
-        baseStart,
-        _autoRenewDayOfMonth,
+      final maxD = DateFormatter.daysInMonth(now.year, now.month);
+      final thisMonthTarget = DateTime(
+        now.year,
+        now.month,
+        _autoRenewDayOfMonth.clamp(1, maxD),
       );
+      if (widget.existing != null) {
+        // For existing subscriber, align to this month's target day so if the
+        // fixed monthly day is today or earlier this month, saving immediately
+        // triggers auto-renewal for this month!
+        _subscriptionEndsAt = thisMonthTarget;
+      } else {
+        _subscriptionEndsAt = DateFormatter.nextUpcomingMonthlyDay(
+          now,
+          _autoRenewDayOfMonth,
+        );
+      }
     } else {
+      final baseStart = widget.existing?.joinedAt ?? now;
       _subscriptionEndsAt = DateFormatter.addDays(
         baseStart,
         _autoRenewIntervalDays,
@@ -3531,9 +3566,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                       onSelectionChanged: (set) {
                         setState(() {
                           _autoRenewMode = set.first;
-                          if (widget.existing == null) {
-                            _recomputeEndDateFromAutoRenewConfig();
-                          }
+                          _recomputeEndDateFromAutoRenewConfig();
                         });
                       },
                     ),
@@ -3560,9 +3593,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                                     parsed <= 365) {
                                   setState(() {
                                     _autoRenewIntervalDays = parsed;
-                                    if (widget.existing == null) {
-                                      _recomputeEndDateFromAutoRenewConfig();
-                                    }
+                                    _recomputeEndDateFromAutoRenewConfig();
                                   });
                                 }
                               },
@@ -3580,9 +3611,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                                   setState(() {
                                     _autoRenewIntervalDays = d;
                                     _intervalDaysController.text = '$d';
-                                    if (widget.existing == null) {
-                                      _recomputeEndDateFromAutoRenewConfig();
-                                    }
+                                    _recomputeEndDateFromAutoRenewConfig();
                                   });
                                 },
                               ),
@@ -3616,11 +3645,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                           if (v != null) {
                             setState(() {
                               _autoRenewDayOfMonth = v;
-                              _subscriptionEndsAt =
-                                  DateFormatter.nextUpcomingMonthlyDay(
-                                DateTime.now(),
-                                v,
-                              );
+                              _recomputeEndDateFromAutoRenewConfig();
                             });
                           }
                         },
@@ -3639,11 +3664,7 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
                               onSelected: (_) {
                                 setState(() {
                                   _autoRenewDayOfMonth = d;
-                                  _subscriptionEndsAt =
-                                      DateFormatter.nextUpcomingMonthlyDay(
-                                    DateTime.now(),
-                                    d,
-                                  );
+                                  _recomputeEndDateFromAutoRenewConfig();
                                 });
                               },
                             ),

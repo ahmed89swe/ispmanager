@@ -8,9 +8,42 @@ import '../../core/services/web_notification_helper.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/providers/preferences_providers.dart';
 import '../auth/auth_repository.dart';
+import '../subscribers/subscribers_repository.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
+
+  Future<void> _applyAutoRenewToExistingSubscribers(
+    BuildContext context,
+    WidgetRef ref, {
+    required AutoRenewMode mode,
+    required int intervalDays,
+    required int dayOfMonth,
+    required bool isArabic,
+  }) async {
+    final user = ref.read(currentAppUserProvider).valueOrNull;
+    if (user == null) return;
+    final count = await ref
+        .read(subscribersRepositoryProvider)
+        .applyAutoRenewConfigToAllSubscribers(
+          user,
+          mode: mode,
+          intervalDays: intervalDays,
+          dayOfMonth: dayOfMonth,
+        );
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isArabic
+              ? (mode == AutoRenewMode.fixedMonthlyDay
+                  ? 'تم ضبط التجديد التلقائي ليوم ($dayOfMonth) من كل شهر وتطبيقه على ($count) مشترك ✓'
+                  : 'تم ضبط التجديد التلقائي لكل ($intervalDays) يوم وتطبيقه على ($count) مشترك ✓')
+              : 'Updated auto-renewal schedule for $count subscribers ✓',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -166,10 +199,20 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ],
                 selected: {defaultAutoRenewMode},
-                onSelectionChanged: (set) {
-                  ref
+                onSelectionChanged: (set) async {
+                  final newMode = set.first;
+                  await ref
                       .read(defaultAutoRenewModeProvider.notifier)
-                      .set(set.first);
+                      .set(newMode);
+                  if (!context.mounted) return;
+                  await _applyAutoRenewToExistingSubscribers(
+                    context,
+                    ref,
+                    mode: newMode,
+                    intervalDays: defaultAutoRenewDays,
+                    dayOfMonth: defaultAutoRenewDayOfMonth,
+                    isArabic: isArabic,
+                  );
                 },
               ),
               const SizedBox(height: 12),
@@ -192,8 +235,19 @@ class SettingsScreen extends ConsumerWidget {
                       ChoiceChip(
                         label: Text(isArabic ? '$d يوم' : '$d days'),
                         selected: defaultAutoRenewDays == d,
-                        onSelected: (_) {
-                          ref.read(defaultAutoRenewDaysProvider.notifier).set(d);
+                        onSelected: (_) async {
+                          await ref
+                              .read(defaultAutoRenewDaysProvider.notifier)
+                              .set(d);
+                          if (!context.mounted) return;
+                          await _applyAutoRenewToExistingSubscribers(
+                            context,
+                            ref,
+                            mode: defaultAutoRenewMode,
+                            intervalDays: d,
+                            dayOfMonth: defaultAutoRenewDayOfMonth,
+                            isArabic: isArabic,
+                          );
                         },
                       ),
                   ],
@@ -221,14 +275,40 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                       ),
                   ],
-                  onChanged: (v) {
+                  onChanged: (v) async {
                     if (v != null) {
-                      ref
+                      await ref
                           .read(defaultAutoRenewDayOfMonthProvider.notifier)
                           .set(v);
+                      if (!context.mounted) return;
+                      await _applyAutoRenewToExistingSubscribers(
+                        context,
+                        ref,
+                        mode: defaultAutoRenewMode,
+                        intervalDays: defaultAutoRenewDays,
+                        dayOfMonth: v,
+                        isArabic: isArabic,
+                      );
                     }
                   },
                 ),
+              const SizedBox(height: 12),
+              FilledButton.tonalIcon(
+                onPressed: () => _applyAutoRenewToExistingSubscribers(
+                  context,
+                  ref,
+                  mode: defaultAutoRenewMode,
+                  intervalDays: defaultAutoRenewDays,
+                  dayOfMonth: defaultAutoRenewDayOfMonth,
+                  isArabic: isArabic,
+                ),
+                icon: const Icon(Icons.sync_rounded, size: 18),
+                label: Text(
+                  isArabic
+                      ? 'تطبيق ومزامنة هذا النظام على جميع المشتركين الآن'
+                      : 'Apply & Sync to All Subscribers Now',
+                ),
+              ),
             ],
           ),
         ),

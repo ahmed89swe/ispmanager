@@ -181,6 +181,7 @@ class SubscribersRepository {
     final ref = _col(by.adminUid).doc(s.id);
     final before = (await ref.get()).data();
     await ref.update(s.toMap());
+    await syncDueDebts(by, s);
     await _logger.log(
       actor: by,
       action: 'subscriber.edit',
@@ -1162,37 +1163,66 @@ class SubscribersRepository {
     if (_db == null || subscriber.id.isEmpty) return;
     final now = DateTime.now();
 
-    // If subscription is not expired, but subscriber still shows debt, self-heal balance
-    if (!subscriber.autoRenew || subscriber.subscriptionEndsAt.isAfter(now)) {
-      if (subscriber.balance > 0) {
-        await syncSubscriberBalance(by.adminUid, subscriber.id);
+    var effectiveSubscriber = subscriber;
+    if (subscriber.autoRenew &&
+        subscriber.autoRenewMode == AutoRenewMode.fixedMonthlyDay) {
+      final targetDay =
+          (subscriber.autoRenewDayOfMonth ?? subscriber.subscriptionEndsAt.day)
+              .clamp(1, 31);
+      if (!DateFormatter.matchesMonthlyDay(
+          subscriber.subscriptionEndsAt, targetDay)) {
+        final maxInNowMonth = DateFormatter.daysInMonth(now.year, now.month);
+        final alignedThisMonth = DateTime(
+          now.year,
+          now.month,
+          targetDay.clamp(1, maxInNowMonth),
+        );
+        await _col(by.adminUid).doc(subscriber.id).update({
+          'subscriptionEndsAt': Timestamp.fromDate(alignedThisMonth),
+          'autoRenewDayOfMonth': targetDay,
+        });
+        effectiveSubscriber = subscriber.copyWith(
+          subscriptionEndsAt: alignedThisMonth,
+          autoRenewDayOfMonth: targetDay,
+        );
+      }
+    }
+
+    // If subscription is not due (by calendar day), self-heal balance if needed
+    if (!effectiveSubscriber.autoRenew ||
+        !DateFormatter.isDueOrToday(
+            effectiveSubscriber.subscriptionEndsAt, now)) {
+      if (effectiveSubscriber.balance > 0) {
+        await syncSubscriberBalance(by.adminUid, effectiveSubscriber.id);
       }
       return;
     }
 
-    var periodStart = subscriber.subscriptionEndsAt;
-    var periodEnd = subscriber.nextRenewalDateFrom(periodStart);
+    var periodStart =
+        DateFormatter.dateOnly(effectiveSubscriber.subscriptionEndsAt);
+    var periodEnd = effectiveSubscriber.nextRenewalDateFrom(periodStart);
     var added = 0;
     num addedBalance = 0;
-    var remainingPrepaid = subscriber.prepaidCycles;
+    var remainingPrepaid = effectiveSubscriber.prepaidCycles;
     final batch = _db.batch();
 
-    while (!periodStart.isAfter(now) && added < 36) {
-      final debtRef =
-          _debtCol(by.adminUid, subscriber.id).doc(_periodDebtId(periodStart));
+    while (DateFormatter.isDueOrToday(periodStart, now) && added < 36) {
+      final debtRef = _debtCol(by.adminUid, effectiveSubscriber.id)
+          .doc(_periodDebtId(periodStart));
       final exists = await debtRef.get();
       if (!exists.exists) {
         final isPrepaid = remainingPrepaid > 0;
         final debt = SubscriberDebt(
           id: debtRef.id,
-          subscriberId: subscriber.id,
-          supplierId: subscriber.supplierId,
-          packageId: subscriber.packageId,
-          packageName: subscriber.packageName ?? subscriber.planName,
-          amount: subscriber.monthlyFee,
-          paidAmount: isPrepaid ? subscriber.monthlyFee : 0,
-          agentCost: subscriber.packageAgentPrice,
-          currency: subscriber.currency,
+          subscriberId: effectiveSubscriber.id,
+          supplierId: effectiveSubscriber.supplierId,
+          packageId: effectiveSubscriber.packageId,
+          packageName: effectiveSubscriber.packageName ??
+              effectiveSubscriber.planName,
+          amount: effectiveSubscriber.monthlyFee,
+          paidAmount: isPrepaid ? effectiveSubscriber.monthlyFee : 0,
+          agentCost: effectiveSubscriber.packageAgentPrice,
+          currency: effectiveSubscriber.currency,
           periodStart: periodStart,
           periodEnd: periodEnd,
           status: isPrepaid
@@ -1213,7 +1243,7 @@ class SubscribersRepository {
       }
       added++;
       periodStart = periodEnd;
-      periodEnd = subscriber.nextRenewalDateFrom(periodStart);
+      periodEnd = effectiveSubscriber.nextRenewalDateFrom(periodStart);
     }
 
     // Read all existing open debts in _debtCol to set the EXACT true balance
@@ -1391,6 +1421,16 @@ class SubscribersRepository {
 
     await batch.commit();
 
+    final updatedSubscriber = subscriber.copyWith(
+      subscriptionEndsAt: newSubscriptionEndsAt,
+      autoRenewMode: autoRenewMode ?? subscriber.autoRenewMode,
+      autoRenewIntervalDays:
+          autoRenewIntervalDays ?? subscriber.autoRenewIntervalDays,
+      autoRenewDayOfMonth:
+          autoRenewDayOfMonth ?? subscriber.autoRenewDayOfMonth,
+    );
+    await syncDueDebts(by, updatedSubscriber);
+
     await _logger.log(
       actor: by,
       action: 'subscriber.autoRenew.shift',
@@ -1403,14 +1443,65 @@ class SubscribersRepository {
         if (oldDebtData != null) 'shiftedDebtBefore': oldDebtData,
       },
       after: {
-        ...subscriber
-            .copyWith(subscriptionEndsAt: newSubscriptionEndsAt)
-            .toMap(),
+        ...updatedSubscriber.toMap(),
         'newActivationDate': Timestamp.fromDate(newActivationDate),
         'newSubscriptionEndsAt': Timestamp.fromDate(newSubscriptionEndsAt),
         if (targetDebtId != null) 'targetDebtId': targetDebtId,
       },
     );
+  }
+
+  /// Applies the given auto-renewal schedule configuration to all subscribers
+  /// of this admin and immediately runs [syncDueDebts] so any due monthly
+  /// or interval renewals take effect right away.
+  Future<int> applyAutoRenewConfigToAllSubscribers(
+    AppUser by, {
+    required AutoRenewMode mode,
+    required int intervalDays,
+    required int dayOfMonth,
+  }) async {
+    if (_db == null) return 0;
+    final snap = await _col(by.adminUid).get();
+    final now = DateTime.now();
+    final targetDay = dayOfMonth.clamp(1, 31);
+    final cleanDays = intervalDays.clamp(1, 365);
+    final maxInNowMonth = DateFormatter.daysInMonth(now.year, now.month);
+    final thisMonthTarget = DateTime(
+      now.year,
+      now.month,
+      targetDay.clamp(1, maxInNowMonth),
+    );
+
+    int updatedCount = 0;
+    for (final doc in snap.docs) {
+      final sub = Subscriber.fromDoc(doc);
+      if (sub.status == SubscriberStatus.inactive) continue;
+
+      final DateTime newEndsAt;
+      if (mode == AutoRenewMode.fixedMonthlyDay) {
+        newEndsAt = thisMonthTarget;
+      } else {
+        newEndsAt = sub.subscriptionEndsAt;
+      }
+
+      await doc.reference.update({
+        'autoRenewMode': mode.name,
+        'autoRenewIntervalDays': cleanDays,
+        'autoRenewDayOfMonth': targetDay,
+        if (mode == AutoRenewMode.fixedMonthlyDay)
+          'subscriptionEndsAt': Timestamp.fromDate(newEndsAt),
+      });
+
+      final updatedSub = sub.copyWith(
+        autoRenewMode: mode,
+        autoRenewIntervalDays: cleanDays,
+        autoRenewDayOfMonth: targetDay,
+        subscriptionEndsAt: newEndsAt,
+      );
+      await syncDueDebts(by, updatedSub);
+      updatedCount++;
+    }
+    return updatedCount;
   }
 
   /// Records an advance subscription payment for upcoming cycle(s).

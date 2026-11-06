@@ -44,8 +44,22 @@ class DateFormatter {
     return endUtc.difference(startUtc).inDays;
   }
 
+  static DateTime dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  /// True if [endDate]'s calendar day is today or in the past relative to [now].
+  static bool isDueOrToday(DateTime endDate, [DateTime? now]) {
+    final refNow = now ?? DateTime.now();
+    return !dateOnly(endDate).isAfter(dateOnly(refNow));
+  }
+
   static int daysInMonth(int year, int month) =>
       DateTime(year, month + 1, 0).day;
+
+  static bool matchesMonthlyDay(DateTime date, int dayOfMonth) {
+    final maxD = daysInMonth(date.year, date.month);
+    final effectiveTarget = dayOfMonth.clamp(1, maxD);
+    return date.day == effectiveTarget;
+  }
 
   /// Returns the next occurrence of [dayOfMonth] (1..31) that is at least 1 day
   /// after [fromDate].
@@ -89,7 +103,7 @@ class DateFormatter {
       periodStart.minute,
       periodStart.second,
     );
-    if (calendarDaysBetween(periodStart, sameMonth) >= 15) {
+    if (calendarDaysBetween(periodStart, sameMonth) >= 1) {
       return sameMonth;
     }
     final nextYear =
