@@ -70,6 +70,7 @@ class CashboxService {
     required String paymentId,
     required String subscriberId,
     required String subscriberName,
+    num? currentCollectorDebt,
   }) {
     if (payment.receivedIn == MoneyStorage.none) {
       return;
@@ -87,10 +88,13 @@ class CashboxService {
         SetOptions(merge: true),
       );
     } else {
+      final Object debtValue = currentCollectorDebt != null
+          ? (currentCollectorDebt.toDouble().clamp(0.0, double.infinity)) + amt
+          : FieldValue.increment(amt);
       batch.set(
         boxRef,
         {
-          'staffDebtToCashbox.$key': FieldValue.increment(amt),
+          'staffDebtToCashbox.$key': debtValue,
           ..._updateMeta(actor),
         },
         SetOptions(merge: true),

@@ -57,3 +57,5 @@ enum ReportRange { day, month, year, custom }
 enum ReportScope { financial, employee }
 
 enum StaffSettlementDirection { toCashbox, fromCashbox }
+
+enum AutoRenewMode { fixedIntervalDays, fixedMonthlyDay }

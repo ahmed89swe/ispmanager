@@ -974,7 +974,7 @@
       "file_type": "code",
       "norm_label": "adminuser",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3061"
+      "source_location": "L3062"
     },
     {
       "id": "lib_features_finance_cashbox_screen_amount",
@@ -985,7 +985,7 @@
       "file_type": "code",
       "norm_label": "amount",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2218"
+      "source_location": "L2219"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildactionbuttons",
@@ -996,7 +996,7 @@
       "file_type": "code",
       "norm_label": "_buildactionbuttons",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1867"
+      "source_location": "L1868"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildadmingeneralcashboxtab",
@@ -1007,7 +1007,7 @@
       "file_type": "code",
       "norm_label": "_buildadmingeneralcashboxtab",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L172"
+      "source_location": "L173"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildadminpersonalcustodybanner",
@@ -1018,7 +1018,7 @@
       "file_type": "code",
       "norm_label": "_buildadminpersonalcustodybanner",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1018"
+      "source_location": "L1019"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildbalancessection",
@@ -1029,7 +1029,7 @@
       "file_type": "code",
       "norm_label": "_buildbalancessection",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1742"
+      "source_location": "L1743"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildemployeedebtcard",
@@ -1040,7 +1040,7 @@
       "file_type": "code",
       "norm_label": "_buildemployeedebtcard",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L504"
+      "source_location": "L505"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildemployeeheroaccountcard",
@@ -1051,7 +1051,7 @@
       "file_type": "code",
       "norm_label": "_buildemployeeheroaccountcard",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1366"
+      "source_location": "L1367"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildemployeepersonalview",
@@ -1062,7 +1062,7 @@
       "file_type": "code",
       "norm_label": "_buildemployeepersonalview",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1250"
+      "source_location": "L1251"
     },
     {
       "id": "lib_features_finance_cashbox_screen_builderrorstate",
@@ -1073,7 +1073,7 @@
       "file_type": "code",
       "norm_label": "_builderrorstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L127"
+      "source_location": "L128"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildfiltersrow",
@@ -1084,7 +1084,7 @@
       "file_type": "code",
       "norm_label": "_buildfiltersrow",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1918"
+      "source_location": "L1919"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildledgertile",
@@ -1095,7 +1095,7 @@
       "file_type": "code",
       "norm_label": "_buildledgertile",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1994"
+      "source_location": "L1995"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildstaffdebtsoverviewheader",
@@ -1106,7 +1106,7 @@
       "file_type": "code",
       "norm_label": "_buildstaffdebtsoverviewheader",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L376"
+      "source_location": "L377"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildstatemententrytile",
@@ -1117,7 +1117,7 @@
       "file_type": "code",
       "norm_label": "_buildstatemententrytile",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3656"
+      "source_location": "L3657"
     },
     {
       "id": "lib_features_finance_cashbox_screen_busy",
@@ -1128,7 +1128,7 @@
       "file_type": "code",
       "norm_label": "_busy",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2296"
+      "source_location": "L2297"
     },
     {
       "id": "lib_features_finance_cashbox_screen_cashbox",
@@ -1139,7 +1139,7 @@
       "file_type": "code",
       "norm_label": "cashbox",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2281"
+      "source_location": "L2282"
     },
     {
       "id": "lib_features_finance_cashbox_screen_color",
@@ -1150,7 +1150,7 @@
       "file_type": "code",
       "norm_label": "color",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2220"
+      "source_location": "L2221"
     },
     {
       "id": "lib_features_finance_cashbox_screen_createstate",
@@ -1161,7 +1161,7 @@
       "file_type": "code",
       "norm_label": "createstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L35"
+      "source_location": "L36"
     },
     {
       "id": "lib_features_finance_cashbox_screen_currency",
@@ -1172,7 +1172,7 @@
       "file_type": "code",
       "norm_label": "currency",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2219"
+      "source_location": "L2220"
     },
     {
       "id": "lib_features_finance_cashbox_screen_currencyfilter",
@@ -1183,7 +1183,7 @@
       "file_type": "code",
       "norm_label": "_currencyfilter",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3075"
+      "source_location": "L3076"
     },
     {
       "id": "lib_features_finance_cashbox_screen_defaultcurrency",
@@ -1194,7 +1194,7 @@
       "file_type": "code",
       "norm_label": "defaultcurrency",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2283"
+      "source_location": "L2284"
     },
     {
       "id": "lib_features_finance_cashbox_screen_direction",
@@ -1205,7 +1205,7 @@
       "file_type": "code",
       "norm_label": "_direction",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2712"
+      "source_location": "L2713"
     },
     {
       "id": "lib_features_finance_cashbox_screen_dispose",
@@ -1216,7 +1216,7 @@
       "file_type": "code",
       "norm_label": "dispose",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2299"
+      "source_location": "L2300"
     },
     {
       "id": "lib_features_finance_cashbox_screen_employee",
@@ -1227,7 +1227,7 @@
       "file_type": "code",
       "norm_label": "employee",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3062"
+      "source_location": "L3063"
     },
     {
       "id": "lib_features_finance_cashbox_screen_entries",
@@ -1238,7 +1238,7 @@
       "file_type": "code",
       "norm_label": "entries",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3065"
+      "source_location": "L3066"
     },
     {
       "id": "lib_features_finance_cashbox_screen_entrytitle",
@@ -1249,7 +1249,7 @@
       "file_type": "code",
       "norm_label": "_entrytitle",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2067"
+      "source_location": "L2068"
     },
     {
       "id": "lib_features_finance_cashbox_screen_filterentries",
@@ -1260,7 +1260,7 @@
       "file_type": "code",
       "norm_label": "_filterentries",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1970"
+      "source_location": "L1971"
     },
     {
       "id": "lib_features_finance_cashbox_screen_icon",
@@ -1271,7 +1271,7 @@
       "file_type": "code",
       "norm_label": "icon",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2221"
+      "source_location": "L2222"
     },
     {
       "id": "lib_features_finance_cashbox_screen_initialamount",
@@ -1282,7 +1282,7 @@
       "file_type": "code",
       "norm_label": "initialamount",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2450"
+      "source_location": "L2451"
     },
     {
       "id": "lib_features_finance_cashbox_screen_initialcurrency",
@@ -1293,7 +1293,7 @@
       "file_type": "code",
       "norm_label": "initialcurrency",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2451"
+      "source_location": "L2452"
     },
     {
       "id": "lib_features_finance_cashbox_screen_initialdirection",
@@ -1304,7 +1304,7 @@
       "file_type": "code",
       "norm_label": "initialdirection",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2698"
+      "source_location": "L2699"
     },
     {
       "id": "lib_features_finance_cashbox_screen_initialemployeename",
@@ -1315,7 +1315,7 @@
       "file_type": "code",
       "norm_label": "initialemployeename",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2697"
+      "source_location": "L2698"
     },
     {
       "id": "lib_features_finance_cashbox_screen_initialemployeeuid",
@@ -1326,7 +1326,7 @@
       "file_type": "code",
       "norm_label": "initialemployeeuid",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2696"
+      "source_location": "L2697"
     },
     {
       "id": "lib_features_finance_cashbox_screen_initialtabindex",
@@ -1337,7 +1337,7 @@
       "file_type": "code",
       "norm_label": "initialtabindex",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L32"
+      "source_location": "L33"
     },
     {
       "id": "lib_features_finance_cashbox_screen_initstate",
@@ -1348,7 +1348,7 @@
       "file_type": "code",
       "norm_label": "initstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2466"
+      "source_location": "L2467"
     },
     {
       "id": "lib_features_finance_cashbox_screen_iqdamount",
@@ -1359,7 +1359,7 @@
       "file_type": "code",
       "norm_label": "iqdamount",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3759"
+      "source_location": "L3760"
     },
     {
       "id": "lib_features_finance_cashbox_screen_isdeposit",
@@ -1370,7 +1370,7 @@
       "file_type": "code",
       "norm_label": "isdeposit",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2282"
+      "source_location": "L2283"
     },
     {
       "id": "lib_features_finance_cashbox_screen_ledgerfiltertype",
@@ -1392,7 +1392,7 @@
       "file_type": "code",
       "norm_label": "loc",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3066"
+      "source_location": "L3067"
     },
     {
       "id": "lib_features_finance_cashbox_screen_locale",
@@ -1403,7 +1403,7 @@
       "file_type": "code",
       "norm_label": "locale",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2222"
+      "source_location": "L2223"
     },
     {
       "id": "lib_features_finance_cashbox_screen_lockemployee",
@@ -1414,7 +1414,7 @@
       "file_type": "code",
       "norm_label": "lockemployee",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2701"
+      "source_location": "L2702"
     },
     {
       "id": "lib_features_finance_cashbox_screen_note",
@@ -1425,7 +1425,7 @@
       "file_type": "code",
       "norm_label": "_note",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2294"
+      "source_location": "L2295"
     },
     {
       "id": "lib_features_finance_cashbox_screen_reason",
@@ -1436,7 +1436,7 @@
       "file_type": "code",
       "norm_label": "_reason",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2293"
+      "source_location": "L2294"
     },
     {
       "id": "lib_features_finance_cashbox_screen_selectedcurrencyfilter",
@@ -1447,7 +1447,7 @@
       "file_type": "code",
       "norm_label": "_selectedcurrencyfilter",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L39"
+      "source_location": "L40"
     },
     {
       "id": "lib_features_finance_cashbox_screen_selectedemployee",
@@ -1458,7 +1458,7 @@
       "file_type": "code",
       "norm_label": "_selectedemployee",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2711"
+      "source_location": "L2712"
     },
     {
       "id": "lib_features_finance_cashbox_screen_selectedfiltertype",
@@ -1469,7 +1469,7 @@
       "file_type": "code",
       "norm_label": "_selectedfiltertype",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L40"
+      "source_location": "L41"
     },
     {
       "id": "lib_features_finance_cashbox_screen_showclaimreimbursementrequestdialog",
@@ -1480,7 +1480,7 @@
       "file_type": "code",
       "norm_label": "_showclaimreimbursementrequestdialog",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2152"
+      "source_location": "L2153"
     },
     {
       "id": "lib_features_finance_cashbox_screen_showdirectadjustmentdialog",
@@ -1491,7 +1491,7 @@
       "file_type": "code",
       "norm_label": "_showdirectadjustmentdialog",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2094"
+      "source_location": "L2095"
     },
     {
       "id": "lib_features_finance_cashbox_screen_showemployeeaccountstatementsheet",
@@ -1502,7 +1502,7 @@
       "file_type": "code",
       "norm_label": "_showemployeeaccountstatementsheet",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2178"
+      "source_location": "L2179"
     },
     {
       "id": "lib_features_finance_cashbox_screen_showsettledebtdialog",
@@ -1513,7 +1513,7 @@
       "file_type": "code",
       "norm_label": "_showsettledebtdialog",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2118"
+      "source_location": "L2119"
     },
     {
       "id": "lib_features_finance_cashbox_screen_subtitle",
@@ -1524,7 +1524,7 @@
       "file_type": "code",
       "norm_label": "subtitle",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3758"
+      "source_location": "L3759"
     },
     {
       "id": "lib_features_finance_cashbox_screen_title",
@@ -1535,7 +1535,7 @@
       "file_type": "code",
       "norm_label": "title",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2217"
+      "source_location": "L2218"
     },
     {
       "id": "lib_features_finance_cashbox_screen_typefilter",
@@ -1546,7 +1546,7 @@
       "file_type": "code",
       "norm_label": "_typefilter",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3076"
+      "source_location": "L3077"
     },
     {
       "id": "lib_features_finance_cashbox_screen_usdamount",
@@ -1557,7 +1557,7 @@
       "file_type": "code",
       "norm_label": "usdamount",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3760"
+      "source_location": "L3761"
     },
     {
       "id": "lib_features_finance_cashbox_screen_user",
@@ -1568,7 +1568,7 @@
       "file_type": "code",
       "norm_label": "user",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2280"
+      "source_location": "L2281"
     },
     {
       "id": "num",
@@ -13765,7 +13765,7 @@
       "file_type": "code",
       "norm_label": "_claimreimbursementrequestsheet",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2438"
+      "source_location": "L2439"
     },
     {
       "id": "lib_features_finance_cashbox_screen_claimreimbursementrequestsheetstate",
@@ -13776,7 +13776,7 @@
       "file_type": "code",
       "norm_label": "_claimreimbursementrequestsheetstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2458"
+      "source_location": "L2459"
     },
     {
       "id": "lib_features_finance_cashbox_screen_confirmandclearstaffdebtwithoutcashbox",
@@ -13787,7 +13787,7 @@
       "file_type": "code",
       "norm_label": "_confirmandclearstaffdebtwithoutcashbox",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1184"
+      "source_location": "L1185"
     },
     {
       "id": "lib_features_finance_cashbox_screen_directadjustmentsheet",
@@ -13798,7 +13798,7 @@
       "file_type": "code",
       "norm_label": "_directadjustmentsheet",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2272"
+      "source_location": "L2273"
     },
     {
       "id": "lib_features_finance_cashbox_screen_directadjustmentsheetstate",
@@ -13809,7 +13809,7 @@
       "file_type": "code",
       "norm_label": "_directadjustmentsheetstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2290"
+      "source_location": "L2291"
     },
     {
       "id": "lib_features_finance_cashbox_screen_settlestaffdebtsheet",
@@ -13820,7 +13820,7 @@
       "file_type": "code",
       "norm_label": "_settlestaffdebtsheet",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2680"
+      "source_location": "L2681"
     },
     {
       "id": "lib_features_finance_cashbox_screen_settlestaffdebtsheetstate",
@@ -13831,7 +13831,7 @@
       "file_type": "code",
       "norm_label": "_settlestaffdebtsheetstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2708"
+      "source_location": "L2709"
     },
     {
       "id": "lib_features_finance_cashbox_screen_submit",
@@ -13842,7 +13842,7 @@
       "file_type": "code",
       "norm_label": "_submit",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2306"
+      "source_location": "L2307"
     },
     {
       "id": "lib_features_inbox_inbox_screen_buildrequeststab",
@@ -15591,7 +15591,7 @@
       "file_type": "code",
       "norm_label": "build",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L43"
+      "source_location": "L44"
     },
     {
       "id": "lib_features_finance_cashbox_screen_buildadminstaffdebtstab",
@@ -15602,7 +15602,7 @@
       "file_type": "code",
       "norm_label": "_buildadminstaffdebtstab",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L281"
+      "source_location": "L282"
     },
     {
       "id": "lib_features_finance_cashbox_screen_cashboxscreen",
@@ -15613,7 +15613,7 @@
       "file_type": "code",
       "norm_label": "cashboxscreen",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L26"
+      "source_location": "L27"
     },
     {
       "id": "lib_features_finance_cashbox_screen_cashboxscreenstate",
@@ -15624,7 +15624,7 @@
       "file_type": "code",
       "norm_label": "_cashboxscreenstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L38"
+      "source_location": "L39"
     },
     {
       "id": "lib_features_inbox_chat_repository_chatthreadsstreamprovider",
@@ -15811,7 +15811,7 @@
       "file_type": "code",
       "norm_label": "_balancecard",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2207"
+      "source_location": "L2208"
     },
     {
       "id": "lib_features_finance_cashbox_screen_statbox",
@@ -15822,7 +15822,7 @@
       "file_type": "code",
       "norm_label": "_statbox",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3746"
+      "source_location": "L3747"
     },
     {
       "id": "lib_features_subscribers_subscribers_screen_modernsubscribercard",
@@ -18627,7 +18627,7 @@
       "file_type": "code",
       "norm_label": "_employeeaccountstatementsheet",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3051"
+      "source_location": "L3052"
     },
     {
       "id": "lib_features_finance_cashbox_screen_employeeaccountstatementsheetstate",
@@ -18638,7 +18638,7 @@
       "file_type": "code",
       "norm_label": "_employeeaccountstatementsheetstate",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3073"
+      "source_location": "L3074"
     },
     {
       "id": "package_image_image_dart",
@@ -25883,7 +25883,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2831",
+      "source_location": "L2832",
       "weight": 1.0
     },
     {
@@ -25895,7 +25895,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -25907,7 +25907,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -25919,7 +25919,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -25931,7 +25931,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -25943,7 +25943,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L290",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
@@ -25955,7 +25955,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1229",
+      "source_location": "L1230",
       "weight": 1.0
     },
     {
@@ -25967,7 +25967,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L290",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
@@ -25979,7 +25979,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -25991,7 +25991,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -26003,7 +26003,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -26015,7 +26015,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L52",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -26027,7 +26027,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2493",
+      "source_location": "L2494",
       "weight": 1.0
     },
     {
@@ -26039,7 +26039,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1229",
+      "source_location": "L1230",
       "weight": 1.0
     },
     {
@@ -26051,7 +26051,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2350",
+      "source_location": "L2351",
       "weight": 1.0
     },
     {
@@ -26063,7 +26063,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2799",
+      "source_location": "L2800",
       "weight": 1.0
     },
     {
@@ -26075,7 +26075,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2831",
+      "source_location": "L2832",
       "weight": 1.0
     },
     {
@@ -26087,7 +26087,7 @@
       "confidence_score": 1.0,
       "context": "riverpod_reference",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2350",
+      "source_location": "L2351",
       "weight": 1.0
     },
     {
@@ -27863,7 +27863,7 @@
       "confidence_score": 1.0,
       "context": "type_lookup",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2396",
+      "source_location": "L2397",
       "weight": 1.0
     },
     {
@@ -27875,7 +27875,7 @@
       "confidence_score": 1.0,
       "context": "type_lookup",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2902",
+      "source_location": "L2903",
       "weight": 1.0
     },
     {
@@ -27887,7 +27887,7 @@
       "confidence_score": 1.0,
       "context": "type_lookup",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2927",
+      "source_location": "L2928",
       "weight": 1.0
     },
     {
@@ -29159,7 +29159,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2220",
+      "source_location": "L2221",
       "weight": 1.0
     },
     {
@@ -29171,7 +29171,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2221",
+      "source_location": "L2222",
       "weight": 1.0
     },
     {
@@ -29183,7 +29183,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2280",
+      "source_location": "L2281",
       "weight": 1.0
     },
     {
@@ -29195,7 +29195,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2281",
+      "source_location": "L2282",
       "weight": 1.0
     },
     {
@@ -29207,7 +29207,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2290",
+      "source_location": "L2291",
       "weight": 1.0
     },
     {
@@ -29219,7 +29219,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2450",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -29231,7 +29231,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2696",
+      "source_location": "L2697",
       "weight": 1.0
     },
     {
@@ -29243,7 +29243,7 @@
       "confidence_score": 1.0,
       "context": "variable_type",
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3065",
+      "source_location": "L3066",
       "weight": 1.0
     },
     {
@@ -38619,7 +38619,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1018",
+      "source_location": "L1019",
       "weight": 1.0
     },
     {
@@ -38630,7 +38630,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1184",
+      "source_location": "L1185",
       "weight": 1.0
     },
     {
@@ -38641,7 +38641,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1250",
+      "source_location": "L1251",
       "weight": 1.0
     },
     {
@@ -38652,7 +38652,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L127",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -38674,7 +38674,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1366",
+      "source_location": "L1367",
       "weight": 1.0
     },
     {
@@ -38696,7 +38696,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L172",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -38707,7 +38707,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1742",
+      "source_location": "L1743",
       "weight": 1.0
     },
     {
@@ -38718,7 +38718,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1867",
+      "source_location": "L1868",
       "weight": 1.0
     },
     {
@@ -38729,7 +38729,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1918",
+      "source_location": "L1919",
       "weight": 1.0
     },
     {
@@ -38740,7 +38740,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1970",
+      "source_location": "L1971",
       "weight": 1.0
     },
     {
@@ -38751,7 +38751,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L1994",
+      "source_location": "L1995",
       "weight": 1.0
     },
     {
@@ -38762,7 +38762,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2067",
+      "source_location": "L2068",
       "weight": 1.0
     },
     {
@@ -38773,7 +38773,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2094",
+      "source_location": "L2095",
       "weight": 1.0
     },
     {
@@ -38784,7 +38784,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2118",
+      "source_location": "L2119",
       "weight": 1.0
     },
     {
@@ -38795,7 +38795,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2152",
+      "source_location": "L2153",
       "weight": 1.0
     },
     {
@@ -38806,7 +38806,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2178",
+      "source_location": "L2179",
       "weight": 1.0
     },
     {
@@ -38817,7 +38817,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2207",
+      "source_location": "L2208",
       "weight": 1.0
     },
     {
@@ -38828,7 +38828,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2217",
+      "source_location": "L2218",
       "weight": 1.0
     },
     {
@@ -38839,7 +38839,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2218",
+      "source_location": "L2219",
       "weight": 1.0
     },
     {
@@ -38850,7 +38850,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2219",
+      "source_location": "L2220",
       "weight": 1.0
     },
     {
@@ -38861,7 +38861,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2220",
+      "source_location": "L2221",
       "weight": 1.0
     },
     {
@@ -38872,7 +38872,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2221",
+      "source_location": "L2222",
       "weight": 1.0
     },
     {
@@ -38883,7 +38883,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2222",
+      "source_location": "L2223",
       "weight": 1.0
     },
     {
@@ -38894,7 +38894,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2272",
+      "source_location": "L2273",
       "weight": 1.0
     },
     {
@@ -38905,7 +38905,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2280",
+      "source_location": "L2281",
       "weight": 1.0
     },
     {
@@ -38916,7 +38916,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2281",
+      "source_location": "L2282",
       "weight": 1.0
     },
     {
@@ -38927,7 +38927,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2282",
+      "source_location": "L2283",
       "weight": 1.0
     },
     {
@@ -38938,7 +38938,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2283",
+      "source_location": "L2284",
       "weight": 1.0
     },
     {
@@ -38949,7 +38949,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2290",
+      "source_location": "L2291",
       "weight": 1.0
     },
     {
@@ -38960,7 +38960,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2293",
+      "source_location": "L2294",
       "weight": 1.0
     },
     {
@@ -38971,7 +38971,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2294",
+      "source_location": "L2295",
       "weight": 1.0
     },
     {
@@ -38982,7 +38982,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2296",
+      "source_location": "L2297",
       "weight": 1.0
     },
     {
@@ -38993,7 +38993,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2299",
+      "source_location": "L2300",
       "weight": 1.0
     },
     {
@@ -39004,7 +39004,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2306",
+      "source_location": "L2307",
       "weight": 1.0
     },
     {
@@ -39015,7 +39015,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2438",
+      "source_location": "L2439",
       "weight": 1.0
     },
     {
@@ -39026,7 +39026,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2450",
+      "source_location": "L2451",
       "weight": 1.0
     },
     {
@@ -39037,7 +39037,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2451",
+      "source_location": "L2452",
       "weight": 1.0
     },
     {
@@ -39048,7 +39048,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2458",
+      "source_location": "L2459",
       "weight": 1.0
     },
     {
@@ -39059,18 +39059,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2466",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_finance_cashbox_screen",
-      "target": "lib_features_finance_cashbox_screen_cashboxscreen",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L26",
+      "source_location": "L2467",
       "weight": 1.0
     },
     {
@@ -39081,7 +39070,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2680",
+      "source_location": "L2681",
       "weight": 1.0
     },
     {
@@ -39092,7 +39081,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2696",
+      "source_location": "L2697",
       "weight": 1.0
     },
     {
@@ -39103,7 +39092,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2697",
+      "source_location": "L2698",
       "weight": 1.0
     },
     {
@@ -39114,7 +39103,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2698",
+      "source_location": "L2699",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_finance_cashbox_screen",
+      "target": "lib_features_finance_cashbox_screen_cashboxscreen",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -39125,7 +39125,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2701",
+      "source_location": "L2702",
       "weight": 1.0
     },
     {
@@ -39136,7 +39136,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2708",
+      "source_location": "L2709",
       "weight": 1.0
     },
     {
@@ -39147,7 +39147,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2711",
+      "source_location": "L2712",
       "weight": 1.0
     },
     {
@@ -39158,7 +39158,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2712",
+      "source_location": "L2713",
       "weight": 1.0
     },
     {
@@ -39169,7 +39169,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L281",
+      "source_location": "L282",
       "weight": 1.0
     },
     {
@@ -39180,7 +39180,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3051",
+      "source_location": "L3052",
       "weight": 1.0
     },
     {
@@ -39191,7 +39191,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3061",
+      "source_location": "L3062",
       "weight": 1.0
     },
     {
@@ -39202,7 +39202,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3062",
+      "source_location": "L3063",
       "weight": 1.0
     },
     {
@@ -39213,7 +39213,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3065",
+      "source_location": "L3066",
       "weight": 1.0
     },
     {
@@ -39224,7 +39224,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3066",
+      "source_location": "L3067",
       "weight": 1.0
     },
     {
@@ -39235,7 +39235,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3073",
+      "source_location": "L3074",
       "weight": 1.0
     },
     {
@@ -39246,7 +39246,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3075",
+      "source_location": "L3076",
       "weight": 1.0
     },
     {
@@ -39257,7 +39257,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3076",
+      "source_location": "L3077",
       "weight": 1.0
     },
     {
@@ -39268,7 +39268,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -39279,7 +39279,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -39290,7 +39290,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3656",
+      "source_location": "L3657",
       "weight": 1.0
     },
     {
@@ -39301,7 +39301,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3746",
+      "source_location": "L3747",
       "weight": 1.0
     },
     {
@@ -39312,7 +39312,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3758",
+      "source_location": "L3759",
       "weight": 1.0
     },
     {
@@ -39323,18 +39323,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3759",
-      "weight": 1.0
-    },
-    {
-      "source": "lib_features_finance_cashbox_screen",
-      "target": "lib_features_finance_cashbox_screen_buildstaffdebtsoverviewheader",
-      "relation": "defines",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L376",
+      "source_location": "L3760",
       "weight": 1.0
     },
     {
@@ -39345,7 +39334,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3760",
+      "source_location": "L3761",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_features_finance_cashbox_screen",
+      "target": "lib_features_finance_cashbox_screen_buildstaffdebtsoverviewheader",
+      "relation": "defines",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/features/finance/cashbox_screen.dart",
+      "source_location": "L377",
       "weight": 1.0
     },
     {
@@ -39356,7 +39356,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -39367,7 +39367,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -39378,7 +39378,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -39389,7 +39389,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -39400,7 +39400,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L504",
+      "source_location": "L505",
       "weight": 1.0
     },
     {
@@ -50532,7 +50532,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2207",
+      "source_location": "L2208",
       "weight": 1.0
     },
     {
@@ -50543,7 +50543,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -50554,7 +50554,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -50565,7 +50565,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2438",
+      "source_location": "L2439",
       "weight": 1.0
     },
     {
@@ -50576,7 +50576,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2458",
+      "source_location": "L2459",
       "weight": 1.0
     },
     {
@@ -50587,7 +50587,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2272",
+      "source_location": "L2273",
       "weight": 1.0
     },
     {
@@ -50598,7 +50598,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2290",
+      "source_location": "L2291",
       "weight": 1.0
     },
     {
@@ -50609,7 +50609,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3051",
+      "source_location": "L3052",
       "weight": 1.0
     },
     {
@@ -50620,7 +50620,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3073",
+      "source_location": "L3074",
       "weight": 1.0
     },
     {
@@ -50631,7 +50631,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2680",
+      "source_location": "L2681",
       "weight": 1.0
     },
     {
@@ -50642,7 +50642,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2708",
+      "source_location": "L2709",
       "weight": 1.0
     },
     {
@@ -50653,7 +50653,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3746",
+      "source_location": "L3747",
       "weight": 1.0
     },
     {
@@ -51731,7 +51731,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -51742,7 +51742,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2458",
+      "source_location": "L2459",
       "weight": 1.0
     },
     {
@@ -51753,7 +51753,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2290",
+      "source_location": "L2291",
       "weight": 1.0
     },
     {
@@ -51764,7 +51764,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L3073",
+      "source_location": "L3074",
       "weight": 1.0
     },
     {
@@ -51775,7 +51775,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/features/finance/cashbox_screen.dart",
-      "source_location": "L2708",
+      "source_location": "L2709",
       "weight": 1.0
     },
     {

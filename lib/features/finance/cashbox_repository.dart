@@ -13,11 +13,13 @@ class CashboxSnapshot {
     required this.balances,
     required this.staffDebtToCashbox,
     required this.cashboxDebtToStaff,
+    this.rawStaffDebtToCashbox = const {},
   });
 
   final Map<String, num> balances;
   final Map<String, num> staffDebtToCashbox;
   final Map<String, num> cashboxDebtToStaff;
+  final Map<String, num> rawStaffDebtToCashbox;
 
   factory CashboxSnapshot.empty() => const CashboxSnapshot(
         balances: {
@@ -26,6 +28,7 @@ class CashboxSnapshot {
         },
         staffDebtToCashbox: {},
         cashboxDebtToStaff: {},
+        rawStaffDebtToCashbox: {},
       );
 
   factory CashboxSnapshot.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -71,7 +74,7 @@ class CashboxSnapshot {
       return total;
     }
 
-    Map<String, num> extractDebtMap(String prefix) {
+    Map<String, num> extractRawDebtMap(String prefix) {
       final result = <String, num>{};
       if (data[prefix] is Map) {
         final m = data[prefix] as Map;
@@ -80,11 +83,7 @@ class CashboxSnapshot {
           final v = entry.value is num
               ? entry.value as num
               : num.tryParse('${entry.value}') ?? 0;
-          if (v > 0.001) {
-            result[k] = v;
-          } else {
-            result.remove(k);
-          }
+          result[k] = v;
         }
       }
       final dotPrefix = '$prefix.';
@@ -94,23 +93,33 @@ class CashboxSnapshot {
           final v = entry.value is num
               ? entry.value as num
               : num.tryParse('${entry.value}') ?? 0;
-          if (v > 0.001) {
-            result[subKey] = v;
-          } else {
-            result.remove(subKey);
-          }
+          result[subKey] = v;
         }
       }
       return result;
     }
+
+    Map<String, num> filterPositive(Map<String, num> rawMap) {
+      final result = <String, num>{};
+      for (final entry in rawMap.entries) {
+        if (entry.value > 0.001) {
+          result[entry.key] = entry.value;
+        }
+      }
+      return result;
+    }
+
+    final rawStaffDebt = extractRawDebtMap('staffDebtToCashbox');
+    final rawCashboxDebt = extractRawDebtMap('cashboxDebtToStaff');
 
     return CashboxSnapshot(
       balances: {
         AppCurrency.iqd.code: extractBalance(AppCurrency.iqd.code),
         AppCurrency.usd.code: extractBalance(AppCurrency.usd.code),
       },
-      staffDebtToCashbox: extractDebtMap('staffDebtToCashbox'),
-      cashboxDebtToStaff: extractDebtMap('cashboxDebtToStaff'),
+      staffDebtToCashbox: filterPositive(rawStaffDebt),
+      cashboxDebtToStaff: filterPositive(rawCashboxDebt),
+      rawStaffDebtToCashbox: rawStaffDebt,
     );
   }
 
@@ -161,6 +170,48 @@ class CashboxSnapshot {
     }
     return total;
   }
+
+  /// Replays the chronological ledger clamping custody at 0 after every
+  /// reversal or settlement so historical negative custody values never
+  /// swallow subsequent custody payments.
+  static ({Map<String, num> clampedCustody, Set<String> keysWithReversals})
+      computeClampedCustodyFromLedger(List<CashboxLedgerEntry> ledger) {
+    final runningMap = <String, double>{};
+    final keysWithReversals = <String>{};
+
+    // ledger is ordered descending (newest first), so iterate reversed (oldest first)
+    for (final e in ledger.reversed) {
+      if (e.effect == 'staffDebtToCashboxIncrease') {
+        final key = CashboxService.debtKey(e.actorUid, e.currency);
+        runningMap[key] = (runningMap[key] ?? 0.0) + e.amount.toDouble();
+      } else if (e.effect == 'staffDebtToCashboxDecreaseReversal') {
+        final key = CashboxService.debtKey(e.actorUid, e.currency);
+        keysWithReversals.add(key);
+        final prev = runningMap[key] ?? 0.0;
+        runningMap[key] = (prev - e.amount.toDouble()).clamp(0.0, double.infinity);
+      } else if (e.effect == 'cashboxIncrease_staffDebtDecrease') {
+        final targetUid =
+            (e.subscriberId != null && e.subscriberId!.isNotEmpty)
+                ? e.subscriberId!
+                : e.actorUid;
+        final key = CashboxService.debtKey(targetUid, e.currency);
+        final prev = runningMap[key] ?? 0.0;
+        runningMap[key] = (prev - e.amount.toDouble()).clamp(0.0, double.infinity);
+      } else if (e.effect == 'staffDebtToCashboxReset') {
+        final targetUid =
+            (e.subscriberId != null && e.subscriberId!.isNotEmpty)
+                ? e.subscriberId!
+                : e.actorUid;
+        final key = CashboxService.debtKey(targetUid, e.currency);
+        runningMap[key] = 0.0;
+      }
+    }
+
+    return (
+      clampedCustody: runningMap,
+      keysWithReversals: keysWithReversals,
+    );
+  }
 }
 
 class CashboxRepository {
@@ -174,7 +225,69 @@ class CashboxRepository {
     if (db == null) return Stream.value(CashboxSnapshot.empty());
     return CashboxService.cashboxRef(db, adminUid)
         .snapshots()
-        .map(CashboxSnapshot.fromDoc);
+        .asyncMap((doc) async {
+      final snap = CashboxSnapshot.fromDoc(doc);
+      try {
+        final ledgerSnap = await CashboxService.ledgerCol(db, adminUid)
+            .orderBy('createdAt', descending: true)
+            .limit(200)
+            .get();
+        final ledger =
+            ledgerSnap.docs.map(CashboxLedgerEntry.fromDoc).toList();
+        final (:clampedCustody, :keysWithReversals) =
+            CashboxSnapshot.computeClampedCustodyFromLedger(ledger);
+
+        final healedStaffDebt = Map<String, num>.from(snap.staffDebtToCashbox);
+        final healedRawStaffDebt =
+            Map<String, num>.from(snap.rawStaffDebtToCashbox);
+        final firestoreFixes = <String, dynamic>{};
+
+        // 1. Clamp any raw negative values in Firestore to at least 0 (or to clampedCustody)
+        for (final entry in snap.rawStaffDebtToCashbox.entries) {
+          final key = entry.key;
+          final rawVal = entry.value.toDouble();
+          final ledgerVal = (clampedCustody[key] ?? 0.0).toDouble();
+          if (rawVal < -0.001) {
+            final targetVal = ledgerVal > 0.001 ? ledgerVal : 0.0;
+            healedRawStaffDebt[key] = targetVal;
+            if (targetVal > 0.001) {
+              healedStaffDebt[key] = targetVal;
+            } else {
+              healedStaffDebt.remove(key);
+            }
+            firestoreFixes['staffDebtToCashbox.$key'] = targetVal;
+          }
+        }
+
+        // 2. If a key had a reversal that previously drove Firestore negative and swallowed
+        //    a subsequent custody payment, restore it to the clamped ledger balance.
+        for (final entry in clampedCustody.entries) {
+          final key = entry.key;
+          final ledgerVal = entry.value.toDouble();
+          final rawVal = (snap.rawStaffDebtToCashbox[key] ?? 0).toDouble();
+          if (ledgerVal > rawVal + 0.001 &&
+              (rawVal < 0 || keysWithReversals.contains(key))) {
+            healedRawStaffDebt[key] = ledgerVal;
+            healedStaffDebt[key] = ledgerVal;
+            firestoreFixes['staffDebtToCashbox.$key'] = ledgerVal;
+          }
+        }
+
+        if (firestoreFixes.isNotEmpty) {
+          await CashboxService.cashboxRef(db, adminUid)
+              .set(firestoreFixes, SetOptions(merge: true));
+          return CashboxSnapshot(
+            balances: snap.balances,
+            staffDebtToCashbox: healedStaffDebt,
+            cashboxDebtToStaff: snap.cashboxDebtToStaff,
+            rawStaffDebtToCashbox: healedRawStaffDebt,
+          );
+        }
+      } catch (_) {
+        // Ignore transient offline/query errors and return snap as-is
+      }
+      return snap;
+    });
   }
 
   Stream<List<CashboxLedgerEntry>> watchLedger(

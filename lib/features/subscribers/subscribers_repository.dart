@@ -106,6 +106,16 @@ class SubscribersRepository {
       lastPaymentAt: (isPaid && s.monthlyFee > 0) ? paymentDate : null,
     );
 
+    num? currentCollectorDebt;
+    if (isPaid && s.monthlyFee > 0 && receivedIn == MoneyStorage.personal) {
+      currentCollectorDebt = await _readCurrentCollectorDebt(
+        db,
+        by.adminUid,
+        by.uid,
+        s.currency,
+      );
+    }
+
     final batch = db.batch();
     batch.set(subRef, finalSubscriber.toMap());
     batch.set(debtRef, debt.toMap());
@@ -136,6 +146,7 @@ class SubscribersRepository {
         paymentId: payRef.id,
         subscriberId: subId,
         subscriberName: s.name,
+        currentCollectorDebt: currentCollectorDebt,
       );
     }
 
@@ -556,6 +567,16 @@ class SubscribersRepository {
       }
     }
 
+    num? currentCollectorDebt;
+    if (receivedIn == MoneyStorage.personal) {
+      currentCollectorDebt = await _readCurrentCollectorDebt(
+        db,
+        by.adminUid,
+        by.uid,
+        debt.currency,
+      );
+    }
+
     batch.set(subRef, {
       'balance': remainingBalance,
       'status': remainingBalance > 0
@@ -573,6 +594,7 @@ class SubscribersRepository {
       paymentId: paymentRef.id,
       subscriberId: subscriber.id,
       subscriberName: subscriber.name,
+      currentCollectorDebt: currentCollectorDebt,
     );
     await batch.commit();
     try {
@@ -1149,7 +1171,7 @@ class SubscribersRepository {
     }
 
     var periodStart = subscriber.subscriptionEndsAt;
-    var periodEnd = DateFormatter.addDays(periodStart, 30);
+    var periodEnd = subscriber.nextRenewalDateFrom(periodStart);
     var added = 0;
     num addedBalance = 0;
     var remainingPrepaid = subscriber.prepaidCycles;
@@ -1191,7 +1213,7 @@ class SubscribersRepository {
       }
       added++;
       periodStart = periodEnd;
-      periodEnd = DateFormatter.addDays(periodStart, 30);
+      periodEnd = subscriber.nextRenewalDateFrom(periodStart);
     }
 
     // Read all existing open debts in _debtCol to set the EXACT true balance
@@ -1271,12 +1293,12 @@ class SubscribersRepository {
     );
     if (!enabled) return;
 
-    // On activation, ensure there is at least one 30-day debt starting now.
+    // On activation, ensure there is at least one cycle debt starting now.
     final now = DateTime.now();
     final activationStart = subscriber.subscriptionEndsAt.isAfter(now)
         ? subscriber.subscriptionEndsAt
         : now;
-    final activationEnd = DateFormatter.addDays(activationStart, 30);
+    final activationEnd = subscriber.nextRenewalDateFrom(activationStart);
     final debtRef = _debtCol(by.adminUid, subscriber.id)
         .doc(_periodDebtId(activationStart));
     final exists = await debtRef.get();
@@ -1336,6 +1358,9 @@ class SubscribersRepository {
     required DateTime newActivationDate,
     required DateTime newSubscriptionEndsAt,
     String? targetDebtId,
+    AutoRenewMode? autoRenewMode,
+    int? autoRenewIntervalDays,
+    int? autoRenewDayOfMonth,
   }) async {
     if (_db == null) return;
     final db = _db;
@@ -1344,6 +1369,11 @@ class SubscribersRepository {
 
     batch.update(subRef, {
       'subscriptionEndsAt': Timestamp.fromDate(newSubscriptionEndsAt),
+      if (autoRenewMode != null) 'autoRenewMode': autoRenewMode.name,
+      if (autoRenewIntervalDays != null)
+        'autoRenewIntervalDays': autoRenewIntervalDays.clamp(1, 365),
+      if (autoRenewDayOfMonth != null)
+        'autoRenewDayOfMonth': autoRenewDayOfMonth.clamp(1, 31),
     });
 
     Map<String, dynamic>? oldDebtData;
@@ -1415,6 +1445,16 @@ class SubscribersRepository {
       prepaidCycles: cycles,
     );
 
+    num? currentCollectorDebt;
+    if (receivedIn == MoneyStorage.personal) {
+      currentCollectorDebt = await _readCurrentCollectorDebt(
+        db,
+        by.adminUid,
+        by.uid,
+        subscriber.currency,
+      );
+    }
+
     final batch = db.batch();
     batch.set(payRef, payment.toMap());
 
@@ -1434,6 +1474,7 @@ class SubscribersRepository {
       paymentId: payRef.id,
       subscriberId: subscriber.id,
       subscriberName: subscriber.name,
+      currentCollectorDebt: currentCollectorDebt,
     );
 
     await batch.commit();
@@ -1623,6 +1664,16 @@ class SubscribersRepository {
       }
     }
 
+    num? currentCollectorDebt;
+    if (payment.receivedIn == MoneyStorage.personal) {
+      currentCollectorDebt = await _readCurrentCollectorDebt(
+        db,
+        by.adminUid,
+        by.uid,
+        payment.currency,
+      );
+    }
+
     batch.set(subRef, {
       'balance': finalRemainingBalance,
       'status': finalRemainingBalance > 0
@@ -1641,6 +1692,7 @@ class SubscribersRepository {
       paymentId: payRef.id,
       subscriberId: subscriber.id,
       subscriberName: subscriber.name,
+      currentCollectorDebt: currentCollectorDebt,
     );
 
     await batch.commit();

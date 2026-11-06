@@ -1,7 +1,7 @@
 # Graph Report - isp_user_manager  (2026-11-06)
 
 ## Corpus Check
-- 103 files · ~125,902 words
+- 103 files · ~125,904 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 58 file(s) not represented in the graph (top: (none) 9, .xcconfig 8, .xml 7)
 

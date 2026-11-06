@@ -258,9 +258,9 @@
     "semantic_hash": ""
   },
   "lib/features/finance/cashbox_screen.dart": {
-    "mtime": 1793988057.3106475,
-    "seen": 1793988090.9203134,
-    "ast_hash": "b075f087c420aa9d83fc66a981c4f7ee",
+    "mtime": 1793988266.3627625,
+    "seen": 1793988280.744907,
+    "ast_hash": "9d8d8341f63cc3abcfb769bfc93c3372",
     "semantic_hash": ""
   },
   "lib/features/history/history_repository.dart": {

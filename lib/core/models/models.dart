@@ -70,6 +70,9 @@ class Subscriber {
   final DateTime joinedAt;
   final DateTime subscriptionEndsAt;
   final bool autoRenew;
+  final AutoRenewMode autoRenewMode;
+  final int autoRenewIntervalDays;
+  final int? autoRenewDayOfMonth;
   final int prepaidCycles;
   final num? lastPaymentAmount;
   final DateTime? lastPaymentAt;
@@ -91,14 +94,36 @@ class Subscriber {
     required this.joinedAt,
     DateTime? subscriptionEndsAt,
     this.autoRenew = true,
+    this.autoRenewMode = AutoRenewMode.fixedIntervalDays,
+    this.autoRenewIntervalDays = 30,
+    this.autoRenewDayOfMonth,
     this.prepaidCycles = 0,
     this.lastPaymentAmount,
     this.lastPaymentAt,
   }) : subscriptionEndsAt =
             subscriptionEndsAt ?? DateFormatter.addDays(joinedAt, 30);
 
+  DateTime nextRenewalDateFrom(DateTime start) => DateFormatter.addRenewalCycle(
+        start,
+        mode: autoRenewMode,
+        intervalDays: autoRenewIntervalDays > 0 ? autoRenewIntervalDays : 30,
+        dayOfMonth: (autoRenewDayOfMonth ?? subscriptionEndsAt.day).clamp(1, 31),
+      );
+
+  String autoRenewScheduleLabel({required bool isAr}) {
+    if (autoRenewMode == AutoRenewMode.fixedMonthlyDay) {
+      final day = (autoRenewDayOfMonth ?? subscriptionEndsAt.day).clamp(1, 31);
+      return isAr ? 'يوم $day من كل شهر' : 'Day $day of each month';
+    }
+    final days = autoRenewIntervalDays > 0 ? autoRenewIntervalDays : 30;
+    return isAr ? 'كل $days يوم' : 'Every $days days';
+  }
+
   factory Subscriber.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final d = doc.data() ?? {};
+    final endsAt = d['subscriptionEndsAt'] == null
+        ? DateFormatter.addDays(tsToDate(d['joinedAt']), 30)
+        : tsToDate(d['subscriptionEndsAt']);
     return Subscriber(
       id: doc.id,
       name: (d['name'] ?? '') as String,
@@ -116,10 +141,15 @@ class Subscriber {
       status: enumFromName(SubscriberStatus.values, d['status'] as String?) ??
           SubscriberStatus.active,
       joinedAt: tsToDate(d['joinedAt']),
-      subscriptionEndsAt: d['subscriptionEndsAt'] == null
-          ? DateFormatter.addDays(tsToDate(d['joinedAt']), 30)
-          : tsToDate(d['subscriptionEndsAt']),
+      subscriptionEndsAt: endsAt,
       autoRenew: (d['autoRenew'] ?? true) as bool,
+      autoRenewMode:
+          enumFromName(AutoRenewMode.values, d['autoRenewMode'] as String?) ??
+              AutoRenewMode.fixedIntervalDays,
+      autoRenewIntervalDays:
+          ((d['autoRenewIntervalDays'] as num?)?.toInt()) ?? 30,
+      autoRenewDayOfMonth: ((d['autoRenewDayOfMonth'] as num?)?.toInt()) ??
+          endsAt.day.clamp(1, 31),
       prepaidCycles: ((d['prepaidCycles'] as num?)?.toInt()) ?? 0,
       lastPaymentAmount: d['lastPaymentAmount'] as num?,
       lastPaymentAt:
@@ -143,6 +173,11 @@ class Subscriber {
         'joinedAt': Timestamp.fromDate(joinedAt),
         'subscriptionEndsAt': Timestamp.fromDate(subscriptionEndsAt),
         'autoRenew': autoRenew,
+        'autoRenewMode': autoRenewMode.name,
+        'autoRenewIntervalDays':
+            autoRenewIntervalDays > 0 ? autoRenewIntervalDays : 30,
+        'autoRenewDayOfMonth':
+            (autoRenewDayOfMonth ?? subscriptionEndsAt.day).clamp(1, 31),
         'prepaidCycles': prepaidCycles,
         if (lastPaymentAmount != null) 'lastPaymentAmount': lastPaymentAmount,
         if (lastPaymentAt != null)
@@ -166,6 +201,9 @@ class Subscriber {
     DateTime? joinedAt,
     DateTime? subscriptionEndsAt,
     bool? autoRenew,
+    AutoRenewMode? autoRenewMode,
+    int? autoRenewIntervalDays,
+    int? autoRenewDayOfMonth,
     int? prepaidCycles,
     num? lastPaymentAmount,
     DateTime? lastPaymentAt,
@@ -187,6 +225,10 @@ class Subscriber {
         joinedAt: joinedAt ?? this.joinedAt,
         subscriptionEndsAt: subscriptionEndsAt ?? this.subscriptionEndsAt,
         autoRenew: autoRenew ?? this.autoRenew,
+        autoRenewMode: autoRenewMode ?? this.autoRenewMode,
+        autoRenewIntervalDays:
+            autoRenewIntervalDays ?? this.autoRenewIntervalDays,
+        autoRenewDayOfMonth: autoRenewDayOfMonth ?? this.autoRenewDayOfMonth,
         prepaidCycles: prepaidCycles ?? this.prepaidCycles,
         lastPaymentAmount: lastPaymentAmount ?? this.lastPaymentAmount,
         lastPaymentAt: lastPaymentAt ?? this.lastPaymentAt,
@@ -968,7 +1010,7 @@ class Employee {
     );
   }
 
-  Map<String, dynamic> toMap() => {
+      Map<String, dynamic> toMap() => {
         'uid': uid,
         'username': username,
         'email': email,
@@ -978,6 +1020,13 @@ class Employee {
         'photoUrl': photoUrl,
         'createdAt': Timestamp.fromDate(createdAt),
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || (other is Employee && other.uid == uid);
+
+  @override
+  int get hashCode => uid.hashCode;
 }
 
 class HistoryEvent {

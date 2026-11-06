@@ -9,6 +9,7 @@ import '../../core/models/models.dart';
 import '../../core/services/pdf_report_service.dart';
 import '../../core/utils/formatters.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/providers/preferences_providers.dart';
 import '../auth/auth_repository.dart';
 import '../payments/advance_subscription_sheet.dart';
 import '../payments/record_payment_sheet.dart';
@@ -1074,7 +1075,7 @@ class _ModernSubscriberCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 3),
                             Text(
-                              l.t('autoRenew'),
+                              '${l.t('autoRenew')} (${subscriber.autoRenewScheduleLabel(isAr: isAr)})',
                               style: TextStyle(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w600,
@@ -1395,7 +1396,7 @@ class SubscriberDetailsDialog extends ConsumerWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    l.t('autoRenew'),
+                                    '${l.t('autoRenew')} (${subscriber.autoRenewScheduleLabel(isAr: isAr)})',
                                     style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
@@ -2445,8 +2446,12 @@ class _ShiftAutoRenewalDialogState
   late DateTime _baseEnd;
   late DateTime _newStart;
   late DateTime _newEnd;
+  late AutoRenewMode _autoRenewMode;
+  late int _autoRenewIntervalDays;
+  late int _autoRenewDayOfMonth;
+  late final TextEditingController _intervalDaysController;
   final TextEditingController _daysController =
-      TextEditingController(text: '1');
+      TextEditingController(text: '0');
   bool _shiftLatestDebt = true;
   bool _loading = true;
   bool _saving = false;
@@ -2454,16 +2459,23 @@ class _ShiftAutoRenewalDialogState
   @override
   void initState() {
     super.initState();
+    _autoRenewMode = widget.subscriber.autoRenewMode;
+    _autoRenewIntervalDays = widget.subscriber.autoRenewIntervalDays;
+    _autoRenewDayOfMonth = widget.subscriber.autoRenewDayOfMonth ??
+        widget.subscriber.subscriptionEndsAt.day;
+    _intervalDaysController =
+        TextEditingController(text: '$_autoRenewIntervalDays');
     _baseEnd = widget.subscriber.subscriptionEndsAt;
-    _baseStart = DateFormatter.addDays(_baseEnd, -30);
-    _newStart = DateFormatter.addDays(_baseStart, 1);
-    _newEnd = DateFormatter.addDays(_baseEnd, 1);
+    _baseStart = DateFormatter.addDays(_baseEnd, -_autoRenewIntervalDays);
+    _newStart = _baseStart;
+    _newEnd = _baseEnd;
     _loadLatestDebt();
   }
 
   @override
   void dispose() {
     _daysController.dispose();
+    _intervalDaysController.dispose();
     super.dispose();
   }
 
@@ -2480,9 +2492,12 @@ class _ShiftAutoRenewalDialogState
           _baseEnd = _latestDebt!.periodEnd;
         } else {
           _baseEnd = widget.subscriber.subscriptionEndsAt;
-          _baseStart = DateFormatter.addDays(_baseEnd, -30);
+          _baseStart =
+              DateFormatter.addDays(_baseEnd, -_autoRenewIntervalDays);
         }
-        _applyShiftDays(1);
+        _newStart = _baseStart;
+        _newEnd = _baseEnd;
+        _daysController.text = '0';
         _loading = false;
       });
     } catch (_) {
@@ -2490,11 +2505,25 @@ class _ShiftAutoRenewalDialogState
     }
   }
 
+  void _recomputeNewEndFromMode() {
+    if (_autoRenewMode == AutoRenewMode.fixedMonthlyDay) {
+      _newEnd =
+          DateFormatter.nextUpcomingMonthlyDay(_newStart, _autoRenewDayOfMonth);
+    } else {
+      _newEnd = DateFormatter.addDays(_newStart, _autoRenewIntervalDays);
+    }
+  }
+
   void _applyShiftDays(int days) {
     setState(() {
       _daysController.text = '$days';
       _newStart = DateFormatter.addDays(_baseStart, days);
-      _newEnd = DateFormatter.addDays(_baseEnd, days);
+      if (_autoRenewMode == AutoRenewMode.fixedMonthlyDay) {
+        _newEnd = DateFormatter.addDays(_baseEnd, days);
+        _autoRenewDayOfMonth = _newEnd.day;
+      } else {
+        _newEnd = DateFormatter.addDays(_baseEnd, days);
+      }
     });
   }
 
@@ -2503,7 +2532,7 @@ class _ShiftAutoRenewalDialogState
     final diffDays = DateFormatter.calendarDaysBetween(_baseStart, normalized);
     setState(() {
       _newStart = normalized;
-      _newEnd = DateFormatter.addDays(normalized, 30);
+      _recomputeNewEndFromMode();
       _daysController.text = '$diffDays';
     });
   }
@@ -2528,7 +2557,12 @@ class _ShiftAutoRenewalDialogState
       lastDate: DateTime(2100),
     );
     if (picked != null) {
-      setState(() => _newEnd = picked);
+      setState(() {
+        _newEnd = picked;
+        if (_autoRenewMode == AutoRenewMode.fixedMonthlyDay) {
+          _autoRenewDayOfMonth = picked.day;
+        }
+      });
     }
   }
 
@@ -2541,12 +2575,15 @@ class _ShiftAutoRenewalDialogState
             newActivationDate: _newStart,
             newSubscriptionEndsAt: _newEnd,
             targetDebtId: _shiftLatestDebt ? _latestDebt?.id : null,
+            autoRenewMode: _autoRenewMode,
+            autoRenewIntervalDays: _autoRenewIntervalDays,
+            autoRenewDayOfMonth: _autoRenewDayOfMonth,
           );
       if (!mounted) return;
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('تمت إزاحة تاريخ التجديد التلقائي بنجاح'),
+          content: Text('تم حفظ إعدادات وتاريخ التجديد التلقائي بنجاح'),
         ),
       );
     } finally {
@@ -2614,6 +2651,139 @@ class _ShiftAutoRenewalDialogState
                           style: const TextStyle(
                               fontSize: 13, fontWeight: FontWeight.w700),
                         ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.25),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          isAr
+                              ? 'نظام التجديد التلقائي لهذا المشترك:'
+                              : 'Auto-Renewal Schedule Mode:',
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        SegmentedButton<AutoRenewMode>(
+                          segments: [
+                            ButtonSegment(
+                              value: AutoRenewMode.fixedIntervalDays,
+                              icon: const Icon(Icons.timelapse_rounded, size: 16),
+                              label: Text(
+                                isAr ? 'بعد أيام محددة' : 'Fixed Days',
+                                style: const TextStyle(fontSize: 11.5),
+                              ),
+                            ),
+                            ButtonSegment(
+                              value: AutoRenewMode.fixedMonthlyDay,
+                              icon: const Icon(Icons.calendar_month_rounded, size: 16),
+                              label: Text(
+                                isAr ? 'يوم ثابت شهرياً' : 'Monthly Day',
+                                style: const TextStyle(fontSize: 11.5),
+                              ),
+                            ),
+                          ],
+                          selected: {_autoRenewMode},
+                          onSelectionChanged: (set) {
+                            setState(() {
+                              _autoRenewMode = set.first;
+                              _recomputeNewEndFromMode();
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        if (_autoRenewMode == AutoRenewMode.fixedIntervalDays)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _intervalDaysController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    labelText: isAr
+                                        ? 'عدد أيام الدورة (مثلاً 30 يوم)'
+                                        : 'Interval Days (e.g. 30)',
+                                    border: const OutlineInputBorder(),
+                                    isDense: true,
+                                    suffixText: isAr ? 'يوم' : 'days',
+                                  ),
+                                  onChanged: (v) {
+                                    final parsed = int.tryParse(v.trim());
+                                    if (parsed != null &&
+                                        parsed >= 1 &&
+                                        parsed <= 365) {
+                                      setState(() {
+                                        _autoRenewIntervalDays = parsed;
+                                        _recomputeNewEndFromMode();
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              for (final d in [28, 30, 31])
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: ChoiceChip(
+                                    label: Text('$d'),
+                                    selected: _autoRenewIntervalDays == d,
+                                    visualDensity: VisualDensity.compact,
+                                    onSelected: (_) {
+                                      setState(() {
+                                        _autoRenewIntervalDays = d;
+                                        _intervalDaysController.text = '$d';
+                                        _recomputeNewEndFromMode();
+                                      });
+                                    },
+                                  ),
+                                ),
+                            ],
+                          )
+                        else
+                          DropdownButtonFormField<int>(
+                            value: _autoRenewDayOfMonth.clamp(1, 31),
+                            decoration: InputDecoration(
+                              labelText: isAr
+                                  ? 'يوم التجديد الثابت من كل شهر'
+                                  : 'Fixed Day of Each Month',
+                              border: const OutlineInputBorder(),
+                              isDense: true,
+                              prefixIcon: const Icon(Icons.event_repeat_rounded,
+                                  size: 18),
+                            ),
+                            items: [
+                              for (int d = 1; d <= 31; d++)
+                                DropdownMenuItem(
+                                  value: d,
+                                  child: Text(
+                                    isAr
+                                        ? 'يوم $d من كل شهر'
+                                        : 'Day $d of each month',
+                                  ),
+                                ),
+                            ],
+                            onChanged: (v) {
+                              if (v != null) {
+                                setState(() {
+                                  _autoRenewDayOfMonth = v;
+                                  _recomputeNewEndFromMode();
+                                });
+                              }
+                            },
+                          ),
                       ],
                     ),
                   ),
@@ -2990,6 +3160,15 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
   late DateTime _subscriptionEndsAt = widget.existing?.subscriptionEndsAt ??
       DateFormatter.addDays(DateTime.now(), 30);
   late bool _autoRenew = widget.existing?.autoRenew ?? true;
+  late AutoRenewMode _autoRenewMode =
+      widget.existing?.autoRenewMode ?? AutoRenewMode.fixedIntervalDays;
+  late int _autoRenewIntervalDays =
+      widget.existing?.autoRenewIntervalDays ?? 30;
+  late int _autoRenewDayOfMonth = widget.existing?.autoRenewDayOfMonth ??
+      (widget.existing?.subscriptionEndsAt.day ?? DateTime.now().day);
+  late final TextEditingController _intervalDaysController =
+      TextEditingController(text: '$_autoRenewIntervalDays');
+  bool _defaultsInitialized = false;
   // 'paid' = مدفوع نقداً, 'debt' = دين على المشترك, 'none' = بدون أثر مالي (إضافة فقط)
   String _initialPaymentMode = 'none';
   MoneyStorage _initialReceivedIn = MoneyStorage.cashbox;
@@ -2997,10 +3176,44 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
   bool _busy = false;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_defaultsInitialized) {
+      _defaultsInitialized = true;
+      if (widget.existing == null) {
+        final defMode = ref.read(defaultAutoRenewModeProvider);
+        final defDays = ref.read(defaultAutoRenewDaysProvider);
+        final defDayOfMonth = ref.read(defaultAutoRenewDayOfMonthProvider);
+        _autoRenewMode = defMode;
+        _autoRenewIntervalDays = defDays;
+        _autoRenewDayOfMonth = defDayOfMonth;
+        _intervalDaysController.text = '$defDays';
+        _recomputeEndDateFromAutoRenewConfig();
+      }
+    }
+  }
+
+  void _recomputeEndDateFromAutoRenewConfig() {
+    final baseStart = widget.existing?.joinedAt ?? DateTime.now();
+    if (_autoRenewMode == AutoRenewMode.fixedMonthlyDay) {
+      _subscriptionEndsAt = DateFormatter.nextUpcomingMonthlyDay(
+        baseStart,
+        _autoRenewDayOfMonth,
+      );
+    } else {
+      _subscriptionEndsAt = DateFormatter.addDays(
+        baseStart,
+        _autoRenewIntervalDays,
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _name.dispose();
     _phone.dispose();
     _price.dispose();
+    _intervalDaysController.dispose();
     super.dispose();
   }
 
@@ -3063,6 +3276,11 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
         joinedAt: widget.existing?.joinedAt ?? DateTime.now(),
         subscriptionEndsAt: _subscriptionEndsAt,
         autoRenew: _autoRenew,
+        autoRenewMode: _autoRenewMode,
+        autoRenewIntervalDays: _autoRenewIntervalDays,
+        autoRenewDayOfMonth: _autoRenewMode == AutoRenewMode.fixedMonthlyDay
+            ? _autoRenewDayOfMonth
+            : widget.existing?.autoRenewDayOfMonth,
         prepaidCycles: widget.existing?.prepaidCycles ?? 0,
         lastPaymentAmount: widget.existing?.lastPaymentAmount,
         lastPaymentAt: widget.existing?.lastPaymentAt,
@@ -3244,6 +3462,198 @@ class _SubscriberFormSheetState extends ConsumerState<SubscriberFormSheet> {
               value: _autoRenew,
               onChanged: (v) => setState(() => _autoRenew = v),
             ),
+            if (_autoRenew) ...[
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.25),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.schedule_send_outlined,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            loc.startsWith('ar')
+                                ? 'خيار التجديد التلقائي'
+                                : 'Auto-Renewal Option',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    SegmentedButton<AutoRenewMode>(
+                      segments: [
+                        ButtonSegment(
+                          value: AutoRenewMode.fixedIntervalDays,
+                          icon: const Icon(Icons.timelapse_rounded, size: 17),
+                          label: Text(
+                            loc.startsWith('ar')
+                                ? 'بعد أيام محددة (مثل 30 يوم)'
+                                : 'After Fixed Days (e.g. 30d)',
+                            style: const TextStyle(fontSize: 11.5),
+                          ),
+                        ),
+                        ButtonSegment(
+                          value: AutoRenewMode.fixedMonthlyDay,
+                          icon: const Icon(Icons.calendar_month_rounded, size: 17),
+                          label: Text(
+                            loc.startsWith('ar')
+                                ? 'يوم ثابت من كل شهر'
+                                : 'Fixed Monthly Day',
+                            style: const TextStyle(fontSize: 11.5),
+                          ),
+                        ),
+                      ],
+                      selected: {_autoRenewMode},
+                      onSelectionChanged: (set) {
+                        setState(() {
+                          _autoRenewMode = set.first;
+                          if (widget.existing == null) {
+                            _recomputeEndDateFromAutoRenewConfig();
+                          }
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    if (_autoRenewMode == AutoRenewMode.fixedIntervalDays) ...[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _intervalDaysController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: loc.startsWith('ar')
+                                    ? 'عدد الأيام لكل دورة اشتراك'
+                                    : 'Days per cycle',
+                                isDense: true,
+                                border: const OutlineInputBorder(),
+                                suffixText: loc.startsWith('ar') ? 'يوم' : 'days',
+                              ),
+                              onChanged: (v) {
+                                final parsed = int.tryParse(v.trim());
+                                if (parsed != null &&
+                                    parsed >= 1 &&
+                                    parsed <= 365) {
+                                  setState(() {
+                                    _autoRenewIntervalDays = parsed;
+                                    if (widget.existing == null) {
+                                      _recomputeEndDateFromAutoRenewConfig();
+                                    }
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          for (final d in [28, 30, 31])
+                            Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: ChoiceChip(
+                                label: Text(loc.startsWith('ar') ? '$d يوم' : '${d}d'),
+                                selected: _autoRenewIntervalDays == d,
+                                visualDensity: VisualDensity.compact,
+                                onSelected: (_) {
+                                  setState(() {
+                                    _autoRenewIntervalDays = d;
+                                    _intervalDaysController.text = '$d';
+                                    if (widget.existing == null) {
+                                      _recomputeEndDateFromAutoRenewConfig();
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ] else ...[
+                      DropdownButtonFormField<int>(
+                        value: _autoRenewDayOfMonth.clamp(1, 31),
+                        decoration: InputDecoration(
+                          labelText: loc.startsWith('ar')
+                              ? 'تحديد اليوم الثابت من كل شهر'
+                              : 'Select Fixed Day of Each Month',
+                          isDense: true,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.event_repeat_rounded,
+                              size: 18),
+                        ),
+                        items: [
+                          for (int d = 1; d <= 31; d++)
+                            DropdownMenuItem(
+                              value: d,
+                              child: Text(
+                                loc.startsWith('ar')
+                                    ? 'يوم $d من كل شهر'
+                                    : 'Day $d of each month',
+                              ),
+                            ),
+                        ],
+                        onChanged: (v) {
+                          if (v != null) {
+                            setState(() {
+                              _autoRenewDayOfMonth = v;
+                              _subscriptionEndsAt =
+                                  DateFormatter.nextUpcomingMonthlyDay(
+                                DateTime.now(),
+                                v,
+                              );
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          for (final d in [1, 5, 10, 15, 20, 25, 30])
+                            ChoiceChip(
+                              label: Text(
+                                  loc.startsWith('ar') ? 'يوم $d' : 'Day $d'),
+                              selected: _autoRenewDayOfMonth == d,
+                              visualDensity: VisualDensity.compact,
+                              onSelected: (_) {
+                                setState(() {
+                                  _autoRenewDayOfMonth = d;
+                                  _subscriptionEndsAt =
+                                      DateFormatter.nextUpcomingMonthlyDay(
+                                    DateTime.now(),
+                                    d,
+                                  );
+                                });
+                              },
+                            ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
             if (widget.existing == null) ...[
               const SizedBox(height: 10),
               Container(

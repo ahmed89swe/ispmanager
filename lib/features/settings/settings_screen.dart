@@ -20,6 +20,10 @@ class SettingsScreen extends ConsumerWidget {
     final webNotifsEnabled = ref.watch(webNotificationsEnabledProvider);
     final locale = ref.watch(localeProvider);
     final currency = ref.watch(currencyProvider);
+    final defaultAutoRenewMode = ref.watch(defaultAutoRenewModeProvider);
+    final defaultAutoRenewDays = ref.watch(defaultAutoRenewDaysProvider);
+    final defaultAutoRenewDayOfMonth =
+        ref.watch(defaultAutoRenewDayOfMonthProvider);
     final isArabic = locale.languageCode.startsWith('ar');
     final uiTheme = Theme.of(context);
 
@@ -96,6 +100,135 @@ class SettingsScreen extends ConsumerWidget {
                       .toList(),
                 ),
               ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: AppTheme.cardDecoration(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.autorenew_rounded,
+                    color: uiTheme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isArabic
+                              ? 'خيارات التجديد التلقائي الافتراضية'
+                              : 'Default Auto-Renewal Options',
+                          style: uiTheme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          isArabic
+                              ? 'اختر نظام التجديد التلقائي الافتراضي للمشتركين (بعد أيام محددة مثل 30 يوم، أو يوم ثابت من كل شهر)'
+                              : 'Choose default auto-renewal mode (after fixed days like 30 days, or a fixed day of each month)',
+                          style: uiTheme.textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              SegmentedButton<AutoRenewMode>(
+                segments: [
+                  ButtonSegment(
+                    value: AutoRenewMode.fixedIntervalDays,
+                    icon: const Icon(Icons.timelapse_rounded, size: 18),
+                    label: Text(
+                      isArabic
+                          ? 'بعد أيام محددة (مثل 30 يوم)'
+                          : 'After Fixed Days (e.g. 30d)',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  ButtonSegment(
+                    value: AutoRenewMode.fixedMonthlyDay,
+                    icon: const Icon(Icons.calendar_month_rounded, size: 18),
+                    label: Text(
+                      isArabic
+                          ? 'وقت ثابت (يوم ثابت من كل شهر)'
+                          : 'Fixed Monthly Day',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ],
+                selected: {defaultAutoRenewMode},
+                onSelectionChanged: (set) {
+                  ref
+                      .read(defaultAutoRenewModeProvider.notifier)
+                      .set(set.first);
+                },
+              ),
+              const SizedBox(height: 12),
+              if (defaultAutoRenewMode == AutoRenewMode.fixedIntervalDays)
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      isArabic
+                          ? 'عدد الأيام الافتراضي للدورة:'
+                          : 'Default Cycle Days:',
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    for (final d in [15, 28, 30, 31])
+                      ChoiceChip(
+                        label: Text(isArabic ? '$d يوم' : '$d days'),
+                        selected: defaultAutoRenewDays == d,
+                        onSelected: (_) {
+                          ref.read(defaultAutoRenewDaysProvider.notifier).set(d);
+                        },
+                      ),
+                  ],
+                )
+              else
+                DropdownButtonFormField<int>(
+                  value: defaultAutoRenewDayOfMonth.clamp(1, 31),
+                  decoration: InputDecoration(
+                    labelText: isArabic
+                        ? 'اليوم الثابت للتجديد من كل شهر'
+                        : 'Fixed Renewal Day of Each Month',
+                    border: const OutlineInputBorder(),
+                    isDense: true,
+                    prefixIcon:
+                        const Icon(Icons.event_repeat_rounded, size: 18),
+                  ),
+                  items: [
+                    for (int d = 1; d <= 31; d++)
+                      DropdownMenuItem(
+                        value: d,
+                        child: Text(
+                          isArabic
+                              ? 'يوم $d من كل شهر'
+                              : 'Day $d of each month',
+                        ),
+                      ),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) {
+                      ref
+                          .read(defaultAutoRenewDayOfMonthProvider.notifier)
+                          .set(v);
+                    }
+                  },
+                ),
             ],
           ),
         ),
